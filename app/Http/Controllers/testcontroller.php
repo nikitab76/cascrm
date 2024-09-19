@@ -9,7 +9,12 @@ class testcontroller extends Controller
 {
     public function index()
     {
-        dd(Room::all());
+        $rooms = Room::all();
+        foreach ($rooms as $room)
+        {
+            dump($room);
+        }
+
 
     }
 }

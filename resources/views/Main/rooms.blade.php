@@ -27,7 +27,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Simple Full Width Table</h3>
+                        <h3 class="card-title">Список объектов</h3>
 
                         <div class="card-tools">
                             <ul class="pagination pagination-sm float-right">
@@ -45,23 +45,27 @@
                             <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Task</th>
-                                <th>Progress</th>
+                                <th>Название</th>
+                                <th>Загруженность</th>
                                 <th style="width: 40px">Label</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>1.</td>
-                                <td>Update software</td>
-                                <td>
-                                    <div class="progress progress-xs">
-                                        <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-danger">55%</span></td>
-                            </tr>
-                            <tr>
+
+                            @foreach($rooms as $room)
+                                <tr>
+                                    <td>#</td>
+                                    <td><a href="{{route('rooms.show', ['room'=>$room->slug])}}">{{$room->title}}</a></td>
+                                    <td>
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-danger">55%</span></td>
+                                </tr>
+                            @endforeach
+
+                            {{--<tr>
                                 <td>2.</td>
                                 <td>Clean database</td>
                                 <td>
@@ -90,7 +94,7 @@
                                     </div>
                                 </td>
                                 <td><span class="badge bg-success">90%</span></td>
-                            </tr>
+                            </tr>--}}
                             </tbody>
                         </table>
                     </div>

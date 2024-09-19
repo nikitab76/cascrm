@@ -37,7 +37,8 @@ class RoomsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $room = Room::where('slug', $id)->first();
+        return view('Main.roomProfile', compact('room'));
     }
 
     /**
