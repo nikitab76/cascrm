@@ -7,11 +7,12 @@
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+          href="{{asset('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')}}">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="assets/profile/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="{{asset('assets/profile/plugins/fontawesome-free/css/all.min.css')}}">
     <!-- Theme style -->
-    <link rel="stylesheet" href="assets/profile/css/adminlte.min.css">
+    <link rel="stylesheet" href="{{asset('assets/profile/css/adminlte.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" />
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -24,7 +25,7 @@
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="../../index3.html" class="nav-link">Home</a>
+                <a href="{{asset('../../index3.html')}}" class="nav-link">Home</a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="#" class="nav-link">Contact</a>
@@ -66,7 +67,7 @@
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="assets/profile/img/user1-128x128.jpg" alt="User Avatar"
+                            <img src="{{asset('assets/profile/img/user1-128x128.jpg')}}" alt="User Avatar"
                                  class="img-size-50 mr-3 img-circle">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
@@ -83,7 +84,7 @@
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="assets/profile/img/user8-128x128.jpg" alt="User Avatar"
+                            <img src="{{asset('assets/profile/img/user8-128x128.jpg')}}" alt="User Avatar"
                                  class="img-size-50 img-circle mr-3">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
@@ -100,7 +101,7 @@
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="assets/profile/img/user3-128x128.jpg" alt="User Avatar"
+                            <img src="{{asset("assets/profile/img/user3-128x128.jpg")}}" alt="User Avatar"
                                  class="img-size-50 img-circle mr-3">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
@@ -161,8 +162,8 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="../../index3.html" class="brand-link">
-            <img src="assets/profile/img/AdminLTELogo.png" alt="AdminLTE Logo"
+        <a href="{{asset('../../index3.html')}}" class="brand-link">
+            <img src="{{asset('assets/profile/img/AdminLTELogo.png')}}" alt="AdminLTE Logo"
                  class="brand-image img-circle elevation-3" style="opacity: .8">
             <span class="brand-text font-weight-light">AdminLTE 3</span>
         </a>
@@ -172,7 +173,7 @@
             <!-- Sidebar user (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="assets/profile/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    <img src="{{asset('assets/profile/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
                     <a href="#" class="d-block">Alexander Pierce</a>
@@ -265,12 +266,14 @@
 <!-- ./wrapper -->
 
 <!-- jQuery -->
-<script src="assets/profile/plugins/jquery/jquery.min.js"></script>
+<script src="{{asset('assets/profile/plugins/jquery/jquery.min.js')}}"></script>
 <!-- Bootstrap 4 -->
-<script src="assets/profile/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{{asset('assets/profile/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- AdminLTE App -->
-<script src="assets/profile/js/adminlte.min.js"></script>
+<script src="{{asset('assets/profile/js/adminlte.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="assets/profile/js/demo.js"></script>
+<script src="{{asset('assets/profile/js/demo.js')}}"></script>
+
+<script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
 </body>
 </html>
