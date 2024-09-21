@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class RoomsController extends Controller
 {
@@ -29,7 +30,12 @@ class RoomsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->roomName);
+        Room::create([
+            'title' => $request->roomName,
+            'slug' =>Str::slug($request->roomName)
+        ]);
+        return redirect()->route('rooms.index');
     }
 
     /**
@@ -62,6 +68,7 @@ class RoomsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Room::find($id)->delete();
+        return redirect()->route('rooms.index');
     }
 }
