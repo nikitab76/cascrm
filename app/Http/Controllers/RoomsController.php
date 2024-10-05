@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Training;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -43,7 +44,11 @@ class RoomsController extends Controller
      */
     public function show(string $id)
     {
-        $room = Room::where('slug', $id)->first();
+        $room['room'] = Room::where('slug', $id)->first();
+        $info = Training::where('slug_room', $id)->first();
+        if (isset($info)){
+            $room['info'] = $info;
+        }
         return view('Main.roomProfile', compact('room'));
     }
 
