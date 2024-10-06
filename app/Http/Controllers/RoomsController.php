@@ -45,10 +45,11 @@ class RoomsController extends Controller
     public function show(string $id)
     {
         $room['room'] = Room::where('slug', $id)->first();
-        $info = Training::where('slug_room', $id)->first();
-        if (isset($info)){
+        $info = self::infoTraining($id);
+        if (isset($info) && !empty($info)){
             $room['info'] = $info;
         }
+        $room['day'] = ['2024-10-05', '2024-10-06'];
         return view('Main.roomProfile', compact('room'));
     }
 
@@ -75,5 +76,33 @@ class RoomsController extends Controller
     {
         Room::find($id)->delete();
         return redirect()->route('rooms.index');
+    }
+
+    public function infoTraining($id){
+        $training = Training::where('slug_room', $id)/*->where('date', '>=', $to)->where('date' , '<=', $from)*/->get();
+        $list = [];
+        foreach ($training as $train){
+            $row['coach'] = $train->coach;
+            if ($train->quarter == 1){
+                $row['quarter'] = 'весь зал';
+            } elseif ($train->quarter == 2){
+                $row['quarter'] = '2/4';
+            } else {
+                $row['quarter'] = '1/4';
+            }
+            $row['comment'] = $train->comment;
+            $row['profile'] = $train->profile;
+            $row['time'] = $train->time;
+            $row['date'] = $train->date;
+            $list[]= $row;
+        }
+        return $list;
+    }
+
+    public function showTable(){
+        for ($i=strtotime('06:00'); $i<=strtotime('22:00'); $i = $i + 15 * 60){
+            $time[] = date("H:i", $i);
+        }
+        return $time;
     }
 }
