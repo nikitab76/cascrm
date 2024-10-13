@@ -1,6 +1,94 @@
 @extends('Main.Layouts.sidebar')
 
 @section('content')
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.css"/>
+    <!-- TUI Date Picker (обязательная зависимость) -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-date-picker/latest/tui-date-picker.min.css">
+    <!-- TUI Time Picker (обязательная зависимость) -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-time-picker/latest/tui-time-picker.min.css">
+    <style>
+        #popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 20px;
+            text-align: left;
+        }
+        #popup h3 {
+            margin-top: 0;
+        }
+        #popup button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #popup button:hover {
+            background-color: #0056b3;
+        }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        #calendar {
+            height: 800px;
+        }
+
+        .tui-full-calendar-popup {
+            max-width: 400px; /* Максимальная ширина стандартного окна */
+        }
+
+        #eventModal {
+            display: none; /* Скрыто по умолчанию */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -60,7 +148,7 @@
             </div>
             <!-- /.widget-user -->
             <div class="container-fluid">
-                <div class="card card-default" >
+                <div class="card card-default">
                     <div class="card-header" data-card-widget="collapse">
                         <h3 class="card-title">Фильтр расписания</h3>
                         <div class="card-tools">
@@ -160,37 +248,44 @@
                                                    placeholder="">
                                         </div>
                                         <div class="pt-2">
-                                            <label for="classTime">Время</label>
+                                            <label for="classTime">Время начала</label>
                                             <input type="time" class="form-control" id="classTime" name="classTime"
                                                    placeholder="">
                                         </div>
                                         <div class="pt-2">
-                                            <label for="classDate">Дата</label>
-                                            <input type="date" class="form-control" id="classDate" name="classDate"
+                                            <label for="classTime">Время окончания</label>
+                                            <input type="time" class="form-control" id="classTimeEnd"
+                                                   name="classTimeEnd"
                                                    placeholder="">
-                                        </div>
-                                        <div class="pt-2">
-                                            <div class="form-group">
-                                                <label for="classQuarter">Четверть</label>
-                                                <select class="form-control" name="classQuarter" id="classQuarter">
-                                                    <option selected value="4">1/4</option>
-                                                    <option value="2">2/4</option>
-                                                    <option value="1">весь зал</option>
-                                                </select>
+
+                                            <div class="pt-2">
+                                                <label for="classDate">Дата</label>
+                                                <input type="date" class="form-control" id="classDate" name="classDate"
+                                                       placeholder="">
                                             </div>
-                                        </div>
-                                        <div class="pt-2">
-                                            <label for="classComment">Комментарий</label>
-                                            <input type="text" class="form-control" id="classComment"
-                                                   name="classComment"
-                                                   placeholder="">
+                                            <div class="pt-2">
+                                                <div class="form-group">
+                                                    <label for="classQuarter">Организация</label>
+                                                    <select class="form-control" name="classQuarter" id="classQuarter">
+                                                        <option selected value="4">Цс</option>
+                                                        <option value="2">Цас</option>
+                                                        <option value="1">Сшор</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="pt-2">
+                                                <label for="classComment">Комментарий</label>
+                                                <input type="text" class="form-control" id="classComment"
+                                                       name="classComment"
+                                                       placeholder="">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                {{--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>--}}
-                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                                <div class="modal-footer">
+                                    {{--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>--}}
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -221,35 +316,20 @@
                                  aria-labelledby="home-tab" tabindex="0">
                                 <div class="p-3">
                                     <h3>Сводная таблица</h3>
-                                    <p>сводная таблица в процессе обмозгования</p>
-                                    {{--<table class="table table-bordered" id="myTable">
-                                        <thead>
-                                        <tr>
-                                            <th style="width: 10%">Время</th>
-                                            <th style="width: 15%">Пн</th>
-                                            <th>Вт</th>
-                                            <th>ср</th>
-                                            <th>Чт</th>
-                                            <th>Пт</th>
-                                            <th>Сб</th>
-                                            <th>Вс</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @for($i=0; $i<24; $i+=1)
-                                            <tr>
-                                                <td>{{$i}}:00</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                        @endfor
-                                        </tbody>
-                                    </table>--}}
+                                    <div class="content">
+                                        <div class="nav-buttons mb-2">
+                                            <button id="prev-week" class="btn btn-outline-warning">← Предыдущая неделя</button>
+                                            <button id="next-week" class="btn btn-outline-warning">Следующая неделя →</button>
+                                            <button id="today" class="btn btn-outline-warning">Сегодня</button>
+                                        </div>
+                                        <div id="calendar"></div>
+                                    </div>
+                                </div>
+                                <div id="popup">
+                                    <h3 id="popupTitle"></h3>
+                                    <p><span id="popupComment"></span></p>
+                                    <p>{{--<strong>Время:</strong> <span id="popupTime"></span></p>--}}
+                                    <button id="closePopup">Закрыть</button>
                                 </div>
                             </div>
                             {{--kanban--}}
@@ -316,18 +396,151 @@
                     </div>
                 </div>
             @endif
+            <meta name="csrf-token" content="{{ csrf_token() }}">
         </section>
+        @dump($room['room']->slug)
     </div>
+    <script src="https://uicdn.toast.com/tui-date-picker/latest/tui-date-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/tui-time-picker/latest/tui-time-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.min.js"></script>
+    <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function (){
-            $('#alertmess').hide();
-        })
-        function show(){
+        function show() {
             $('#alertmess').show();
         }
-        function hide(){
+
+        function hide() {
             $('#alertmess').hide();
         }
+        $(document).ready(function (){
+            showCalendar();
+        })
 
+        function showCalendar(){
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST', // отправляем в POST формате, можно GET
+                url: '{{ route('rooms.calendar', ['id'=>$room['room']->slug])}}', // путь дo обработчика
+                dataType: 'json', // ответ ждём в json формате
+                data: '', // данные для отправки
+                beforeSend: function(data) { // событие дo отправки запроса
+                },
+                success: function(data){ // событие в случае удачного запроса
+                    renderCalendar(data)
+                },
+            })
+        }
+
+        function renderCalendar(data) {
+            var calendar = new tui.Calendar('#calendar', {
+                defaultView: 'week',
+                taskView: false,
+                scheduleView: ['time'],
+                useDetailPopup: true,  // Включаем всплывающее окно
+                useCreationPopup: true,  // Включаем создание событий через всплывающие окна
+                useResizeHandle: true,   // Включаем изменение размера событий
+                useDrag: true,           // Включаем перетаскивание событий
+                week: {
+                    startDayOfWeek: 1,
+                    hourStart: 6,
+                    hourEnd: 23,
+                },
+                template: {
+                    time: function (schedule) {
+                        var start = schedule.start;
+                        var timeString = start.getHours().toString().padStart(2, '0') + ':' + start.getMinutes().toString().padStart(2, '0');
+                        return timeString + ' ' + schedule.title;
+                    }
+                }
+            });
+
+            data.forEach(function (item) {
+                calendar.createSchedules([{
+                    id: item.id,
+                    calendarId: '1',
+                    title: item.profile,
+                    category: 'time',
+                    start: item.start,
+                    end: item.end,
+                    body:item.body,
+                    bgColor:item.quarter,
+                }]);
+            });
+            calendar.on('beforeUpdateSchedule', function(event) {
+                var schedule = event.schedule;
+                var changes = event.changes;
+
+                // Создаем текст для отображения изменений
+                var content = `
+            <p><strong>Название события:</strong> ${schedule.title}</p>
+            <p><strong>Новый период:</strong>${changes.start ? new Date(changes.start).toLocaleString() : new Date(schedule.start).toLocaleString()} - ${changes.end ? new Date(changes.end).toLocaleString() : new Date(schedule.end).toLocaleString()}</p>`;
+                $('#popupTitle').text(schedule.title);
+                $('#popupComment').html(content);
+
+                $('#overlay').show();
+                $('#popup').show();
+                // Показать модальное окно с изменениями
+                /*showModal(content);*/
+
+                // Обновить событие в календаре
+                calendar.updateSchedule(schedule.id, schedule.calendarId, changes);
+            });
+
+            // Обработчик для удаления события
+            calendar.on('beforeDeleteSchedule', function(event) {
+                var schedule = event.schedule;
+
+                // Удаление события
+                calendar.deleteSchedule(schedule.id, schedule.calendarId);
+            });
+
+            // Обработчик события для изменения стандартного всплывающего окна
+            /*calendar.on('clickSchedule', function(event) {
+                var schedule = event.schedule;
+
+                // Заполнение данных в всплывающем окне
+                $('#popupTitle').text(schedule.title);
+                $('#popupComment').html(schedule.body);
+
+                // Показать всплывающее окно
+                $('#overlay').show();
+                $('#popup').show();
+            });*/
+
+            $('#closePopup').click(function() {
+                $('#popup').hide();
+                $('#overlay').hide();
+            });
+
+
+            // Закрытие модального окна
+            $('.close').click(function() {
+                $('#eventModal').fadeOut();
+            });
+
+            // Закрытие модального окна при клике вне него
+            $(window).click(function(event) {
+                if ($(event.target).is('#eventModal')) {
+                    $('#eventModal').fadeOut();
+                }
+            });
+            // Функции для переключения между неделями
+            document.getElementById('prev-week').addEventListener('click', function () {
+                calendar.prev();  // Переход на предыдущую неделю
+            });
+
+            document.getElementById('next-week').addEventListener('click', function () {
+                calendar.next();  // Переход на следующую неделю
+            });
+
+            document.getElementById('today').addEventListener('click', function () {
+                calendar.today();  // Возврат на текущую неделю
+            });
+        }
     </script>
 @endsection

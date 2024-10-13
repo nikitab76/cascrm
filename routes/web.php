@@ -8,3 +8,7 @@ Route::get('/', [\App\Http\Controllers\MainController::class, 'index'])->name('i
 Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
 
 Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
+Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
+Route::get('/t', function (){
+    return view('test');
+});

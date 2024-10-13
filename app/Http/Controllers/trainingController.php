@@ -14,7 +14,8 @@ class trainingController extends Controller
             'coach' => $request->classCoach,
             'profile' => $request->classProfile,
             'date' => $request->classDate,
-            'time' => $request->classTime,
+            'time_start' => $request->classTime,
+            'time_end' => $request->classTimeEnd,
             'quarter' => $request->classQuarter,
             'comment' => $request->classComment
         ]);

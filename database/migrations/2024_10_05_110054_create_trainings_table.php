@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('coach');
             $table->string('profile');
             $table->string('date');
-            $table->string('time');
+            $table->string('time_start');
+            $table->string('time_end');
             $table->string('quarter');
             $table->string('comment');
             $table->timestamps();
@@ -26,6 +27,11 @@ return new class extends Migration
         if (!Schema::hasColumn('trainings', 'comment')) {
             Schema::table('trainings', function (Blueprint $table) {
                 $table->string('comment')->after('quarter');
+            });
+        }
+        if (!Schema::hasColumn('trainings', 'time_end')) {
+            Schema::table('trainings', function (Blueprint $table) {
+                $table->string('time_end')->after('time_start');
             });
         }
     }

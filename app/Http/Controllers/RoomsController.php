@@ -99,10 +99,33 @@ class RoomsController extends Controller
         return $list;
     }
 
-    public function showTable(){
-        for ($i=strtotime('06:00'); $i<=strtotime('22:00'); $i = $i + 15 * 60){
-            $time[] = date("H:i", $i);
+    public function showTable(Request $request){
+        $trainings = Training::where('slug_room', $request->id)->get();
+        $list = [];
+        foreach ($trainings as $training){
+            $row['id'] = $training->id;
+            $row['name'] = $training->coach;
+            $row['profile'] = $training->profile;
+            $row['comment'] = $training->comment;
+            $row['start'] = $training->date . 'T' . $training->time_start . ':00';
+            $row['end'] = $training->date . 'T' . $training->time_end . ':00';
+            $row['quarter'] = self::colorEvent($training->quarter);
+            $row['body'] = '<strong>Начало тренировки:</strong> ' . $training->time_start . '<br>' .
+            '<strong>Конец тренировки:</strong> ' . $training->time_end . '<br>' .
+                '<strong>Инструктор:</strong> ' . $training->coach . '<br>'.
+            '<strong>Комментарий:</strong> ' . $training->comment;
+            $list[] = $row;
         }
-        return $time;
+        return $list;
+    }
+    public function colorEvent($data){
+        switch ($data){
+            case 4:
+                return '#9379d9';
+            case 2:
+                return '';
+            case 1:
+                return '#d5b42c';
+        }
     }
 }
