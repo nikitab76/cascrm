@@ -233,35 +233,43 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-
                             <div class="modal-body">
                                 <div class="card-body">
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul class="list-unstyled">
+                                                @foreach($errors->all() as $error)
+                                                    <li>{{$error}}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
                                     <div class="form-group">
                                         <input style="display: none" name="roomsSlug" value="{{{$room['room']->slug}}}">
                                         <label for="classCoach">Инструктор</label>
                                         <input type="text" class="form-control" id="classCoach" name="classCoach"
-                                               placeholder="">
+                                               placeholder="" value="{{old('classCoach')}}">
                                         <div class="pt-2">
                                             <label for="classProfile">Секция</label>
                                             <input type="text" class="form-control" id="classProfile"
                                                    name="classProfile"
-                                                   placeholder="">
+                                                   placeholder="" value="{{old('classProfile')}}">
                                         </div>
                                         <div class="pt-2">
                                             <label for="classTime">Время начала</label>
                                             <input type="time" class="form-control" id="classTime" name="classTime"
-                                                   placeholder="">
+                                                   placeholder="" value="{{old('classTime')}}">
                                         </div>
                                         <div class="pt-2">
                                             <label for="classTime">Время окончания</label>
                                             <input type="time" class="form-control" id="classTimeEnd"
                                                    name="classTimeEnd"
-                                                   placeholder="">
+                                                   placeholder="" value="{{old('classTimeEnd')}}">
 
                                             <div class="pt-2">
                                                 <label for="classDate">Дата</label>
                                                 <input type="date" class="form-control" id="classDate" name="classDate"
-                                                       placeholder="">
+                                                       placeholder="" value="{{old('classDate')}}">
                                             </div>
                                             <div class="pt-2">
                                                 <div class="form-group">

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,7 +13,7 @@ return new class extends Migration
         if (!Schema::hasTable('trainings')) {
             Schema::create('trainings', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('slug_room');
+                $table->string('slug_room')->default(null);
                 $table->string('coach')->default(null);
                 $table->string('profile')->default(null);
                 $table->string('date')->default(null);
@@ -24,18 +23,19 @@ return new class extends Migration
                 $table->string('comment')->default(null);
                 $table->timestamps();
             });
-
-            if (!Schema::hasColumn('trainings', 'comment')) {
-                Schema::table('trainings', function (Blueprint $table) {
-                    $table->string('comment')->after('quarter');
-                });
-            }
-            if (!Schema::hasColumn('trainings', 'time_end')) {
-                Schema::table('trainings', function (Blueprint $table) {
-                    $table->string('time_end')->after('time_start');
-                });
-            }
         }
+
+        if (!Schema::hasColumn('trainings', 'comment')) {
+            Schema::table('trainings', function (Blueprint $table) {
+                $table->string('comment')->after('quarter')->default(null);
+            });
+        }
+        if (!Schema::hasColumn('trainings', 'time_end')) {
+            Schema::table('trainings', function (Blueprint $table) {
+                $table->string('time_end')->after('time_start')->default(null);
+            });
+        }
+
     }
 
     /**
