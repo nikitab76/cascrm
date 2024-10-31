@@ -8,12 +8,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Все помещения</h1>
+                        <h1>Список пользователей</h1>
                     </div>
                     <div class="col-sm-6">
                         <button type="button" class="btn btn-success float-sm-right" data-toggle="modal"
                                 data-target="#createModal">
-                            Добавить объект
+                            Добавить пользователя
                         </button>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
              aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form role="form" method="post" action="{{route('rooms.store')}}">
+                    <form role="form" method="post" action="#">
                         @csrf
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Добавить объект</h5>
@@ -59,11 +59,11 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Список объектов</h3>
+                        <h3 class="card-title">Список пользователей</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body p-0">
-                        <table class="table">
+                        {{--<table class="table">
                             <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
@@ -87,21 +87,21 @@
                                     </td>
                                     <td><span class="badge bg-danger">55%</span></td>
                                     <td>
-                                    <form action="{{ route('rooms.destroy', ['room'=>$room->id]) }}" method="post" class="float-left">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Подтвердите удаление')">
-                                            <i
-                                                class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
+                                        <form action="{{ route('rooms.destroy', ['room'=>$room->id]) }}" method="post" class="float-left">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Подтвердите удаление')">
+                                                <i
+                                                    class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
 
                             </tbody>
-                        </table>
+                        </table>--}}
                     </div>
                     <!-- /.card-body -->
                 </div>

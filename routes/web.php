@@ -4,11 +4,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/test', [\App\Http\Controllers\testcontroller::class, 'index']);
 Route::get('/', [\App\Http\Controllers\MainController::class, 'index'])->name('index');
+Route::post('/', [\App\Http\Controllers\MainController::class, 'login'])->name('index.login');
 
-Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
+Route::group(['middleware' => 'auth'], function (){
+    Route::get('/profile', [\App\Http\Controllers\MainController::class, 'indexProfile'])->name('index.profile');
+    Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
 
-Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
-Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
-Route::get('/t', function (){
-    return view('test');
+    Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
+
+    Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
+    Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
+    Route::get('/t', function (){
+        return view('test');
+    });
 });
+
