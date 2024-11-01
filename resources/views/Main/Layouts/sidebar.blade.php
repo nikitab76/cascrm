@@ -37,8 +37,9 @@
         <ul class="navbar-nav ml-auto">
             <!-- Navbar Search -->
             <li class="nav-item">
-                <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                    <i class="fas fa-search"></i>
+                    {{--@dump(\Illuminate\Support\Facades\Auth::check())--}}
+                <a class="nav-link" {{--data-widget="navbar-search"--}} href="{{\Illuminate\Support\Facades\Auth::logout()}}" role="button">
+                    {{--<i class="fas fa-search"></i>--}}выход
                 </a>
                 <div class="navbar-search-block">
                     <form class="form-inline">

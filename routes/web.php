@@ -6,7 +6,7 @@ Route::get('/test', [\App\Http\Controllers\testcontroller::class, 'index']);
 Route::get('/', [\App\Http\Controllers\MainController::class, 'index'])->name('index');
 Route::post('/', [\App\Http\Controllers\MainController::class, 'login'])->name('index.login');
 
-Route::group(['middleware' => 'auth'], function (){
+Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function (){
     Route::get('/profile', [\App\Http\Controllers\MainController::class, 'indexProfile'])->name('index.profile');
     Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
 

@@ -20,7 +20,6 @@ class MainController extends Controller
 
     public function login(Request $request)
     {
-//        dd($request);
         if ($user = User::where('login', $request->login)->where('password', $request->password)->first()){
             Auth::login($user);
             return redirect()->route('index.profile');
