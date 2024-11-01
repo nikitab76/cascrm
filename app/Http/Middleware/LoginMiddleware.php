@@ -17,8 +17,8 @@ class LoginMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /*dd(Auth::check());*/
-        if (Auth::check()){
+        /*dd(session('auth'));*/
+        if (session('auth') == 1){
             return $next($request);
         } else {
             return redirect()->route('index');

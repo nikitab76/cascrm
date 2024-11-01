@@ -15,8 +15,15 @@ return new class extends Migration
             $table->id();
             $table->text('login');
             $table->text('password');
+            $table->integer('aktiv')->default(0);
             $table->timestamps();
         });
+
+        if (!Schema::hasColumn('users', 'aktiv')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->integer('aktiv')->after('password')->default(0);
+            });
+        }
     }
 
     /**

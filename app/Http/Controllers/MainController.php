@@ -20,11 +20,17 @@ class MainController extends Controller
 
     public function login(Request $request)
     {
-        if ($user = User::where('login', $request->login)->where('password', $request->password)->first()){
-            Auth::login($user);
+        if (User::where('login', $request->login)->where('password', $request->password)->first()){
+            session()->put('auth', 1);
             return redirect()->route('index.profile');
         } else {
             return redirect()->back();
         }
+    }
+
+    public function logout(Request $request)
+    {
+        $request->session()->forget('auth');
+        return redirect()->route('index');
     }
 }
