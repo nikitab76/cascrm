@@ -15,12 +15,14 @@ class MainController extends Controller
 
     public function indexProfile()
     {
-        return view('users.profile');
+        $user = Auth::user();
+        return view('users.profile', compact('user'));
     }
 
     public function login(Request $request)
     {
-        if (User::where('login', $request->login)->where('password', $request->password)->first()){
+        if ($user = User::where('login', $request->login)->where('password', $request->password)->first()){
+            Auth::login($user);
             session()->put('auth', 1);
             return redirect()->route('index.profile');
         } else {

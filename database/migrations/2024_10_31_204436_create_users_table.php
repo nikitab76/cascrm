@@ -16,14 +16,36 @@ return new class extends Migration
             $table->text('login');
             $table->text('password');
             $table->integer('aktiv')->default(0);
+            $table->string('name')->nullable();
+            $table->string('surname')->nullable();
+            $table->string('second_name')->nullable();
+            $table->string('role')->nullable();
+            $table->string('job_title')->nullable();
             $table->timestamps();
         });
 
-        if (!Schema::hasColumn('users', 'aktiv')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->integer('aktiv')->after('password')->default(0);
-            });
-        }
+        Schema::table('users', function (Blueprint $table) {
+            // Добавление новых столбцов
+            if (!Schema::hasColumn('users', 'name')) {
+                $table->string('name')->nullable()->after('aktiv');
+            }
+
+            if (!Schema::hasColumn('users', 'surname')) {
+                $table->string('surname')->nullable()->after('name');
+            }
+
+            if (!Schema::hasColumn('users', 'second_name')) {
+                $table->string('second_name')->nullable()->after('surname');
+            }
+
+            if (!Schema::hasColumn('users', 'role')) {
+                $table->string('role')->nullable()->after('second_name');
+            }
+
+            if (!Schema::hasColumn('users', 'job_title')) {
+                $table->string('job_title')->nullable()->after('role');
+            }
+        });
     }
 
     /**

@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Профиль пользователя</h1>
+                        <h1>{{$user->surname . ' ' . $user->name}}</h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -22,8 +22,8 @@
                 <div class="card card-widget widget-user shadow">
                     <!-- Add the bg color to the header using any of the bg-* classes -->
                     <div class="widget-user-header bg-info">
-                        <h3 class="widget-user-username">Никита Белянинов</h3>
-                        <h5 class="widget-user-desc">инструктор</h5>
+                        <h3 class="widget-user-username">{{$user->name . ' ' . $user->surname}}</h3>
+                        <h5 class="widget-user-desc">{{$user->job_title}}</h5>
                     </div>
                     <div class="widget-user-image">
                         <img class="img-circle elevation-2" src="assets/profile/img/user1-128x128.jpg" alt="User Avatar">
@@ -32,16 +32,16 @@
                         <div class="row">
                             <div class="col-sm-4 border-right">
                                 <div class="description-block">
-                                    <h5 class="description-header">3,200</h5>
-                                    <span class="description-text">SALES</span>
+                                    <h5 class="description-header">Роль</h5>
+                                    <span class="description-text">{{$user->role}}</span>
                                 </div>
                                 <!-- /.description-block -->
                             </div>
                             <!-- /.col -->
                             <div class="col-sm-4 border-right">
                                 <div class="description-block">
-                                    <h5 class="description-header">13,000</h5>
-                                    <span class="description-text">FOLLOWERS</span>
+                                    <h5 class="description-header">Должность</h5>
+                                    <span class="description-text">{{$user->job_title}}</span>
                                 </div>
                                 <!-- /.description-block -->
                             </div>

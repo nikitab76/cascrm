@@ -30,7 +30,7 @@
                     <form role="form" method="post" action="#">
                         @csrf
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Добавить объект</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Добавить пользователя</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -39,8 +39,27 @@
                         <div class="modal-body">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label for="roomName">Название</label>
-                                    <input type="text" class="form-control" id="roomName" name="roomName" placeholder="">
+                                    <label for="surname">Фамилия</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Иванов">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="name">Имя</label>
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="Иван">
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="second_name">Отчество</label>
+                                            <input type="text" class="form-control" id="second_name" name="second_name" placeholder="Иванович">
+                                        </div>
+                                    </div>
+                                    <label for="job_title">Должность</label>
+                                    {{--<input type="text" class="form-control" id="job_title" name="job_title" placeholder="">--}}
+                                    <select class="form-control" name="job_title" id="job_title">
+                                        @foreach(\App\Models\Job_title::all() as $job)
+                                            <option selected value="{{$job->name}}">{{$job->name}}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="role">Роль</label>
+                                    <input type="text" class="form-control" id="role" name="role" placeholder="">
                                 </div>
                             </div>
                         </div>

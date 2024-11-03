@@ -177,7 +177,7 @@
                     <img src="{{asset('assets/profile/img/user1-128x128.jpg')}}" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="{{route('index.profile')}}" class="d-block">Никита Белянинов</a>
+                    <a href="{{route('index.profile')}}" class="d-block">{{\Illuminate\Support\Facades\Auth::user()->name . ' ' . \Illuminate\Support\Facades\Auth::user()->surname}}</a>
                 </div>
             </div>
 
