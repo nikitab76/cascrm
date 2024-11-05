@@ -8,15 +8,7 @@ use Illuminate\Http\Request;
 class trainingController extends Controller
 {
     public function create(Request $request){
-        //dd($request);
-        $request->validate([
-            'coach' => 'required',
-            'profile' => 'required',
-            'date' => 'required',
-            'time_start' => 'required',
-            'time_end' => 'required',
-        ]);
-        /*Training::create([
+        Training::create([
             'slug_room' => $request->roomsSlug,
             'coach' => $request->classCoach,
             'profile' => $request->classProfile,
@@ -26,6 +18,20 @@ class trainingController extends Controller
             'quarter' => $request->classQuarter,
             'comment' => $request->classComment ? $request->classComment : '-',
         ]);
-        return redirect()->route('rooms.show', ['room'=>$request->roomsSlug]);*/
+        return redirect()->route('rooms.show', ['room'=>$request->roomsSlug]);
+    }
+
+    public function edit(Request $request)
+    {
+        $traning = Training::where('id', $request->id)->first();
+        $traning->date = date('Y-m-d', strtotime($request->date));
+        $traning->time_start = date('H:i', strtotime($request->start));
+        $traning->time_end = date('H:i', strtotime($request->end));
+        $traning->save();
+    }
+
+    public function delete(Request $request)
+    {
+        Training::where('id', $request->id)->delete();
     }
 }

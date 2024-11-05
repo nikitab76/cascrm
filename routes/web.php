@@ -13,6 +13,8 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
 
     Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
+    Route::post('training/delete', [\App\Http\Controllers\trainingController::class, 'delete'])->name('training.delete');
+    Route::post('training/edit', [\App\Http\Controllers\trainingController::class, 'edit'])->name('training.edit');
     Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
     Route::get('/t', function (){
         return view('test');

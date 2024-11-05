@@ -406,7 +406,6 @@
             @endif
             <meta name="csrf-token" content="{{ csrf_token() }}">
         </section>
-        @dump($room['room']->slug)
     </div>
     <script src="https://uicdn.toast.com/tui-date-picker/latest/tui-date-picker.min.js"></script>
     <script src="https://uicdn.toast.com/tui-time-picker/latest/tui-time-picker.min.js"></script>
@@ -436,6 +435,53 @@
                 url: '{{ route('rooms.calendar', ['id'=>$room['room']->slug])}}', // путь дo обработчика
                 dataType: 'json', // ответ ждём в json формате
                 data: '', // данные для отправки
+                beforeSend: function(data) { // событие дo отправки запроса
+                },
+                success: function(data){ // событие в случае удачного запроса
+                    renderCalendar(data)
+                },
+            })
+        }
+
+        function deleteTrening(data){
+            let pajeData = {
+                'id': data,
+            }
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST', // отправляем в POST формате, можно GET
+                url: '{{ route('training.delete')}}', // путь дo обработчика
+                dataType: 'json', // ответ ждём в json формате
+                data: pajeData, // данные для отправки
+                beforeSend: function(data) { // событие дo отправки запроса
+                },
+                success: function(data){ // событие в случае удачного запроса
+                    renderCalendar(data)
+                },
+            })
+        }
+
+        function editTrening(id, data, timeStart, timeEnd){
+            let pajeData = {
+                'id': id,
+                'date': data,
+                'start': timeStart,
+                'end': timeEnd,
+            }
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST', // отправляем в POST формате, можно GET
+                url: '{{ route('training.edit')}}', // путь дo обработчика
+                dataType: 'json', // ответ ждём в json формате
+                data: pajeData, // данные для отправки
                 beforeSend: function(data) { // событие дo отправки запроса
                 },
                 success: function(data){ // событие в случае удачного запроса
@@ -482,6 +528,10 @@
             calendar.on('beforeUpdateSchedule', function(event) {
                 var schedule = event.schedule;
                 var changes = event.changes;
+                var data = changes.start ? new Date(changes.start).toLocaleDateString() : new Date(schedule.start).toLocaleDateString();
+                var timeStart = changes.start ? new Date(changes.start).toLocaleTimeString() : new Date(schedule.start).toLocaleTimeString();
+                var timeEnd = changes.end ? new Date(changes.end).toLocaleTimeString() : new Date(schedule.end).toLocaleTimeString();
+                editTrening(schedule.id, data, timeStart, timeEnd);
 
                 // Создаем текст для отображения изменений
                 var content = `
@@ -502,9 +552,12 @@
             // Обработчик для удаления события
             calendar.on('beforeDeleteSchedule', function(event) {
                 var schedule = event.schedule;
-
                 // Удаление события
-                calendar.deleteSchedule(schedule.id, schedule.calendarId);
+                if(confirm('Удалить тренировку ' + schedule.title))
+                {
+                    deleteTrening(schedule.id);
+                    calendar.deleteSchedule(schedule.id, schedule.calendarId);
+                }
             });
 
             // Обработчик события для изменения стандартного всплывающего окна
