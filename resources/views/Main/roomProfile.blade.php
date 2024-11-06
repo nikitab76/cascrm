@@ -542,8 +542,6 @@
 
                 $('#overlay').show();
                 $('#popup').show();
-                // Показать модальное окно с изменениями
-                /*showModal(content);*/
 
                 // Обновить событие в календаре
                 calendar.updateSchedule(schedule.id, schedule.calendarId, changes);
