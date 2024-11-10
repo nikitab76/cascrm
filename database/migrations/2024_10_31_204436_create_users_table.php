@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->text('login');
-            $table->text('password');
-            $table->integer('aktiv')->default(0);
-            $table->string('name')->nullable();
-            $table->string('surname')->nullable();
-            $table->string('second_name')->nullable();
-            $table->string('role')->nullable();
-            $table->string('job_title')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('users')){
+            Schema::create('users', function (Blueprint $table) {
+                $table->id();
+                $table->text('login')->nullable();
+                $table->text('password')->nullable();
+                $table->integer('aktiv')->default(0);
+                $table->string('name')->nullable();
+                $table->string('surname')->nullable();
+                $table->string('second_name')->nullable();
+                $table->string('role')->nullable();
+                $table->string('job_title')->nullable();
+                $table->timestamps();
+            });
+        }
 
         Schema::table('users', function (Blueprint $table) {
             // Добавление новых столбцов
@@ -44,6 +46,12 @@ return new class extends Migration
 
             if (!Schema::hasColumn('users', 'job_title')) {
                 $table->string('job_title')->nullable()->after('role');
+            }
+            if (Schema::hasColumn('users', 'login')) {
+                $table->string('login')->nullable()->change();
+            }
+            if (Schema::hasColumn('users', 'password')) {
+                $table->string('password')->nullable()->change();
             }
         });
     }

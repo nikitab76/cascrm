@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Users extends Model
 {
     use HasFactory;
-
-    public function fulName()
+    protected $fillable = [
+        'name',
+        'surname',
+        'second_name',
+        'job_title',
+        'role'
+    ];
+    public function fullName()
     {
         return trim($this->surname . ' ' .  $this->name . ' ' . $this->second_name);
     }

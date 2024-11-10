@@ -26,7 +26,7 @@
                         <h5 class="widget-user-desc">{{$user->job_title}}</h5>
                     </div>
                     <div class="widget-user-image">
-                        <img class="img-circle elevation-2" src="assets/profile/img/user1-128x128.jpg" alt="User Avatar">
+                        <img class="img-circle elevation-2" src="{{asset("assets/profile/img/user1-128x128.jpg")}}" alt="User Avatar">
                     </div>
                     <div class="card-footer">
                         <div class="row">

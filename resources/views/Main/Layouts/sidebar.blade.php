@@ -209,7 +209,7 @@
                     <li class="nav-item">
                         <a href="{{route('rooms.index')}}" class="nav-link">
                             <i class="nav-icon fas fa-file"></i>
-                            <p>Помещения</p>
+                            <p>Расписание</p>
                         </a>
                     </li>
                     <li class="nav-item">

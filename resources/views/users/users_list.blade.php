@@ -27,7 +27,7 @@
              aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form role="form" method="post" action="#">
+                    <form role="form" method="post" action="{{route('users.create')}}">
                         @csrf
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Добавить пользователя</h5>
@@ -40,15 +40,15 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="surname">Фамилия</label>
-                                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Иванов">
+                                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Иванов" value="{{old('surname')}}" autocomplete="off">
                                     <div class="row">
                                         <div class="col-6">
                                             <label for="name">Имя</label>
-                                            <input type="text" class="form-control" id="name" name="name" placeholder="Иван">
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="Иван" value="{{old('name')}}" autocomplete="off">
                                         </div>
                                         <div class="col-6">
                                             <label for="second_name">Отчество</label>
-                                            <input type="text" class="form-control" id="second_name" name="second_name" placeholder="Иванович">
+                                            <input type="text" class="form-control" id="second_name" name="second_name" placeholder="Иванович" value="{{old('second_name')}}" autocomplete="off">
                                         </div>
                                     </div>
                                     <label for="job_title">Должность</label>
@@ -58,8 +58,6 @@
                                             <option selected value="{{$job->name}}">{{$job->name}}</option>
                                         @endforeach
                                     </select>
-                                    <label for="role">Роль</label>
-                                    <input type="text" class="form-control" id="role" name="role" placeholder="">
                                 </div>
                             </div>
                         </div>
@@ -82,45 +80,31 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body p-0">
-                        {{--<table class="table">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Название</th>
-                                <th>Загруженность</th>
-                                <th style="width: 40px">Label</th>
-                                <th style="width: 40px">Delight</th>
+                                <th>Имя</th>
+                                <th>Должность</th>
+                                <th>Роль</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            @foreach($rooms as $room)
+                            @foreach(\App\Models\Users::all() as $user)
                                 <tr>
                                     <td>#</td>
-                                    <td style="width: 25%"><a href="{{route('rooms.show', ['room'=>$room->slug])}}">{{$room->title}}</a>
+                                    <td style="width: 25%"><a href="{{route('users.show', ['id'=>$user->id])}}">{{$user->fullName()}}</a>
                                     </td>
                                     <td>
-                                        <div class="progress progress-xs">
-                                            <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                                        </div>
+                                        {{$user->job_title}}
                                     </td>
-                                    <td><span class="badge bg-danger">55%</span></td>
-                                    <td>
-                                        <form action="{{ route('rooms.destroy', ['room'=>$room->id]) }}" method="post" class="float-left">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                    onclick="return confirm('Подтвердите удаление')">
-                                                <i
-                                                    class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </td>
+                                    <td>{{$user->role}}</td>
                                 </tr>
                             @endforeach
 
                             </tbody>
-                        </table>--}}
+                        </table>
                     </div>
                     <!-- /.card-body -->
                 </div>
