@@ -20,6 +20,7 @@ return new class extends Migration
                 $table->string('name')->nullable();
                 $table->string('surname')->nullable();
                 $table->string('second_name')->nullable();
+                $table->string('phone')->nullable();
                 $table->string('role')->nullable();
                 $table->string('job_title')->nullable();
                 $table->timestamps();
@@ -46,6 +47,9 @@ return new class extends Migration
 
             if (!Schema::hasColumn('users', 'job_title')) {
                 $table->string('job_title')->nullable()->after('role');
+            }
+            if (!Schema::hasColumn('users', 'phone')) {
+                $table->string('phone')->nullable()->after('second_name');
             }
             if (Schema::hasColumn('users', 'login')) {
                 $table->string('login')->nullable()->change();

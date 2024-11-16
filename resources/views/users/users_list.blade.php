@@ -51,6 +51,13 @@
                                             <input type="text" class="form-control" id="second_name" name="second_name" placeholder="Иванович" value="{{old('second_name')}}" autocomplete="off">
                                         </div>
                                     </div>
+                                    <label for="phone">Телефон</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="{{old('phone')}}" pattern="(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?" autocomplete="off">
+                                    <script>
+                                        $(function(){
+                                            $("#phone").mask("+7(999) 999-9999");
+                                        });
+                                    </script>
                                     <label for="job_title">Должность</label>
                                     {{--<input type="text" class="form-control" id="job_title" name="job_title" placeholder="">--}}
                                     <select class="form-control" name="job_title" id="job_title">

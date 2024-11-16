@@ -13,7 +13,10 @@ class Users extends Model
         'surname',
         'second_name',
         'job_title',
-        'role'
+        'role',
+        'phone',
+        'login',
+        'password'
     ];
     public function fullName()
     {
