@@ -28,20 +28,28 @@ class UsersController extends Controller
         if (!isset($request->second_name)){
             $this->response['error'] = 'Поле Отчество обязательно';
         }
-        /*dd($request->request);*/
         if (isset($request->phone)){
-            $request->phone = trim($request->phone);
+            $phone = trim($request->phone);
+            $phone = str_replace(' ', '', $phone);
+            $onesim = substr($phone, 0, 1);
+            if ($onesim == '+'){
+                $phone = substr($phone, 1);
+            } elseif ($onesim == 8){
+                $phone = '7' . substr($phone, 1);
+            }
+            if(mb_strlen($phone) != 11){
+                return null;
+            }
         }
-        if (isset($request->phone))
 
         Users::create([
             'name' => $request->name,
             'surname' => $request->surname,
             'second_name' => $request->second_name,
             'job_title' => $request->job_title,
-            'phone' => $request->phone,
-            'login' => $request->phone,
-            'password' => $request->phone,
+            'phone' => $phone,
+            'login' => $phone,
+            'password' => $phone,
             'role' => Job_title::getRole($request->job_title)
         ]);
         return redirect()->route('users.list');

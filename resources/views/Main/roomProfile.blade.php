@@ -247,8 +247,13 @@
                                     <div class="form-group">
                                         <input style="display: none" name="roomsSlug" value="{{{$room['room']->slug}}}">
                                         <label for="classCoach">Инструктор</label>
-                                        <input type="text" class="form-control" id="classCoach" name="classCoach"
-                                               placeholder="" value="{{old('classCoach')}}">
+                                        {{--<input type="text" class="form-control" id="classCoach" name="classCoach"
+                                               placeholder="" value="{{old('classCoach')}}">--}}
+                                        <select class="form-control" name="classCoach" id="classCoach">
+                                            @foreach(\App\Models\Users::where('role', 'coach')->get() as $user)
+                                                <option value="{{$user->surname}}">{{$user->fullName()}}</option>
+                                            @endforeach
+                                        </select>
                                         <div class="pt-2">
                                             <label for="classProfile">Секция</label>
                                             <input type="text" class="form-control" id="classProfile"
@@ -438,7 +443,9 @@
                 beforeSend: function(data) { // событие дo отправки запроса
                 },
                 success: function(data){ // событие в случае удачного запроса
-                    renderCalendar(data)
+                    if(data){
+                        renderCalendar(data)
+                    }
                 },
             })
         }
