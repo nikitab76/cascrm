@@ -100,7 +100,7 @@ class trainingController extends Controller
 
     public function trainingList()
     {
-        $trainig = Training::orderBy('date', 'asc')->get();
+        $trainig = Training::where('date', '>=' , date('Y-m-d', strtotime('- 3 day')))->orderBy('date', 'asc')->get();
         return view('traingListAll', compact('trainig'));
     }
 }
