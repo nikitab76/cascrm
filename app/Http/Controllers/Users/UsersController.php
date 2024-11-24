@@ -31,6 +31,7 @@ class UsersController extends Controller
         if (isset($request->phone)){
             $phone = trim($request->phone);
             $phone = str_replace(' ', '', $phone);
+            $phone = str_replace('-', '', $phone);
             $onesim = substr($phone, 0, 1);
             if ($onesim == '+'){
                 $phone = substr($phone, 1);
