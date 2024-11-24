@@ -97,4 +97,10 @@ class trainingController extends Controller
         $trainig = Training::where('coach', Auth::user()->surname)->where('date', '>=', date('Y-m-d'))->orderBy('date', 'asc')->get();
         return view('coach.treningList', compact('trainig'));
     }
+
+    public function trainingList()
+    {
+        $trainig = Training::orderBy('date', 'asc')->get();
+        return view('traingListAll', compact('trainig'));
+    }
 }

@@ -208,15 +208,15 @@
                             <p>Пользователи</p>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    {{--<li class="nav-item">
                         <a href="{{route('rooms.index')}}" class="nav-link">
                             <i class="nav-icon fas fa-file"></i>
                             <p>Расписание</p>
                         </a>
-                    </li>
+                    </li>--}}
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <i class="nav-icon fas fa-file"></i>
                             <p>
                                 Расписание
                                 <i class="right fas fa-angle-left"></i>
@@ -224,26 +224,20 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Dashboard v1</p>
+                                <a href="{{route('rooms.index')}}" class="nav-link">
+                                    <i class="fas nav-icon"></i>
+                                    <p>Залы</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Dashboard v2</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Dashboard v3</p>
+                                <a href="{{route('training.list')}}" class="nav-link">
+                                    <i class="far nav-icon"></i>
+                                    <p>Занятия тренеров</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-header">MISCELLANEOUS</li>
+                    {{--<li class="nav-header">MISCELLANEOUS</li>--}}
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->role == 'coach')
                         <li class="nav-item">
