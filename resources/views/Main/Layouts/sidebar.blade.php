@@ -13,6 +13,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{asset('assets/profile/css/adminlte.min.css')}}">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" />
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
@@ -242,6 +243,14 @@
                         </ul>
                     </li>
                     <li class="nav-header">MISCELLANEOUS</li>
+                    @if(\Illuminate\Support\Facades\Auth::user()->role == 'coach')
+                        <li class="nav-item">
+                            <a href="{{route('training.profile')}}" class="nav-link">
+                                <i class="nav-icon fas fa-file"></i>
+                                <p>Мои занятия</p>
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -278,7 +287,20 @@
 <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.js"></script>
 
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+{{--<script src="{{asset('assets/profile/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/jszip/jszip.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>--}}
 </body>
 </html>
