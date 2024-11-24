@@ -201,6 +201,7 @@
                     data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
+                    @if(\Illuminate\Support\Facades\Auth::user()->role == 'admin')
                     <li class="nav-item">
                         <a href="{{route('users.list')}}" class="nav-link">
                             <i class="nav-icon fas fa-users"></i>
@@ -243,6 +244,7 @@
                         </ul>
                     </li>
                     <li class="nav-header">MISCELLANEOUS</li>
+                    @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->role == 'coach')
                         <li class="nav-item">
                             <a href="{{route('training.profile')}}" class="nav-link">
