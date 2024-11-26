@@ -8,17 +8,18 @@ Route::any('logout', [\App\Http\Controllers\MainController::class, 'logout'])->n
 
 Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function (){
     Route::get('/profile', [\App\Http\Controllers\MainController::class, 'indexProfile'])->name('index.profile');
-    Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
-    Route::post('/users/create', [\App\Http\Controllers\Users\UsersController::class, 'createUsers'])->name('users.create');
-    Route::get('/users/profile/{id}', [\App\Http\Controllers\Users\UsersController::class, 'showUsers'])->name('users.show');
+    Route::middleware([\App\Http\Middleware\AdminRole::class])->group(function (){
+        Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
+        Route::post('/users/create', [\App\Http\Controllers\Users\UsersController::class, 'createUsers'])->name('users.create');
+        Route::get('/users/profile/{id}', [\App\Http\Controllers\Users\UsersController::class, 'showUsers'])->name('users.show');
 
-    Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
+        Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
 
-    Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
-    Route::post('training/delete', [\App\Http\Controllers\trainingController::class, 'delete'])->name('training.delete');
-    Route::post('training/edit', [\App\Http\Controllers\trainingController::class, 'edit'])->name('training.edit');
-    Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
-
+        Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
+        Route::post('training/delete', [\App\Http\Controllers\trainingController::class, 'delete'])->name('training.delete');
+        Route::post('training/edit', [\App\Http\Controllers\trainingController::class, 'edit'])->name('training.edit');
+        Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
+    });
     Route::get('training/list', [\App\Http\Controllers\trainingController::class, 'trainingProfile'])->name('training.profile');
     Route::get('trainings', [\App\Http\Controllers\trainingController::class, 'trainingList'])->name('training.list');
     Route::post('training/create/coach', [\App\Http\Controllers\trainingController::class, 'createTrainingCoach'])->name('training.coach.create');
