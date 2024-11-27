@@ -7,6 +7,7 @@ use App\Models\Job_title;
 use App\Models\User;
 use App\Models\Users;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
@@ -60,5 +61,47 @@ class UsersController extends Controller
     {
         $user = Users::where('id' , $id)->first();
         return view('users.profile', compact('user'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+        if (Auth::user()->id == $request->user){
+            $user = Users::where('id', $request->user)->first();
+            if (isset($request->oldPassword) && isset($request->newPassword)){
+                if ($request->oldPassword == $user->password) {
+
+                    if ($request->oldPassword != $request->newPassword) {
+                        $request->newPassword = trim($request->newPassword);
+                        if (strlen($request->newPassword) >= 5) {
+                            $user->update(['password' => $request->newPassword]);
+                            return response()->json([
+                                'success' => true,
+                                'message' => 'Пароль успешно изменен!'
+                            ]);;
+                        } else {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Новый пароль не может быть короче 5 символов'
+                            ]);;
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Новый пароль не может равняться старому!'
+                        ]);
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Cтарый пароль введен не верно!'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Введите новые данные!'
+                ]);;
+            }
+        }
     }
 }

@@ -120,7 +120,6 @@
                 dataType: 'json',
                 data: data,
                 success: function (data) {
-                    console.log(data)
                     if(data.success){
                         $('#error').hide();
                         $('#success').show();

@@ -8,6 +8,7 @@ Route::any('logout', [\App\Http\Controllers\MainController::class, 'logout'])->n
 
 Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function (){
     Route::get('/profile', [\App\Http\Controllers\MainController::class, 'indexProfile'])->name('index.profile');
+    Route::post('/profile/update/password', [\App\Http\Controllers\Users\UsersController::class, 'updatePassword'])->name('password.update');
     Route::middleware([\App\Http\Middleware\AdminRole::class])->group(function (){
         Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
         Route::post('/users/create', [\App\Http\Controllers\Users\UsersController::class, 'createUsers'])->name('users.create');

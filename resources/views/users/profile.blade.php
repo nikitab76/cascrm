@@ -69,12 +69,20 @@
                                     aria-controls="home-tab-pane" aria-selected="true">Общее
                             </button>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item ml-1" role="presentation">
                             <button class="nav-link " id="profile-tab" data-bs-toggle="tab"
                                     data-bs-target="#profile-tab-pane" type="button" role="tab"
                                     aria-controls="profile-tab-pane" aria-selected="false">Документы
                             </button>
                         </li>
+                        @if(\Illuminate\Support\Facades\Auth::user()->id === $user->id)
+                        <li class="nav-item ml-1" role="presentation">
+                            <button class="nav-link " id="safety-tab" data-bs-toggle="tab"
+                                    data-bs-target="#safety-tab-pane" type="button" role="tab"
+                                    aria-controls="safety-tab-pane" aria-selected="false">Авторизация
+                            </button>
+                        </li>
+                        @endif
                     </ul>
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
@@ -129,7 +137,7 @@
                                 </div>
                             </div>
                         </div>
-                        {{--kanban--}}
+                        {{--документы--}}
                         <div class="tab-pane fade show" id="profile-tab-pane" role="tabpanel"
                              aria-labelledby="profile-tab" tabindex="0">
                             <div class="p-3">
@@ -141,9 +149,106 @@
                                 </div>
                             </div>
                         </div>
+                        {{--безопасность--}}
+                        @if(\Illuminate\Support\Facades\Auth::user()->id === $user->id)
+                        <div class="tab-pane fade show" id="safety-tab-pane" role="tabpanel"
+                             aria-labelledby="safety-tab" tabindex="0">
+                            <div class="p-3">
+                                <div class="content">
+                                    <div class="form-group">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <label for="userLogin">Login</label>
+                                                    <input type="text" class="form-control" id="userLogin"
+                                                           name="userLogin" autocomplete="off"  value="{{$user->login}}" disabled>
+                                                    <div class="row">
+                                                    <div class="col-6">
+                                                    <label for="userPassword">Password</label>
+                                                    <input type="password" class="form-control" id="userPassword" name="userPassword" value="{{$user->password}}">
+                                                    </div>
+                                                    <div class="col-6 d-flex">
+                                                        <button type="button" class="btn btn-warning mt-auto" data-toggle="modal"
+                                                                data-target="#addPassword">
+                                                            изменить
+                                                        </button>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="addPassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form role="form" method="post" action="">
+                            <meta name="csrf-token" content="{{ csrf_token() }}">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Изменить пароль</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div class="alert alert-danger" role="alert" id="error" style="display: none"></div>
+                                        <div class="alert alert-success" role="alert" id="success" style="display: none"></div>
+                                        <label for="oldPassword">Старый пароль</label>
+                                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" autocomplete="off">
+                                        <label for="newPassword">Новый пароль</label>
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword" autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="update()" class="btn btn-primary">Изменить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function update() {
+                    var data = {
+                        'user' : {{$user->id}},
+                        'oldPassword': $('#oldPassword').val(),
+                        'newPassword': $('#newPassword').val(),
+                    }
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route('password.update') }}',
+                        dataType: 'json',
+                        data: data,
+                        success: function (data) {
+                            if(data.success){
+                                $('#error').hide();
+                                $('#success').show();
+                                $('#success').text(data.message);
+                                window.location.reload();
+                            } else {
+                                $('#success').hide();
+                                $('#error').show()
+                                $('#error').text(data.message)
+                            }
+                        },
+                    });
+                }
+            </script>
             {{--<div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Любая нужная инфа</h3>
