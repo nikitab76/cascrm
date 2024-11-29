@@ -15,6 +15,34 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" />
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.css">
+    <style>
+        #garland {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-image: url('http://imapo.ru/img/christmas.png');
+            height: 36px;
+            width: 100%;
+            overflow: hidden;
+            z-index: 99;
+        }
+
+        .garland_1 {
+            background-position: 0 0
+        }
+
+        .garland_2 {
+            background-position: 0 -36px
+        }
+
+        .garland_3 {
+            background-position: 0 -72px
+        }
+
+        .garland_4 {
+            background-position: 0 -108px
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -56,106 +84,35 @@
                     </form>
                 </div>
             </li>
-
-            <!-- Messages Dropdown Menu -->
-            {{--<li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" href="#">
-                    <i class="far fa-comments"></i>
-                    <span class="badge badge-danger navbar-badge">3</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                    <a href="#" class="dropdown-item">
-                        <!-- Message Start -->
-                        <div class="media">
-                            <img src="{{asset('assets/profile/img/user1-128x128.jpg')}}" alt="User Avatar"
-                                 class="img-size-50 mr-3 img-circle">
-                            <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    Brad Diesel
-                                    <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                                </h3>
-                                <p class="text-sm">Call me whenever you can...</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                            </div>
-                        </div>
-                        <!-- Message End -->
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        <!-- Message Start -->
-                        <div class="media">
-                            <img src="{{asset('assets/profile/img/user8-128x128.jpg')}}" alt="User Avatar"
-                                 class="img-size-50 img-circle mr-3">
-                            <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    John Pierce
-                                    <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                                </h3>
-                                <p class="text-sm">I got your message bro</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                            </div>
-                        </div>
-                        <!-- Message End -->
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        <!-- Message Start -->
-                        <div class="media">
-                            <img src="{{asset("assets/profile/img/user3-128x128.jpg")}}" alt="User Avatar"
-                                 class="img-size-50 img-circle mr-3">
-                            <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    Nora Silvester
-                                    <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                                </h3>
-                                <p class="text-sm">The subject goes here</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                            </div>
-                        </div>
-                        <!-- Message End -->
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-                </div>
-            </li>
-            <!-- Notifications Dropdown Menu -->
-            <li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" href="#">
-                    <i class="far fa-bell"></i>
-                    <span class="badge badge-warning navbar-badge">15</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                    <span class="dropdown-item dropdown-header">15 Notifications</span>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-envelope mr-2"></i> 4 new messages
-                        <span class="float-right text-muted text-sm">3 mins</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-users mr-2"></i> 8 friend requests
-                        <span class="float-right text-muted text-sm">12 hours</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-file mr-2"></i> 3 new reports
-                        <span class="float-right text-muted text-sm">2 days</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                    <i class="fas fa-expand-arrows-alt"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                    <i class="fas fa-th-large"></i>
-                </a>
-            </li>--}}
         </ul>
+        <div id="garland" class="garland_4">
+            <div id="nums_1">1</div>
+        </div>
+        <script>
+            function garland() {
+                nums = document.getElementById('nums_1').innerHTML
+                if (nums == 1) {
+                    document.getElementById('garland').className = 'garland_1';
+                    document.getElementById('nums_1').innerHTML = '2'
+                }
+                if (nums == 2) {
+                    document.getElementById('garland').className = 'garland_2';
+                    document.getElementById('nums_1').innerHTML = '3'
+                }
+                if (nums == 3) {
+                    document.getElementById('garland').className = 'garland_3';
+                    document.getElementById('nums_1').innerHTML = '4'
+                }
+                if (nums == 4) {
+                    document.getElementById('garland').className = 'garland_4';
+                    document.getElementById('nums_1').innerHTML = '1'
+                }
+            }
+
+            setInterval(function() {
+                garland()
+            }, 400)
+        </script>
     </nav>
     <!-- /.navbar -->
 
@@ -166,7 +123,6 @@
             <img src="{{asset('assets/profile/img/photo.svg')}}"
                  class=" brand-text font-weight-light">
         </p>
-
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- Sidebar user (optional) -->
@@ -178,20 +134,6 @@
                     <a href="{{route('index.profile')}}" class="d-block">{{\Illuminate\Support\Facades\Auth::user()->name . ' ' . \Illuminate\Support\Facades\Auth::user()->surname}}</a>
                 </div>
             </div>
-
-            <!-- SidebarSearch Form -->
-            {{--<div class="form-inline">
-                <div class="input-group" data-widget="sidebar-search">
-                    <input class="form-control form-control-sidebar" type="search" placeholder="Search"
-                           aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-sidebar">
-                            <i class="fas fa-search fa-fw"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>--}}
-
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
@@ -205,12 +147,6 @@
                             <p>Пользователи</p>
                         </a>
                     </li>
-                    {{--<li class="nav-item">
-                        <a href="{{route('rooms.index')}}" class="nav-link">
-                            <i class="nav-icon fas fa-file"></i>
-                            <p>Расписание</p>
-                        </a>
-                    </li>--}}
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file"></i>
@@ -248,7 +184,8 @@
             </nav>
             <!-- /.sidebar-menu -->
         </div>
-        <!-- /.sidebar -->
+    <!-- /.sidebar -->
+
     </aside>
 
     @yield('content')
@@ -283,17 +220,5 @@
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-{{--<script src="{{asset('assets/profile/plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{asset('assets/profile/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>--}}
 </body>
 </html>
