@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Training;
+use App\Models\traning_group;
 use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -102,5 +103,21 @@ class trainingController extends Controller
     {
         $trainig = Training::where('date', '>=' , date('Y-m-d', strtotime('- 3 day')))->orderBy('date', 'asc')->get();
         return view('traingListAll', compact('trainig'));
+    }
+
+    public function groupsIndex()
+    {
+        return view('users.groups');
+    }
+
+    public function groupsCreate(Request $request)
+    {
+        //dd(json_encode($request->users));
+        traning_group::create([
+            'coach_id' => $request->coach,
+            'group_num' => $request->numGroup,
+            'users_list' => json_encode($request->users)
+        ]);
+        return true;
     }
 }

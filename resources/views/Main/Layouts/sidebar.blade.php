@@ -179,6 +179,12 @@
                                 <p>Мои занятия</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('groups.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Мои группы</p>
+                            </a>
+                        </li>
                     @endif
                 </ul>
             </nav>
