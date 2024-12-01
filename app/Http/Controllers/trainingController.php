@@ -120,4 +120,15 @@ class trainingController extends Controller
         ]);
         return true;
     }
+
+    public function addTraing(Request $request)
+    {
+        //dd($request);
+        Training::where('id', $request->traingId)->update([
+            'time_start' => $request->classTimeStart,
+            'time_end' => $request->classTimeEnd,
+            'slug_room' => Room::where('id', $request->classAdd)->value('slug'),
+        ]);
+        return true;
+    }
 }

@@ -26,6 +26,7 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     Route::post('training/create/coach', [\App\Http\Controllers\trainingController::class, 'createTrainingCoach'])->name('training.coach.create');
     Route::get('training/groups', [\App\Http\Controllers\trainingController::class, 'groupsIndex'])->name('groups.index');
     Route::post('training/groups', [\App\Http\Controllers\trainingController::class, 'groupsCreate'])->name('groups.create');
+    Route::post('training/addTraing', [\App\Http\Controllers\trainingController::class, 'addTraing'])->name('add.traing');
     Route::get('/t', function (){
         return view('test');
     });

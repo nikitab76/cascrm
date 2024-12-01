@@ -12,35 +12,58 @@
             </div><!-- /.container-fluid -->
         </section>
         <div class="content">
-            @if(!empty($trainig))
-                <div class="card-body p-0">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>тренировка</th>
-                            <th>зал</th>
-                            <th>дата</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        @foreach($trainig as $train)
-                            <tr>
-                                <td>#</td>
-                                <td> {{$train->profile}}
-                                </td>
-                                <td>
-                                    {{\App\Models\Room::where('slug', $train->slug_room)->value('title')}}
-                                </td>
-                                <td>{{$train->date}}</td>
-                            </tr>
-                        @endforeach
-
-                        </tbody>
-                    </table>
-                </div>
-            @endif
+            {{--@dump($trainig)--}}
+            <div class="accordion" id="accordionExample">
+                @foreach($trainig as $train)
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#{{$train->id}}" aria-expanded="false"
+                                    aria-controls="{{$train->id}}">
+                                {{$train->profile . ' ' . $train->date}}
+                            </button>
+                        </h2>
+                        <div id="{{$train->id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <form role="formAdd" method="post" class="formAddTr">
+                                    <meta name="csrf-token" content="{{ csrf_token() }}">
+                                    <input type="text" class="form-control" id="traingId"
+                                           name="traingId"
+                                           value="{{$train->id}}" style="display: none">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="class">Зал</label>
+                                            <select class="form-control" name="classAdd" id="classAdd">
+                                                {{--<option value="{{$train->slug_room}}">{{\App\Models\Room::where('slug', $train->slug_room)->value('title')}}</option>--}}
+                                                @foreach(\App\Models\Room::all() as $room)
+                                                    <option value="{{$room->id}}" @if($train->slug_room == $room->slug) selected @endif >{{$room->title}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="classTimeStart">Время начала</label>
+                                            <input type="time" class="form-control" id="classTimeStart"
+                                                   name="classTimeStart"
+                                                   value="{{$train->time_start}}">
+                                        </div>
+                                        <div class="col">
+                                            <label for="classTimeEnd">Время окончания</label>
+                                            <input type="time" class="form-control" id="classTimeEnd"
+                                                   name="classTimeEnd"
+                                                   placeholder="" value="{{$train->time_end}}">
+                                        </div>
+                                        <div class="col">
+                                            <button type="button" class="btn btn-primary addTrain" style="position: absolute; bottom: 0" onclick="addTraing()">
+                                                Изменить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
             <div class="card card-success mt-5">
                 <div class="card-header">
                     <h3 class="card-title">Добавить занятия</h3>
@@ -52,7 +75,8 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <div class="alert alert-danger" role="alert" id="error" style="display: none"></div>
-                                    <div class="alert alert-success" role="alert" id="success" style="display: none"></div>
+                                    <div class="alert alert-success" role="alert" id="success"
+                                         style="display: none"></div>
                                     <input type="text" name="coach" id="coach" class="form-control"
                                            value="{{\Illuminate\Support\Facades\Auth::user()->id}}"
                                            style="display: none">
@@ -120,7 +144,7 @@
                 dataType: 'json',
                 data: data,
                 success: function (data) {
-                    if(data.success){
+                    if (data.success) {
                         $('#error').hide();
                         $('#success').show();
                         $('#success').text(data.error);
@@ -132,6 +156,27 @@
                     }
                 },
             });
+        }
+
+        function addTraing(){
+            //console.log($(this));
+            $('#accordionExample').on('click', '.addTrain', function (){
+               let pageData =  $(this).closest('.formAddTr').serialize();
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('add.traing') }}',
+                    dataType: 'json',
+                    data: pageData,
+                    success: function (data) {
+                        console.log(data)
+                    },
+                });
+            })
         }
     </script>
 @endsection
