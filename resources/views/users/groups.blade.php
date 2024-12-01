@@ -38,18 +38,23 @@
                                            value="{{\Illuminate\Support\Facades\Auth::user()->id}}"
                                            style="display: none">
                                     <label for="numGroup">Номер группы</label>
-                                    <input type="number" class="form-control" id="numGroup" name="numGroup" placeholder="">
+                                    <input type="number" class="form-control" id="numGroup" name="numGroup"
+                                           placeholder="">
 
                                     <label for="users[]">Занимающиеся</label>
-                                    <div class="user-row row">
-                                        <div class="col-11">
-                                        <select name="users[]" class="form-control" id="users">
-                                            @foreach(\App\Models\Users::where('role', 'user')->get() as $user)
-                                                <option value="{{$user->id}}">{{$user->fullName()}}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="user-row d-flex">
+                                        <div class="col-10">
+                                            <select name="users[]" class="form-control" id="users">
+                                                @foreach(\App\Models\Users::where('role', 'user')->get() as $user)
+                                                    <option value="{{$user->id}}">{{$user->fullName()}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        <button type="button" class="add-btn btn btn-light" onclick="addBtn()" id="add-btn">+</button>
+                                        <div class="col">
+                                            <button type="button" class="add-btn btn btn-light" onclick="addBtn()"
+                                                    id="add-btn">+
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -62,9 +67,9 @@
             </div>
         </div>
         <script>
-            function addBtn(){
+            function addBtn() {
                 const newRow = `
-            <div class="user-row row mt-3">
+            <div class="user-row d-flex mt-3">
                 <div class="col-10">
                 <select name="users[]" class="form-control">
                     @foreach(\App\Models\Users::where('role', 'user')->get() as $user)
@@ -80,13 +85,13 @@
                 $('#user-container').append(newRow);
             }
 
-            function removeBtn(){
+            function removeBtn() {
                 $('#user-container').on('click', '.remove-btn', function () {
                     $(this).closest('.user-row').remove();
                 });
             }
 
-            function createGroup(){
+            function createGroup() {
                 let pageData = $('#creategroupform').serialize();
                 $.ajaxSetup({
                     headers: {
@@ -99,7 +104,7 @@
                     dataType: 'json',
                     data: pageData,
                     success: function (data) {
-                        if(data.success){
+                        if (data.success) {
                             $('#error').hide();
                             $('#success').show();
                             $('#success').text(data.error);
