@@ -22,8 +22,8 @@ class UsersController extends Controller
         if (isset($request->file)){
             $file = $request->file('file');
             testcontroller::exel($file);
+            return true;
         }
-        exit;
         if (!isset($request->name)){
             $this->response['error'] = 'Поле Имя обязательно';
         }
