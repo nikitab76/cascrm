@@ -36,26 +36,30 @@
                                             <select class="form-control" name="classAdd" id="classAdd">
                                                 {{--<option value="{{$train->slug_room}}">{{\App\Models\Room::where('slug', $train->slug_room)->value('title')}}</option>--}}
                                                 @foreach(\App\Models\Room::all() as $room)
-                                                    <option value="{{$room->id}}" @if($train->slug_room == $room->slug) selected @endif >{{$room->title}}</option>
+                                                    <option value="{{$room->id}}"
+                                                            @if($train->slug_room == $room->slug) selected @endif >{{$room->title}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col">
-                                            <label for="classTimeStart">Время начала</label>
-                                            <input type="time" class="form-control" id="classTimeStart"
-                                                   name="classTimeStart"
-                                                   value="{{$train->time_start}}">
-                                        </div>
-                                        <div class="col">
-                                            <label for="classTimeEnd">Время окончания</label>
-                                            <input type="time" class="form-control" id="classTimeEnd"
-                                                   name="classTimeEnd"
-                                                   placeholder="" value="{{$train->time_end}}">
-                                        </div>
-                                        <div class="col">
-                                            <button type="button" class="btn btn-primary addTrain" style="position: absolute; bottom: 0" onclick="addTraing()">
-                                                Изменить
-                                            </button>
+                                        <div class="row mt-2">
+                                            <div class="col">
+                                                <label for="classTimeStart">Время начала</label>
+                                                <input type="time" class="form-control" id="classTimeStart"
+                                                       name="classTimeStart"
+                                                       value="{{$train->time_start}}">
+                                            </div>
+                                            <div class="col">
+                                                <label for="classTimeEnd">Время окончания</label>
+                                                <input type="time" class="form-control" id="classTimeEnd"
+                                                       name="classTimeEnd"
+                                                       placeholder="" value="{{$train->time_end}}">
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" class="btn btn-primary addTrain"
+                                                        style="position: absolute; bottom: 0" onclick="addTraing()">
+                                                    Изменить
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -158,10 +162,10 @@
             });
         }
 
-        function addTraing(){
+        function addTraing() {
             //console.log($(this));
-            $('#accordionExample').on('click', '.addTrain', function (){
-               let pageData =  $(this).closest('.formAddTr').serialize();
+            $('#accordionExample').on('click', '.addTrain', function () {
+                let pageData = $(this).closest('.formAddTr').serialize();
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

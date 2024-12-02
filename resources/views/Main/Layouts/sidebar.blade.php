@@ -21,7 +21,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            background-image: url('http://imapo.ru/img/christmas.png');
+            background-image: url("{{asset('assets/profile/img/christmas.png')}}");
             height: 36px;
             width: 100%;
             overflow: hidden;
