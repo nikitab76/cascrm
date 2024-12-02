@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\testcontroller;
 use App\Models\Job_title;
 use App\Models\User;
 use App\Models\Users;
@@ -18,6 +19,11 @@ class UsersController extends Controller
 
     public function createUsers(Request $request)
     {
+        if (isset($request->file)){
+            $file = $request->file('file');
+            testcontroller::exel($file);
+        }
+        exit;
         if (!isset($request->name)){
             $this->response['error'] = 'Поле Имя обязательно';
         }
@@ -103,5 +109,23 @@ class UsersController extends Controller
                 ]);;
             }
         }
+    }
+
+    public function usersList()
+    {
+        $users = Users::all();
+        $data = [];
+        foreach ($users as $user){
+            $row['user']['name'] = $user->fullName();
+            $row['user']['id'] = $user->id;
+            $row['phone'] = $user->phone;
+            $row['job'] = $user->job_title;
+            $data[] = $row;
+        }
+
+        return response()->json([
+            'data' => $data,
+            'success' => true
+        ]);
     }
 }

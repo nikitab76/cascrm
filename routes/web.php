@@ -11,6 +11,7 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     Route::post('/profile/update/password', [\App\Http\Controllers\Users\UsersController::class, 'updatePassword'])->name('password.update');
     Route::middleware([\App\Http\Middleware\AdminRole::class])->group(function (){
         Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
+        Route::post('/users/list', [\App\Http\Controllers\Users\UsersController::class, 'usersList'])->name('get.users.list');
         Route::post('/users/create', [\App\Http\Controllers\Users\UsersController::class, 'createUsers'])->name('users.create');
         Route::get('/users/profile/{id}', [\App\Http\Controllers\Users\UsersController::class, 'showUsers'])->name('users.show');
 

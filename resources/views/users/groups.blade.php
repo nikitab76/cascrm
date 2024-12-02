@@ -16,7 +16,32 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-
+        <div class="content">
+            {{--@dump($trainig)--}}
+            <div class="accordion" id="accordionExample">
+                @foreach($trainig as $train)
+                    {{--@dump($train)--}}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#{{$train->id}}" aria-expanded="false"
+                                    aria-controls="{{$train->id}}">
+                                {{$train->group_num}}
+                            </button>
+                        </h2>
+                        <div id="{{$train->id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                @foreach(json_decode($train['users_list']) as $user)
+                                <div class="col mt-2">
+                                    <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->value('surname')}}">
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
         <!-- Modal -->
         <div class="modal fade" id="createGroupe" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true">
@@ -34,6 +59,8 @@
                             <meta name="csrf-token" content="{{ csrf_token()}}">
                             <div class="card-body">
                                 <div class="form-group" id="user-container">
+                                    <div class="alert alert-danger" role="alert" id="error" style="display: none"></div>
+                                    <div class="alert alert-success" role="alert" id="success" style="display: none"></div>
                                     <input type="text" name="coach" id="coach" class="form-control"
                                            value="{{\Illuminate\Support\Facades\Auth::user()->id}}"
                                            style="display: none">
@@ -107,12 +134,12 @@
                         if (data.success) {
                             $('#error').hide();
                             $('#success').show();
-                            $('#success').text(data.error);
+                            $('#success').text(data.message);
                             window.location.reload();
                         } else {
                             $('#success').hide();
                             $('#error').show()
-                            $('#error').text(data.error)
+                            $('#error').text(data.message)
                         }
                     },
                 });

@@ -107,18 +107,28 @@ class trainingController extends Controller
 
     public function groupsIndex()
     {
-        return view('users.groups');
+        $trainig = traning_group::where('coach_id', Auth::user()->id)->get();
+        return view('users.groups', compact('trainig'));
     }
 
     public function groupsCreate(Request $request)
     {
-        //dd(json_encode($request->users));
+        $count = traning_group::where('coach_id', $request->coach)->count();
+        if ($request->numGroup <= $count){
+            return response()->json([
+               'success' => false,
+               'message' => 'Номер группы не может быть меньше существующего!'
+            ]);
+        }
         traning_group::create([
             'coach_id' => $request->coach,
             'group_num' => $request->numGroup,
             'users_list' => json_encode($request->users)
         ]);
-        return true;
+        return response()->json([
+            'success' => true,
+            'message' => 'Группа успешно создана!'
+        ]);
     }
 
     public function addTraing(Request $request)
