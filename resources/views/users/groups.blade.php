@@ -100,9 +100,10 @@
             <div class="user-row d-flex mt-3">
                 <div class="col-10">
                 <select name="users[]" class="form-control">
-                    @foreach(\App\Models\Users::where('role', 'user')->get() as $user)
+                    <option value="null"></option>
+                                                @foreach(\App\Models\Users::where('role', 'user')->orderBy('surname', 'asc')->get() as $user)
                 <option value="{{$user->id}}">{{$user->fullName()}}</option>
-                    @endforeach
+                                                @endforeach
                 </select>
                 </div>
                 <button type="button" class="add-btn btn btn-light mr-1" onclick="addBtn()" id="add-btn">+</button>
