@@ -72,7 +72,8 @@
                                     <div class="user-row d-flex">
                                         <div class="col-10">
                                             <select name="users[]" class="form-control" id="users">
-                                                @foreach(\App\Models\Users::where('role', 'user')->get() as $user)
+                                                <option value="null"></option>
+                                                @foreach(\App\Models\Users::where('role', 'user')->orderBy('surname', 'asc')->get() as $user)
                                                     <option value="{{$user->id}}">{{$user->fullName()}}</option>
                                                 @endforeach
                                             </select>
