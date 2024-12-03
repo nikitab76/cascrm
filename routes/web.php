@@ -21,6 +21,8 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::post('training/delete', [\App\Http\Controllers\trainingController::class, 'delete'])->name('training.delete');
         Route::post('training/edit', [\App\Http\Controllers\trainingController::class, 'edit'])->name('training.edit');
         Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
+
+        Route::get('groups', [\App\Http\Controllers\GroupsController::class, 'index'])->name('index.group');
     });
     Route::get('training/list', [\App\Http\Controllers\trainingController::class, 'trainingProfile'])->name('training.profile');
     Route::get('trainings', [\App\Http\Controllers\trainingController::class, 'trainingList'])->name('training.list');

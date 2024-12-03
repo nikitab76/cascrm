@@ -11,10 +11,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('assets/profile/plugins/fontawesome-free/css/all.min.css')}}">
     <!-- Theme style -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="{{asset('assets/profile/css/adminlte.min.css')}}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"/>
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
@@ -72,8 +73,12 @@
     <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -102,7 +107,7 @@
         <ul class="navbar-nav ml-auto">
             <!-- Navbar Search -->
             <li class="nav-item">
-                    {{--@dump(\Illuminate\Support\Facades\Auth::check())--}}
+                {{--@dump(\Illuminate\Support\Facades\Auth::check())--}}
                 <a class="nav-link" {{--data-widget="navbar-search"--}} href="{{route('logout')}}" role="button">
                     {{--<i class="fas fa-search"></i>--}}выход
                 </a>
@@ -148,7 +153,7 @@
                 }
             }
 
-            setInterval(function() {
+            setInterval(function () {
                 garland()
             }, 400)
         </script>
@@ -167,10 +172,12 @@
             <!-- Sidebar user (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="{{asset('assets/profile/img/user1-128x128.jpg')}}" class="img-circle elevation-2" alt="User Image">
+                    <img src="{{asset('assets/profile/img/user1-128x128.jpg')}}" class="img-circle elevation-2"
+                         alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="{{route('index.profile')}}" class="d-block">{{\Illuminate\Support\Facades\Auth::user()->name . ' ' . \Illuminate\Support\Facades\Auth::user()->surname}}</a>
+                    <a href="{{route('index.profile')}}"
+                       class="d-block">{{\Illuminate\Support\Facades\Auth::user()->name . ' ' . \Illuminate\Support\Facades\Auth::user()->surname}}</a>
                 </div>
             </div>
             <!-- Sidebar Menu -->
@@ -180,36 +187,42 @@
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
                     @if(\Illuminate\Support\Facades\Auth::user()->role == 'admin')
-                    <li class="nav-item">
-                        <a href="{{route('users.list')}}" class="nav-link">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Пользователи</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-file"></i>
-                            <p>
-                                Расписание
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{route('rooms.index')}}" class="nav-link">
-                                    <i class="fas nav-icon"></i>
-                                    <p>Залы</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('training.list')}}" class="nav-link">
-                                    <i class="far nav-icon"></i>
-                                    <p>Занятия тренеров</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    {{--<li class="nav-header">MISCELLANEOUS</li>--}}
+                        <li class="nav-item">
+                            <a href="{{route('users.list')}}" class="nav-link">
+                                <i class="nav-icon fas fa-user"></i>
+                                <p>Пользователи</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-file"></i>
+                                <p>
+                                    Расписание
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('rooms.index')}}" class="nav-link">
+                                        <i class="fas nav-icon"></i>
+                                        <p>Залы</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('training.list')}}" class="nav-link">
+                                        <i class="far nav-icon"></i>
+                                        <p>Занятия тренеров</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('index.group')}}" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Группы тренеров</p>
+                            </a>
+                        </li>
+                        {{--<li class="nav-header">MISCELLANEOUS</li>--}}
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->role == 'coach')
                         <li class="nav-item">
@@ -229,7 +242,7 @@
             </nav>
             <!-- /.sidebar-menu -->
         </div>
-    <!-- /.sidebar -->
+        <!-- /.sidebar -->
 
     </aside>
 
