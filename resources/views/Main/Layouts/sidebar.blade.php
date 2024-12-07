@@ -187,11 +187,34 @@
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
                     @if(\Illuminate\Support\Facades\Auth::user()->role == 'admin')
-                        <li class="nav-item">
+                        {{--<li class="nav-item">
                             <a href="{{route('users.list')}}" class="nav-link">
                                 <i class="nav-icon fas fa-user"></i>
                                 <p>Пользователи</p>
                             </a>
+                        </li>--}}
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-user"></i>
+                                <p>
+                                    Пользователи
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('users.list')}}" class="nav-link">
+                                        <i class="fas nav-icon"></i>
+                                        <p>Список пользователей</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('engaged.list')}}" class="nav-link">
+                                        <i class="far nav-icon"></i>
+                                        <p>Список занимающихся</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">

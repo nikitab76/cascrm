@@ -48,8 +48,13 @@
                         <!-- /.col -->
                         <div class="col-sm-4">
                             <div class="description-block">
-                                <h5 class="description-header">35</h5>
-                                <span class="description-text">PRODUCTS</span>
+                                @if($user->role != 'user')
+                                    <h5 class="description-header">35</h5>
+                                    <span class="description-text">PRODUCTS</span>
+                                @else
+                                    <h5 class="description-header">Справка</h5>
+                                    <span class="description-text">PRODUCTS</span>
+                                @endif
                             </div>
                             <!-- /.description-block -->
                         </div>
@@ -76,12 +81,12 @@
                             </button>
                         </li>
                         @if(\Illuminate\Support\Facades\Auth::user()->id === $user->id)
-                        <li class="nav-item ml-1" role="presentation">
-                            <button class="nav-link " id="safety-tab" data-bs-toggle="tab"
-                                    data-bs-target="#safety-tab-pane" type="button" role="tab"
-                                    aria-controls="safety-tab-pane" aria-selected="false">Авторизация
-                            </button>
-                        </li>
+                            <li class="nav-item ml-1" role="presentation">
+                                <button class="nav-link " id="safety-tab" data-bs-toggle="tab"
+                                        data-bs-target="#safety-tab-pane" type="button" role="tab"
+                                        aria-controls="safety-tab-pane" aria-selected="false">Авторизация
+                                </button>
+                            </li>
                         @endif
                     </ul>
                     <div class="tab-content" id="myTabContent">
@@ -122,16 +127,45 @@
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <label for="phone">Телефон</label>
-                                                    <input type="tel" class="form-control" id="user_phone"
-                                                           pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                                           name="user_phone" autocomplete="off"  value="{{$user->phone}}">
-                                                    <label for="speciality">Направление</label>
-                                                    <input type="text" class="form-control" id="speciality" name="speciality">
+                                            @if($user->role != 'user')
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <label for="phone">Телефон</label>
+                                                        <input type="tel" class="form-control" id="user_phone"
+                                                               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                                               name="user_phone" autocomplete="off"
+                                                               value="{{$user->phone}}">
+                                                        <label for="speciality">Направление</label>
+                                                        <input type="text" class="form-control" id="speciality"
+                                                               name="speciality">
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @else
+                                                <div class="form-group">
+                                                    <label for="user_coach">Инструктор</label>
+                                                    <input type="text" class="form-control" id="user_coach"
+                                                           name="user_coach" autocomplete="off"
+                                                           value="{{\App\Models\Users::where('id', $user->coach)->value('surname')}}">
+                                                    <label for="representative">Представитель</label>
+                                                    <input type="text" class="form-control" id="representative"
+                                                           name="representative" value="{{$user->representative}}">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <label for="nosology">Нозология</label>
+                                                            <input type="text" class="form-control" id="nosology"
+                                                                   name="nosology" value="{{$user->nosology}}">
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label for="medical_certificate">Справка</label>
+                                                            <input type="text" class="form-control"
+                                                                   id="medical_certificate"
+                                                                   name="medical_certificate"
+                                                                   value="{{$user->medical_certificate}}"
+                                                                   autocomplete="off">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -151,28 +185,33 @@
                         </div>
                         {{--безопасность--}}
                         @if(\Illuminate\Support\Facades\Auth::user()->id === $user->id)
-                        <div class="tab-pane fade show" id="safety-tab-pane" role="tabpanel"
-                             aria-labelledby="safety-tab" tabindex="0">
-                            <div class="p-3">
-                                <div class="content">
-                                    <div class="form-group">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <label for="userLogin">Login</label>
-                                                    <input type="text" class="form-control" id="userLogin"
-                                                           name="userLogin" autocomplete="off"  value="{{$user->login}}" disabled>
+                            <div class="tab-pane fade show" id="safety-tab-pane" role="tabpanel"
+                                 aria-labelledby="safety-tab" tabindex="0">
+                                <div class="p-3">
+                                    <div class="content">
+                                        <div class="form-group">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
                                                     <div class="row">
-                                                    <div class="col-6">
-                                                    <label for="userPassword">Password</label>
-                                                    <input type="password" class="form-control" id="userPassword" name="userPassword" value="{{$user->password}}">
-                                                    </div>
-                                                    <div class="col-6 d-flex">
-                                                        <button type="button" class="btn btn-warning mt-auto" data-toggle="modal"
-                                                                data-target="#addPassword">
-                                                            изменить
-                                                        </button>
-                                                    </div>
+                                                        <label for="userLogin">Login</label>
+                                                        <input type="text" class="form-control" id="userLogin"
+                                                               name="userLogin" autocomplete="off"
+                                                               value="{{$user->login}}" disabled>
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <label for="userPassword">Password</label>
+                                                                <input type="password" class="form-control"
+                                                                       id="userPassword" name="userPassword"
+                                                                       value="{{$user->password}}">
+                                                            </div>
+                                                            <div class="col-6 d-flex">
+                                                                <button type="button" class="btn btn-warning mt-auto"
+                                                                        data-toggle="modal"
+                                                                        data-target="#addPassword">
+                                                                    изменить
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -180,7 +219,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endif
                     </div>
                 </div>
@@ -201,12 +239,16 @@
                             <div class="modal-body">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <div class="alert alert-danger" role="alert" id="error" style="display: none"></div>
-                                        <div class="alert alert-success" role="alert" id="success" style="display: none"></div>
+                                        <div class="alert alert-danger" role="alert" id="error"
+                                             style="display: none"></div>
+                                        <div class="alert alert-success" role="alert" id="success"
+                                             style="display: none"></div>
                                         <label for="oldPassword">Старый пароль</label>
-                                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" autocomplete="off">
+                                        <input type="password" class="form-control" id="oldPassword" name="oldPassword"
+                                               autocomplete="off">
                                         <label for="newPassword">Новый пароль</label>
-                                        <input type="password" class="form-control" id="newPassword" name="newPassword" autocomplete="off">
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword"
+                                               autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -220,7 +262,7 @@
             <script>
                 function update() {
                     var data = {
-                        'user' : {{$user->id}},
+                        'user': {{$user->id}},
                         'oldPassword': $('#oldPassword').val(),
                         'newPassword': $('#newPassword').val(),
                     }
@@ -235,7 +277,7 @@
                         dataType: 'json',
                         data: data,
                         success: function (data) {
-                            if(data.success){
+                            if (data.success) {
                                 $('#error').hide();
                                 $('#success').show();
                                 $('#success').text(data.message);

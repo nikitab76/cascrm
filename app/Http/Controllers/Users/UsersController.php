@@ -7,6 +7,7 @@ use App\Http\Controllers\testcontroller;
 use App\Models\Job_title;
 use App\Models\User;
 use App\Models\Users;
+use App\Models\UsersDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,6 +67,13 @@ class UsersController extends Controller
     public function showUsers(string $id)
     {
         $user = Users::where('id' , $id)->first();
+        if($user->role == 'user'){
+            $document = UsersDocument::where('user_id', $user->id)->first();
+            $user->coach = $document->coach;
+            $user->nosology = $document->nosology;
+            $user->representative = $document->representative;
+            $user->medical_certificate = $document->medical_certificate;
+        }
         return view('users.profile', compact('user'));
     }
 
@@ -127,5 +135,38 @@ class UsersController extends Controller
             'data' => $data,
             'success' => true
         ]);
+    }
+
+    public function engagedList()
+    {
+        return view('users.engagedList');
+    }
+
+    public function getCoachById($id)
+    {
+        $coach = Users::where('id', $id)->first();
+        return $coach->fullName();
+    }
+
+    public function engagedListGet()
+    {
+        $users = Users::where('role', 'user')->join('users_documents', 'users.id', '=', 'users_documents.user_id')->get();
+        $data = [];
+        foreach ($users as $user){
+            $row['user']['name'] = $user->fullName();
+            $row['user']['id'] = $user->user_id;
+            $row['coach']['name'] = self::getCoachById($user->coach);
+            $row['coach']['id'] = $user->coach;
+            $row['repres'] = $user->representative;
+            $row['mc'] = $user->medical_certificate;
+            $row['nosology'] = $user->nosology;
+            $data[] = $row;
+        }
+
+        return response()->json([
+            'data' => $data,
+            'success' => true
+        ]);
+
     }
 }

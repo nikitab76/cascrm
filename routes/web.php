@@ -14,6 +14,8 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::post('/users/list', [\App\Http\Controllers\Users\UsersController::class, 'usersList'])->name('get.users.list');
         Route::post('/users/create', [\App\Http\Controllers\Users\UsersController::class, 'createUsers'])->name('users.create');
         Route::get('/users/profile/{id}', [\App\Http\Controllers\Users\UsersController::class, 'showUsers'])->name('users.show');
+        Route::get('/users/list/engaged', [\App\Http\Controllers\Users\UsersController::class, 'engagedList'])->name('engaged.list');
+        Route::post('/users/list/engaged', [\App\Http\Controllers\Users\UsersController::class, 'engagedListGet'])->name('engaged.list.get');
 
         Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
 
