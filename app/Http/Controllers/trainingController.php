@@ -101,8 +101,35 @@ class trainingController extends Controller
 
     public function trainingList()
     {
-        $trainig = Training::where('date', '>=' , date('Y-m-d', strtotime('- 3 day')))->orderBy('date', 'asc')->get();
-        return view('traingListAll', compact('trainig'));
+        return view('traingListAll');
+    }
+
+    public function getCoachTrening()
+    {
+        $days =[
+            'пн',
+            'вт',
+            'ср',
+            'чт',
+            'пт',
+            'сб',
+            'вс'
+        ];
+        $trainigs = Training::all();
+        $data = [];
+        foreach ($trainigs as $trainig){
+            $row['name'] = $trainig->coach;
+            $row['profile'] = $trainig->profile;
+            $row['room'] = \App\Models\Room::where('slug', $trainig->slug_room)->value('title');
+            $dat = date('d-m-Y', strtotime($trainig->date));
+            $dayWeek = $days[date('w', (strtotime($trainig->date)) - 1)];
+            $row['day'] = $dayWeek . ' (' . $dat . ')';
+            $row['start'] = $trainig->time_start;
+            $row['end'] = $trainig->time_end;
+            $data[] = $row;
+        }
+        return response()->json($data);
+
     }
 
     public function groupsIndex()

@@ -14,7 +14,16 @@ class testcontroller extends Controller
 {
     public function index()
     {
-
+        $days =[
+            'пн',
+            'вт',
+            'ср',
+            'чт',
+            'пт',
+            'сб',
+            'вс'
+        ];
+        dd($days[date('w', strtotime('yesterday')) - 1]);
         exit;
         $d = Job_title::getRole('Занимающийся');
         dd($d);

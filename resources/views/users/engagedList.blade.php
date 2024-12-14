@@ -30,9 +30,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{--<div class="text-center" id="no_reports_transaction" style="display: none">
-                                    <h3 class="bold">Для данного отчёта нет ни одной транзакции</h3>
-                                </div>--}}
                             </div>
                         </div>
                     </div>

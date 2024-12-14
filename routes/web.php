@@ -28,6 +28,7 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     });
     Route::get('training/list', [\App\Http\Controllers\trainingController::class, 'trainingProfile'])->name('training.profile');
     Route::get('trainings', [\App\Http\Controllers\trainingController::class, 'trainingList'])->name('training.list');
+    Route::post('trainings', [\App\Http\Controllers\trainingController::class, 'getCoachTrening'])->name('training.coach.list');
     Route::post('training/create/coach', [\App\Http\Controllers\trainingController::class, 'createTrainingCoach'])->name('training.coach.create');
     Route::get('training/groups', [\App\Http\Controllers\trainingController::class, 'groupsIndex'])->name('groups.index');
     Route::post('training/groups', [\App\Http\Controllers\trainingController::class, 'groupsCreate'])->name('groups.create');

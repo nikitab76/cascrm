@@ -96,50 +96,6 @@
             </div>
         </div>
         <!-- Main content -->
-        {{--<section class="content">
-
-            <!-- Default box -->
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Список пользователей</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Имя</th>
-                                <th>Должность</th>
-                                <th>Роль</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            @foreach(\App\Models\Users::all() as $user)
-                                <tr>
-                                    <td>#</td>
-                                    <td style="width: 25%"><a
-                                            href="{{route('users.show', ['id'=>$user->id])}}">{{$user->fullName()}}</a>
-                                    </td>
-                                    <td>
-                                        {{$user->job_title}}
-                                    </td>
-                                    <td>{{$user->role}}</td>
-                                </tr>
-                            @endforeach
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-            </div>
-            <!-- /.card -->
-
-        </section>--}}
         <!-- /.content -->
     </div>
     <script>
