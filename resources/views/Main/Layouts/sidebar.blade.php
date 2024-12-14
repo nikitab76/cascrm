@@ -237,6 +237,12 @@
                                         <p>Занятия тренеров</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{route('index.hour.coach')}}" class="nav-link">
+                                        <i class="far nav-icon"></i>
+                                        <p>Часы тренеров</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item">

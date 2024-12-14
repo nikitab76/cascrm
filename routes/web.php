@@ -25,6 +25,8 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
 
         Route::get('groups', [\App\Http\Controllers\GroupsController::class, 'index'])->name('index.group');
+        Route::post('coachHour', [\App\Http\Controllers\trainingController::class, 'getHourCoach'])->name('get.hour.coach');
+        Route::get('coachHour', [\App\Http\Controllers\trainingController::class, 'indexHourCoach'])->name('index.hour.coach');
     });
     Route::get('training/list', [\App\Http\Controllers\trainingController::class, 'trainingProfile'])->name('training.profile');
     Route::get('trainings', [\App\Http\Controllers\trainingController::class, 'trainingList'])->name('training.list');

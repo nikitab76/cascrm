@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Job_title;
 use App\Models\Room;
 use App\Models\Training;
+use App\Models\traning_group;
 use App\Models\User;
 use App\Models\Users;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 
@@ -14,16 +18,65 @@ class testcontroller extends Controller
 {
     public function index()
     {
-        $days =[
-            'пн',
-            'вт',
-            'ср',
-            'чт',
-            'пт',
-            'сб',
-            'вс'
-        ];
-        dd($days[date('w', strtotime('yesterday')) - 1]);
+        $start = date('Y-m-d', strtotime('01.10.2024'));
+        $end = date('Y-m-d', strtotime('31.10.2024'));
+
+        // Создаем объекты даты
+        $startDate = new DateTime($start);
+        $endDate = new DateTime($end);
+        $endDate->modify('+1 day'); // Добавляем 1 день, чтобы включить конечную дату
+
+        // Устанавливаем интервал (1 день)
+        $interval = new DateInterval('P1D');
+        // Генерируем период
+        $datePeriod = new DatePeriod($startDate, $interval, $endDate);
+
+        // Преобразуем период в массив
+        $dates = [];
+        $data = [];
+
+        // Преобразуем объекты DateTime в строки формата 'Y-m-d' для массива $dates
+        foreach ($datePeriod as $date) {
+            $day = $date->format('Y-m-d'); // Строковый формат даты
+            $dates[] = $day;
+        }
+
+        // Получаем данные из базы
+        $trs = Training::where('coach', 'Броня')
+            ->where('date', '>=', $start) // Используем строковые даты
+            ->where('date', '<=', $end)  // Используем строковые даты
+            ->get();
+
+        // Обрабатываем данные
+        foreach ($dates as $day) {
+            $data[$day] = false; // Инициализируем значение как '-'
+        }
+
+        foreach ($trs as $tr) {
+            $trDate = $tr->date; // Убедитесь, что $tr->date — это строка формата 'Y-m-d'
+            if (isset($data[$trDate])) {
+                $time1 = new DateTime($tr->time_end);
+                $time2 = new DateTime($tr->time_start);
+                // Преобразуем в timestamp
+                $timestamp1 = $time1->getTimestamp();
+                $timestamp2 = $time2->getTimestamp();
+                $diffInSeconds = abs($timestamp1 - $timestamp2);
+                // Переводим в минуты
+                $minutes = $diffInSeconds / 60;
+                // Вычисляем часы и оставшиеся минуты
+                $hours = floor($minutes / 60);
+                $remainingMinutes = $minutes % 60;
+                // Форматируем результат
+                $timeFormatted = sprintf('%02d:%02d', $hours, $remainingMinutes);
+                $row['time'] = $timeFormatted;
+                $row['coach'] = $tr->coach;
+                $row['room'] = $tr->slug_room;
+                $data[$trDate] = $row; // Если дата совпадает, устанавливаем 'ok'
+            }
+        }
+
+
+        dd($data);
         exit;
         $d = Job_title::getRole('Занимающийся');
         dd($d);
@@ -37,7 +90,7 @@ class testcontroller extends Controller
         $user->import($file, function ($line) {
             $name = explode(" ", trim($line['фио']));
             //dump($name);
-            if (isset($name[1])){
+            if (isset($name[1])) {
                 Users::create([
                     'name' => $name[1],
                     'surname' => $name[0] ?? null,

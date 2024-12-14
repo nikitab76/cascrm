@@ -6,12 +6,16 @@ use App\Models\Room;
 use App\Models\Training;
 use App\Models\traning_group;
 use App\Models\Users;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class trainingController extends Controller
 {
-    public function create(Request $request){
+    public function create(Request $request)
+    {
         Training::create([
             'slug_room' => $request->roomsSlug,
             'coach' => $request->classCoach,
@@ -22,7 +26,7 @@ class trainingController extends Controller
             'quarter' => $request->classQuarter,
             'comment' => $request->classComment ? $request->classComment : '-',
         ]);
-        return redirect()->route('rooms.show', ['room'=>$request->roomsSlug]);
+        return redirect()->route('rooms.show', ['room' => $request->roomsSlug]);
     }
 
     public function createTrainingCoach(Request $request)
@@ -31,7 +35,7 @@ class trainingController extends Controller
         if (isset($request->class)) {
             $class = Room::where('id', $request->class)->value('slug');
         }
-        if (!isset($request->classProfile)){
+        if (!isset($request->classProfile)) {
             $flag = false;
             return response()->json([
                 'success' => false,
@@ -39,28 +43,28 @@ class trainingController extends Controller
             ]);
             //$profile = $request->classProfile;
         }
-        if (!isset($request->classDate)){
+        if (!isset($request->classDate)) {
             $flag = false;
             return response()->json([
                 'success' => false,
                 'error' => 'заполните дату'
             ]);
         }
-        if (!isset($request->classTime)){
+        if (!isset($request->classTime)) {
             $flag = false;
             return response()->json([
                 'success' => false,
                 'error' => 'заполните время начала'
             ]);
         }
-        if (!isset($request->classTimeEnd)){
+        if (!isset($request->classTimeEnd)) {
             $flag = false;
             return response()->json([
                 'success' => false,
                 'error' => 'заполните время окончания'
             ]);
         }
-        if ($flag){
+        if ($flag) {
             $coach = Users::where('id', $request->coach)->value('surname');
             Training::create([
                 'slug_room' => $class,
@@ -106,7 +110,7 @@ class trainingController extends Controller
 
     public function getCoachTrening()
     {
-        $days =[
+        $days = [
             'пн',
             'вт',
             'ср',
@@ -117,7 +121,7 @@ class trainingController extends Controller
         ];
         $trainigs = Training::all();
         $data = [];
-        foreach ($trainigs as $trainig){
+        foreach ($trainigs as $trainig) {
             $row['name'] = $trainig->coach;
             $row['profile'] = $trainig->profile;
             $row['room'] = \App\Models\Room::where('slug', $trainig->slug_room)->value('title');
@@ -141,10 +145,10 @@ class trainingController extends Controller
     public function groupsCreate(Request $request)
     {
         $count = traning_group::where('coach_id', $request->coach)->count();
-        if ($request->numGroup <= $count){
+        if ($request->numGroup <= $count) {
             return response()->json([
-               'success' => false,
-               'message' => 'Номер группы не может быть меньше существующего!'
+                'success' => false,
+                'message' => 'Номер группы не может быть меньше существующего!'
             ]);
         }
         traning_group::create([
@@ -167,5 +171,83 @@ class trainingController extends Controller
             'slug_room' => Room::where('id', $request->classAdd)->value('slug'),
         ]);
         return true;
+    }
+
+    public function getHourCoach(Request $request)
+    {
+        $start = date('Y-m-d', strtotime($request->start));
+        $end = date('Y-m-d', strtotime($request->end));
+        $coach = Users::where('id', $request->coach)->first();
+
+        // Создаем объекты даты
+        $startDate = new DateTime($start);
+        $endDate = new DateTime($end);
+        $endDate->modify('+1 day'); // Добавляем 1 день, чтобы включить конечную дату
+
+        // Устанавливаем интервал (1 день)
+        $interval = new DateInterval('P1D');
+        // Генерируем период
+        $datePeriod = new DatePeriod($startDate, $interval, $endDate);
+
+        // Преобразуем период в массив
+
+        $dates = [];
+        $data = [];
+
+        // Преобразуем объекты DateTime в строки формата 'Y-m-d' для массива $dates
+        foreach ($datePeriod as $date) {
+            $day = $date->format('Y-m-d'); // Строковый формат даты
+            $dates[] = $day;
+        }
+
+        // Получаем данные из базы
+        $trs = Training::where('coach', $coach->surname)
+            ->where('date', '>=', $start) // Используем строковые даты
+            ->where('date', '<=', $end)  // Используем строковые даты
+            ->get();
+
+        // Обрабатываем данные
+
+        foreach ($trs as $tr) {
+            $row['coach'] = $tr->coach;
+            $row['room'] = $tr->slug_room;
+            $row['profile'] = $tr->profile;
+            foreach ($dates as $day) {
+                $row[$day] = false; // Инициализируем значение как false
+                $trDate = $tr->date; // Убедитесь, что $tr->date — это строка формата 'Y-m-d'
+                if ($trDate == $day) {
+                    $time1 = new DateTime($tr->time_end);
+                    $time2 = new DateTime($tr->time_start);
+                    // Преобразуем в timestamp
+                    $timestamp1 = $time1->getTimestamp();
+                    $timestamp2 = $time2->getTimestamp();
+                    $diffInSeconds = abs($timestamp1 - $timestamp2);
+                    // Переводим в минуты
+                    $minutes = $diffInSeconds / 60;
+                    // Вычисляем часы и оставшиеся минуты
+                    $hours = floor($minutes / 60);
+                    $remainingMinutes = $minutes % 60;
+                    // Форматируем результат
+                    $timeFormatted = sprintf('%02d:%02d', $hours, $remainingMinutes);
+                    $row[$day] = $timeFormatted;
+                }
+
+            }
+            array_push($data, $row);
+        }
+//        $data[] = $row; // Если дата совпадает, устанавливаем 'ok'
+        $answer = [
+            'days' => $dates,
+            'result' => $data,
+        ];
+        return response()->json($answer,
+            200,
+            ['Content-Type' => 'application/json; charset=utf-8'],
+            JSON_UNESCAPED_UNICODE);
+    }
+
+    public function indexHourCoach()
+    {
+        return view('hourCoach');
     }
 }
