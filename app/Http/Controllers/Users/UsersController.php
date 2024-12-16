@@ -68,11 +68,14 @@ class UsersController extends Controller
     {
         $user = Users::where('id' , $id)->first();
         if($user->role == 'user'){
-            $document = UsersDocument::where('user_id', $user->id)->first();
-            $user->coach = $document->coach;
-            $user->nosology = $document->nosology;
-            $user->representative = $document->representative;
-            $user->medical_certificate = $document->medical_certificate;
+            if ($document = UsersDocument::where('user_id', $user->id)->first())
+            {
+                $user->coach = $document->coach;
+                $user->nosology = $document->nosology;
+                $user->representative = $document->representative;
+                $user->medical_certificate = $document->medical_certificate;
+            }
+
         }
         return view('users.profile', compact('user'));
     }
