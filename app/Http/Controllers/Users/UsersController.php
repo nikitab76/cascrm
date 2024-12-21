@@ -166,7 +166,10 @@ class UsersController extends Controller
             $row['coach']['id'] = $user->coach;
             $row['user_birth'] = date('d-m-Y', strtotime($user->user_birth)) ?? null;
             $row['repres'] = $user->representative;
-            $row['mc'] = date('d-m-Y', strtotime($user->medical_certificate));
+            $row['mc']['data'] = false;
+            if (date('Y-m-d', strtotime($user->medical_certificate)) < date('Y-m-d', strtotime('today')))
+                $row['mc']['data'] = true;
+            $row['mc']['day'] = date('d-m-Y', strtotime($user->medical_certificate));
             $row['nosology'] = $user->nosology;
             $row['phone_repres'] = $user->representative_phone;
             $data[] = $row;

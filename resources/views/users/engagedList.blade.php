@@ -37,6 +37,17 @@
             </div>
         </section>
     </div>
+    <style>
+        .bg-green-jungle {
+            background-color: #2ecc71; /* Зеленый цвет */
+            color: #fff; /* Белый текст */
+        }
+
+        .bg-red-pink {
+            background-color: #e74c3c; /* Красный цвет */
+            color: #fff; /* Белый текст */
+        }
+    </style>
     <script>
         $(document).ready(function () {
             $.ajax({ // инициализациям ajax запрос
@@ -144,6 +155,12 @@
                         title: "справка",
                         className: "column-160 text-align-center vertical-align-middle",
                         data: 'mc',
+                        createdCell: function(cell, cellData, rowData) {
+                            $(cell).text(cellData.day);
+                            if (cellData.data){
+                                $(cell).css('background-color', '#c4101f');
+                            }
+                        },
                     },
                     {
                         title: "Представитель",
