@@ -8,6 +8,7 @@ use App\Models\Training;
 use App\Models\traning_group;
 use App\Models\User;
 use App\Models\Users;
+use App\Models\UsersDocument;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -88,10 +89,11 @@ class testcontroller extends Controller
     {
         $user = new FastExcel();
         $user->import($file, function ($line) {
-            $name = explode(" ", trim($line['фио']));
+            //dd($line);
+            $name = explode(" ", trim($line['ФИО занимающегося']));
             //dump($name);
             if (isset($name[1])) {
-                Users::create([
+                $user = Users::create([
                     'name' => $name[1],
                     'surname' => $name[0] ?? null,
                     'second_name' => $name[2] ?? null,
@@ -101,6 +103,20 @@ class testcontroller extends Controller
                     'password' => null,
                     'role' => Job_title::getRole('Занимающийся')
                 ]);
+                $user_dok = UsersDocument::create([
+                    'user_id' => $user->id,
+                    'user_birth' => $line['дата рождения'] instanceof \DateTimeImmutable
+                        ? $line['дата рождения']->format('Y-m-d')
+                        : null,
+                    'coach' => null,
+                    'medical_certificate' => $line['Справка 1144Н'] instanceof \DateTimeImmutable
+                        ? $line['Справка 1144Н']->format('Y-m-d')
+                        : null,
+                    'representative' => $line['ФИО представителя'] ?? null,
+                    'representative_phone' => $line['телефон'] ?? null,
+                    'nosology' => $line['Группа нозологий'],
+                ]);
+                //dd($user, $user_dok);
             }
         });
         return true;

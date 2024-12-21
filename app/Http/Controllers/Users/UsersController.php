@@ -147,8 +147,12 @@ class UsersController extends Controller
 
     public function getCoachById($id)
     {
-        $coach = Users::where('id', $id)->first();
-        return $coach->fullName();
+        if (isset($id))
+        {
+            $coach = Users::where('id', $id)->first();
+            return $coach->fullName();
+        }
+        return null;
     }
 
     public function engagedListGet()
@@ -160,9 +164,11 @@ class UsersController extends Controller
             $row['user']['id'] = $user->user_id;
             $row['coach']['name'] = self::getCoachById($user->coach);
             $row['coach']['id'] = $user->coach;
+            $row['user_birth'] = date('d-m-Y', strtotime($user->user_birth)) ?? null;
             $row['repres'] = $user->representative;
-            $row['mc'] = $user->medical_certificate;
+            $row['mc'] = date('d-m-Y', strtotime($user->medical_certificate));
             $row['nosology'] = $user->nosology;
+            $row['phone_repres'] = $user->representative_phone;
             $data[] = $row;
         }
 

@@ -6,6 +6,7 @@ use App\Models\Room;
 use App\Models\Training;
 use App\Models\traning_group;
 use App\Models\Users;
+use App\Models\UsersDocument;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -151,6 +152,22 @@ class trainingController extends Controller
                 'message' => 'Номер группы не может быть меньше существующего!'
             ]);
         }
+        foreach ($request->users as $user) {
+            $user = Users::where('id', $user)->first();
+            if ($doc = UsersDocument::where('user_id', $user->id)->first()) {
+                //dd($doc);
+                if (isset($doc->coach)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'У ' . $user->fullName() . ' уже есть тренер!'
+                    ]);
+                } else {
+                    $doc->coach = $request->coach;
+                    $doc->save();
+                }
+            }
+        }
+        //dd(11);
         traning_group::create([
             'coach_id' => $request->coach,
             'group_num' => $request->numGroup,

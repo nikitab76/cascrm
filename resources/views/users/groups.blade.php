@@ -49,7 +49,7 @@
                 <div class="modal-content">
                     <form role="form" method="post" id="creategroupform">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Добавить объект</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Добавить группу</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>

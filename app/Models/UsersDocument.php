@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class UsersDocument extends Model
 {
-    protected $fillable = ['user_id',  'coach', 'medical_certificate', 'medical_certificate', 'nosology'];
+    protected $fillable = [
+        'user_id',
+        'user_birth',
+        'coach',
+        'representative_phone',
+        'representative',
+        'medical_certificate',
+        'nosology'];
 }

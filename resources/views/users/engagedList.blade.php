@@ -119,6 +119,11 @@
                         }
                     },
                     {
+                        title: "Дата рождения",
+                        className: "column-160 text-align-center vertical-align-middle",
+                        data: 'user_birth',
+                    },
+                    {
                         title: "Нозология",
                         className: "column-160 text-align-center vertical-align-middle",
                         data: 'nosology',
@@ -128,7 +133,11 @@
                         className: "column-160 text-align-center vertical-align-middle",
                         data: 'coach',
                         render: function (data){
-                            return '<a href="/users/profile/' + data.id +'">'+ data.name +'</a>'
+                            if(data.id) {
+                                return '<a href="/users/profile/' + data.id +'">'+ data.name +'</a>';
+                            } else {
+                                return '';
+                            }
                         }
                     },
                     {
@@ -140,6 +149,11 @@
                         title: "Представитель",
                         className: "column-160 text-align-center vertical-align-middle",
                         data: 'repres',
+                    },
+                    {
+                        title: "Телефон представителя",
+                        className: "column-160 text-align-center vertical-align-middle",
+                        data: 'phone_repres',
                     },
                 ],
                 "headerCallback": function (row, data, start, end, display) {
