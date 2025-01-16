@@ -108,6 +108,12 @@
                                         <input type="date" class="form-control" id="classDate" name="classDate"
                                                placeholder="" value="{{old('classDate')}}">
                                     </div>
+                                    <label for="group">Группа</label>
+                                    <select class="form-control" name="group" id="group">
+                                        @foreach(\App\Models\traning_group::where('coach_id', Auth::user()->id)->get() as $group)
+                                            <option value="{{$group->id}}">{{$group->group_num}}</option>
+                                        @endforeach
+                                    </select>
                                     <div class="pt-2">
                                         <label for="classComment">Комментарий</label>
                                         <input type="text" class="form-control" id="classComment"
@@ -136,6 +142,7 @@
                 'classProfile': $('#classProfile').val(),
                 'class': $('#class').val(),
                 'coach': $('#coach').val(),
+                'group': $('#group').val(),
             }
             $.ajaxSetup({
                 headers: {

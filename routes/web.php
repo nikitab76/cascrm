@@ -35,6 +35,8 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     Route::get('training/groups', [\App\Http\Controllers\trainingController::class, 'groupsIndex'])->name('groups.index');
     Route::post('training/groups', [\App\Http\Controllers\trainingController::class, 'groupsCreate'])->name('groups.create');
     Route::post('training/addTraing', [\App\Http\Controllers\trainingController::class, 'addTraing'])->name('add.traing');
+    Route::get('magazine/user', [\App\Http\Controllers\MagazineController::class, 'index'])->name('magazine.index');
+    Route::get('magazine/list/{id}', [\App\Http\Controllers\MagazineController::class, 'show'])->name('magazine.show');
     Route::get('/t', function (){
         return view('test');
     });

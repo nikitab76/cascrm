@@ -65,11 +65,19 @@ class trainingController extends Controller
                 'error' => 'заполните время окончания'
             ]);
         }
+        if (!isset($request->group)) {
+            $flag = false;
+            return response()->json([
+                'success' => false,
+                'error' => 'заполните группу'
+            ]);
+        }
         if ($flag) {
             $coach = Users::where('id', $request->coach)->value('surname');
             Training::create([
                 'slug_room' => $class,
                 'coach' => $coach,
+                'group' => $request->group,
                 'profile' => $request->classProfile,
                 'date' => $request->classDate,
                 'time_start' => $request->classTime,

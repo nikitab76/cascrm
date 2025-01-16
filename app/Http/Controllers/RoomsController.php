@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Training;
+use App\Models\traning_group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -103,6 +104,7 @@ class RoomsController extends Controller
         $trainings = Training::where('slug_room', $request->id)->get();
         $list = [];
         foreach ($trainings as $training){
+            $group = traning_group::query()->where('id', $training->group)->value('group_num');
             $row['id'] = $training->id;
             $row['name'] = $training->coach;
             $row['profile'] = $training->profile;
@@ -113,6 +115,7 @@ class RoomsController extends Controller
             $row['body'] = '<strong>Начало тренировки:</strong> ' . $training->time_start . '<br>' .
             '<strong>Конец тренировки:</strong> ' . $training->time_end . '<br>' .
                 '<strong>Инструктор:</strong> ' . $training->coach . '<br>'.
+                '<strong>Группа:</strong> ' . $group . '<br>'.
             '<strong>Комментарий:</strong> ' . $training->comment;
             $list[] = $row;
         }

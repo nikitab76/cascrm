@@ -15,6 +15,7 @@ return new class extends Migration {
                 $table->increments('id');
                 $table->string('slug_room')->default(null);
                 $table->string('coach')->default(null);
+                $table->string('group')->default(null);
                 $table->string('profile')->default(null);
                 $table->string('date')->default(null);
                 $table->string('time_start')->default(null);
@@ -33,6 +34,11 @@ return new class extends Migration {
         if (!Schema::hasColumn('trainings', 'time_end')) {
             Schema::table('trainings', function (Blueprint $table) {
                 $table->string('time_end')->after('time_start')->default(null);
+            });
+        }
+        if (!Schema::hasColumn('trainings', 'group')) {
+            Schema::table('trainings', function (Blueprint $table) {
+                $table->string('group')->after('coach')->default(null);
             });
         }
 

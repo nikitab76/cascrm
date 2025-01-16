@@ -266,6 +266,12 @@
                                 <p>Мои группы</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('magazine.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-book"></i>
+                                <p>Журнал</p>
+                            </a>
+                        </li>
                     @endif
                 </ul>
             </nav>
