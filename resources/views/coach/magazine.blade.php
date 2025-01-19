@@ -14,15 +14,17 @@
         <div class="content">
             {{--<div class="accordion" id="accordionExample">--}}
             @foreach($trainig as $train)
-                <a href="{{route('magazine.show', ['id'=>$train->group, 'day'=>$train->profile, 'profile'=>$train->date])}}"
-                   style="color: #ffffff">
-                    <div class="alert alert-info" role="alert">
-                        <h5 class="accordion-header">
-                            <span style="color: black">{{$train->profile . ' ' . $train->time_start}}</span>
-                            {{$train->date}}
-                        </h5>
-                    </div>
-                </a>
+                @if(isset($train->group) && $train->group != '')
+                    <a href="{{route('magazine.show', ['id'=>$train->group, 'day'=>$train->profile, 'profile'=>$train->date])}}"
+                       style="color: #ffffff">
+                        <div class="alert alert-info" role="alert">
+                            <h5 class="accordion-header">
+                                <span style="color: black">{{$train->profile . ' ' . $train->time_start}}</span>
+                                {{$train->date}}
+                            </h5>
+                        </div>
+                    </a>
+                @endif
             @endforeach
             {{--</div>--}}
         </div>
