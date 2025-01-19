@@ -11,45 +11,51 @@
             </div><!-- /.container-fluid -->
         </section>
 
-       {{-- @dump($groups)--}}
+        {{-- @dump($groups)--}}
         <div class="content">
             <div class="accordion" id="accordionExample">
-                @foreach($groups as $id => $group)
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#{{$id}}" aria-expanded="false"
-                                    aria-controls="{{$id}}">
-                                {{$id}}
-                            </button>
-                        </h2>
-                        <div id="{{$id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                @foreach($group as $train)
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                                    data-bs-target="#group_{{$train->id}}" aria-expanded="false"
-                                                    aria-controls="group_{{$train->id}}">
-                                                {{$train->profile}}
-                                            </button>
-                                        </h2>
-                                        <div id="group_{{$train->id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExampleGroup">
-                                            <div class="accordion-body">
-                                                @foreach($train->users as $user => $value)
-                                                    <div class="col mt-2">
-                                                        <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->value('surname')}}"
-                                                        @if($value) style="color: green" @else style="color: red" @endif>
-                                                    </div>
-                                                @endforeach
+                @if (!empty($groups) && is_array($groups))
+                    @foreach($groups as $id => $group)
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#{{$id}}" aria-expanded="false"
+                                        aria-controls="{{$id}}">
+                                    {{$id}}
+                                </button>
+                            </h2>
+                            <div id="{{$id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    @foreach($group as $train)
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#group_{{$train->id}}" aria-expanded="false"
+                                                        aria-controls="group_{{$train->id}}">
+                                                    {{$train->profile}}
+                                                </button>
+                                            </h2>
+                                            <div id="group_{{$train->id}}" class="accordion-collapse collapse"
+                                                 data-bs-parent="#accordionExampleGroup">
+                                                <div class="accordion-body">
+                                                    @foreach($train->users as $user => $value)
+                                                        <div class="col mt-2">
+                                                            <input type="text" class="col-6 form-control"
+                                                                   value="{{\App\Models\Users::where('id', $user)->value('surname')}}"
+                                                                   @if($value) style="color: green"
+                                                                   @else style="color: red" @endif>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>
