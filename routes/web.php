@@ -27,6 +27,8 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::get('groups', [\App\Http\Controllers\GroupsController::class, 'index'])->name('index.group');
         Route::post('coachHour', [\App\Http\Controllers\trainingController::class, 'getHourCoach'])->name('get.hour.coach');
         Route::get('coachHour', [\App\Http\Controllers\trainingController::class, 'indexHourCoach'])->name('index.hour.coach');
+
+        Route::get('magazine/coach', [\App\Http\Controllers\MagazineController::class, 'showMagazinesCoach'])->name('magazines.coach');
     });
     Route::get('training/list', [\App\Http\Controllers\trainingController::class, 'trainingProfile'])->name('training.profile');
     Route::get('trainings', [\App\Http\Controllers\trainingController::class, 'trainingList'])->name('training.list');
@@ -36,7 +38,8 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     Route::post('training/groups', [\App\Http\Controllers\trainingController::class, 'groupsCreate'])->name('groups.create');
     Route::post('training/addTraing', [\App\Http\Controllers\trainingController::class, 'addTraing'])->name('add.traing');
     Route::get('magazine/user', [\App\Http\Controllers\MagazineController::class, 'index'])->name('magazine.index');
-    Route::get('magazine/list/{id}', [\App\Http\Controllers\MagazineController::class, 'show'])->name('magazine.show');
+    Route::get('magazine/list/{id}/{profile}/{day}', [\App\Http\Controllers\MagazineController::class, 'show'])->name('magazine.show');
+    Route::post('magazine/list', [\App\Http\Controllers\MagazineController::class, 'noteUsers'])->name('magazine.noteUsers');
     Route::get('/t', function (){
         return view('test');
     });

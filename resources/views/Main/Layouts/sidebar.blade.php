@@ -251,6 +251,12 @@
                                 <p>Группы тренеров</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('magazines.coach')}}" class="nav-link">
+                                <i class="nav-icon fas fa-book"></i>
+                                <p>Журнал посещений</p>
+                            </a>
+                        </li>
                         {{--<li class="nav-header">MISCELLANEOUS</li>--}}
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->role == 'coach')
