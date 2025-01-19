@@ -14,7 +14,7 @@
         {{-- @dump($groups)--}}
         <div class="content">
             <div class="accordion" id="accordionExample">
-                @if (!empty($groups) && is_array($groups))
+                @if (!empty($groups))
                     @foreach($groups as $id => $group)
                         <div class="accordion-item">
                             <h2 class="accordion-header">
@@ -33,7 +33,7 @@
                                                         data-bs-toggle="collapse"
                                                         data-bs-target="#group_{{$train->id}}" aria-expanded="false"
                                                         aria-controls="group_{{$train->id}}">
-                                                    {{$train->profile}}
+                                                    {{$train->profile  . ' ' . $train->time_start . ' ' . $train->date}}
                                                 </button>
                                             </h2>
                                             <div id="group_{{$train->id}}" class="accordion-collapse collapse"

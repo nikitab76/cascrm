@@ -136,7 +136,8 @@ class trainingController extends Controller
             $row['room'] = \App\Models\Room::where('slug', $trainig->slug_room)->value('title');
             $dat = date('d-m-Y', strtotime($trainig->date));
             $dayWeek = $days[date('w', (strtotime($trainig->date)) - 1)];
-            $row['day'] = $dayWeek . ' (' . $dat . ')';
+            $row['data'] = date('Y-m-d', strtotime($dat));
+            $row['day'] = $dayWeek;
             $row['start'] = $trainig->time_start;
             $row['end'] = $trainig->time_end;
             $data[] = $row;

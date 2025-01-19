@@ -13,7 +13,7 @@ class MagazineController extends Controller
 {
     public function index()
     {
-        $trainig = Training::where('coach', Auth::user()->surname)/*->where('date', '>=', date('Y-m-d'))*/->orderBy('date', 'asc')->get();
+        $trainig = Training::where('coach', Auth::user()->surname)->where('date', '>=', date('Y-m-d'))->orderBy('date', 'asc')->get();
         return view('coach.magazine', compact('trainig'));
     }
 
@@ -65,7 +65,7 @@ class MagazineController extends Controller
 
     public function showMagazinesCoach()
     {
-        $groups = Training::all()->groupBy('coach');
+        $groups = Training::where('date', '<=', date('Y-m-d'))->orderBy('date', 'desc')->get()->groupBy('coach')->sortKeys();
 
         foreach ($groups as $coach => $training){
             foreach ($training as $train){

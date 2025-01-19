@@ -107,6 +107,11 @@
                         data: 'profile',
                     },
                     {
+                        title: "Дата",
+                        className: "column-160 text-align-center vertical-align-middle",
+                        data: 'data',
+                    },
+                    {
                         title: "День",
                         className: "column-160 text-align-center vertical-align-middle",
                         data: 'day',
