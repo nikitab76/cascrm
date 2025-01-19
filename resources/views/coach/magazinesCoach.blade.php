@@ -39,14 +39,16 @@
                                             <div id="group_{{$train->id}}" class="accordion-collapse collapse"
                                                  data-bs-parent="#accordionExampleGroup">
                                                 <div class="accordion-body">
-                                                    @foreach($train->users as $user => $value)
-                                                        <div class="col mt-2">
-                                                            <input type="text" class="col-6 form-control"
-                                                                   value="{{\App\Models\Users::where('id', $user)->value('surname')}}"
-                                                                   @if($value) style="color: green"
-                                                                   @else style="color: red" @endif>
-                                                        </div>
-                                                    @endforeach
+                                                    @if(isset($train->users))
+                                                        @foreach($train->users as $user => $value)
+                                                            <div class="col mt-2">
+                                                                <input type="text" class="col-6 form-control"
+                                                                       value="{{\App\Models\Users::where('id', $user)->value('surname')}}"
+                                                                       @if($value) style="color: green"
+                                                                       @else style="color: red" @endif>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
