@@ -65,7 +65,7 @@ class MagazineController extends Controller
 
     public function showMagazinesCoach()
     {
-        $groups = Training::where('date', '<=', date('Y-m-d'))->orderBy('date', 'desc')->get()->groupBy('coach')->sortKeys();
+        $groups = Training::query()->where('group', '!=', '')->where('date', '<=', date('Y-m-d'))->orderBy('date', 'desc')->get()->groupBy('coach')->sortKeys();
 
         foreach ($groups as $coach => $training){
             foreach ($training as $train){
