@@ -164,24 +164,26 @@ class trainingController extends Controller
         foreach ($request->users as $user) {
             $user = Users::where('id', $user)->first();
             if ($doc = UsersDocument::where('user_id', $user->id)->first()) {
-                //dd($doc);
                 if (isset($doc->coach)) {
                     return response()->json([
                         'success' => false,
                         'message' => 'У ' . $user->fullName() . ' уже есть тренер!'
                     ]);
-                } else {
+                }
+            }
+        }
+            if (traning_group::create([
+                'coach_id' => $request->coach,
+                'group_num' => $request->numGroup,
+                'users_list' => json_encode($request->users)
+            ])){
+                foreach ($request->users as $user) {
+                    $doc = UsersDocument::where('user_id', $user)->first();
                     $doc->coach = $request->coach;
                     $doc->save();
                 }
             }
-        }
-        //dd(11);
-        traning_group::create([
-            'coach_id' => $request->coach,
-            'group_num' => $request->numGroup,
-            'users_list' => json_encode($request->users)
-        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Группа успешно создана!'

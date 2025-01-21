@@ -37,7 +37,7 @@
                                             <div class="accordion-body">
                                                 @foreach(json_decode($train['users_list']) as $user)
                                                     <div class="col mt-2">
-                                                        <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->value('surname')}}">
+                                                        <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->first()->fullName()}}">
                                                     </div>
                                                 @endforeach
                                             </div>

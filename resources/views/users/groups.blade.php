@@ -32,10 +32,24 @@
                         <div id="{{$train->id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @foreach(json_decode($train['users_list']) as $user)
-                                <div class="col mt-2">
-                                    <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->value('surname')}}">
-                                </div>
+                                    <div class="row user-row-edd d-flex align-items-center mt-3">
+                                        <div class="col-auto">
+                                            <input type="text" class="form-control"
+                                                   value="{{ \App\Models\Users::where('id', $user)->value('surname') }}">
+                                        </div>
+                                        {{--<div class="col-auto">
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="removeBtnEdd()">
+                                                &minus;
+                                            </button>
+                                        </div>--}}
+                                    </div>
                                 @endforeach
+                                {{--<div class="col-sm-6">
+                                    <button type="button" class="btn btn-success mt-2" data-toggle="modal"
+                                            data-target="#editGroupe">
+                                        Редактировать группу
+                                    </button>
+                                </div>--}}
                             </div>
                         </div>
                     </div>
@@ -60,7 +74,8 @@
                             <div class="card-body">
                                 <div class="form-group" id="user-container">
                                     <div class="alert alert-danger" role="alert" id="error" style="display: none"></div>
-                                    <div class="alert alert-success" role="alert" id="success" style="display: none"></div>
+                                    <div class="alert alert-success" role="alert" id="success"
+                                         style="display: none"></div>
                                     <input type="text" name="coach" id="coach" class="form-control"
                                            value="{{\Illuminate\Support\Facades\Auth::user()->id}}"
                                            style="display: none">
