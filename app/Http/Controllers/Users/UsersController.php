@@ -25,6 +25,11 @@ class UsersController extends Controller
             testcontroller::exel($file);
             return true;
         }
+        if (isset($request->fileEdit)){
+            $file = $request->file('fileEdit');
+            testcontroller::excelAddUsers($file);
+            return true;
+        }
         if (!isset($request->name)){
             $this->response['error'] = 'Поле Имя обязательно';
         }

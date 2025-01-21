@@ -13,12 +13,23 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Rap2hpoutre\FastExcel\FastExcel;
 
 class testcontroller extends Controller
 {
     public function index()
     {
+
+        // Получаем список всех таблиц
+        // Замените 'users' на нужное имя таблицы
+        $data = DB::table('users')->get();
+
+        // Экспортируем данные в Excel
+        return (new FastExcel($data))->download('users.xlsx');
+
+
+        exit;
         $start = date('Y-m-d', strtotime('01.10.2024'));
         $end = date('Y-m-d', strtotime('31.10.2024'));
 
@@ -118,6 +129,36 @@ class testcontroller extends Controller
                 ]);
                 //dd($user, $user_dok);
             }
+        });
+        return true;
+    }
+
+    public static function excelAddUsers($file)
+    {
+        $user = new FastExcel();
+        $user->import($file, function ($line) {
+            $name = explode(" ", trim($line['ФИО занимающегося']));
+            Users::where('id', $line['id'])->update(
+            [
+                'name' => $name[1],
+                'surname' => $name[0] ?? null,
+                'second_name' => $name[2] ?? null
+            ]);
+            UsersDocument::where('user_id', $line['id'])
+                ->update(
+                  [
+                      'user_birth' => $line['дата рождения'] instanceof \DateTimeImmutable
+                          ? $line['дата рождения']->format('Y-m-d')
+                          : null,
+                      'medical_certificate' => $line['Справка 1144Н'] instanceof \DateTimeImmutable
+                          ? $line['Справка 1144Н']->format('Y-m-d')
+                          : null,
+                      'representative' => $line['ФИО представителя'] ?? null,
+                      'representative_phone' => $line['телефон'] ?? null,
+                      'nosology' => $line['Группа нозологий'],
+                  ]
+                );
+
         });
         return true;
     }

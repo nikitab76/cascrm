@@ -30,16 +30,34 @@
                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                                     data-bs-target="#group_{{$train->id}}" aria-expanded="false"
                                                     aria-controls="group_{{$train->id}}">
-                                                {{$train->group_num}}
+                                                {{$train->group_num}} группа
                                             </button>
                                         </h2>
                                         <div id="group_{{$train->id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExampleGroup">
                                             <div class="accordion-body">
-                                                @foreach(json_decode($train['users_list']) as $user)
-                                                    <div class="col mt-2">
-                                                        <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->first()->fullName()}}">
-                                                    </div>
-                                                @endforeach
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">ФИО</th>
+                                                        <th scope="col">Дата рождения</th>
+                                                        <th scope="col">Нозология</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @foreach(json_decode($train['users_list']) as $user)
+                                                        {{--<div class="col mt-2">
+                                                            <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->first()->fullName()}}">
+                                                        </div>--}}
+                                                        <tr>
+                                                            <th scope="row"><span class="fa fa-user"></span></th>
+                                                            <td>{{\App\Models\Users::where('id', $user)->first()->fullName()}}</td>
+                                                            <td>{{\App\Models\UsersDocument::where('user_id', $user)->value('user_birth')}}</td>
+                                                            <td>{{\App\Models\UsersDocument::where('user_id', $user)->value('nosology')}}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>

@@ -58,6 +58,8 @@
                                 <div class="form-group">
                                     @if(\Illuminate\Support\Facades\Auth::user()->surname == 'Белянинов')
                                     <input type="file" name="file" class="form-control">
+                                    <label for="fileEdit" class="mt-2">редактировать</label>
+                                    <input type="file" name="fileEdit" class="form-control">
                                     @endif
                                     <label for="surname">Фамилия</label>
                                     <input type="text" class="form-control" id="surname" name="surname"
