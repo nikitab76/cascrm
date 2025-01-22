@@ -66,6 +66,14 @@
             <!-- /.widget-user -->
             <!-- Default box -->
             <div class="col-md-12">
+                <div class="row" id="saveButton" style="display: none">
+                    <div class="alert alert-default-warning" role="alert">
+                        <span id="alertText"></span>
+                        <button type="button" class="btn btn-primary ml-5" style="color: white" onclick="eddUser()">
+                            сохранить
+                        </button>
+                    </div>
+                </div>
                 <div class="card">
                     <ul class="nav nav-tabs" id="user_info" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -94,7 +102,7 @@
                              aria-labelledby="home-tab" tabindex="0">
                             <div class="p-3">
                                 <h3>Общее</h3>
-                                <div class="content">
+                                <div class="content" id="profile">
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
@@ -260,6 +268,22 @@
                 </div>
             </div>
             <script>
+                $(document).ready(function () {
+                    $('#profile').on('change', 'input, select', function () {
+                        const fieldName = $(this).attr('name') || $(this).attr('id');
+                        const fieldValue = $(this).val();
+                        const message = `Изменение в поле "${fieldName}": новое значение - "${fieldValue}"`;
+
+                        $('#alertText').attr('name', fieldName);
+                        $('#alertText').attr('data-val', fieldValue);
+                        // Устанавливаем текст в div
+                        $('#alertText').text(message);
+
+                        // Показываем кнопку
+                        $('#saveButton').show();
+                    });
+                });
+
                 function update() {
                     var data = {
                         'user': {{$user->id}},
@@ -289,6 +313,12 @@
                             }
                         },
                     });
+                }
+
+                function eddUser(){
+                   const name = $('#alertText').attr('name');
+                   const val = $('#alertText').attr('data-val');
+                    console.log(name, val)
                 }
             </script>
             {{--<div class="card">
