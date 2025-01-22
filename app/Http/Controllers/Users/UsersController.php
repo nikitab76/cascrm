@@ -155,9 +155,9 @@ class UsersController extends Controller
         if (isset($id))
         {
             $coach = Users::where('id', $id)->first();
-            return $coach->fullName();
+            return $coach ? $coach->fullName() : null;
         }
-        return null;
+        return false;
     }
 
     public function engagedListGet()
@@ -167,7 +167,8 @@ class UsersController extends Controller
         foreach ($users as $user){
             $row['user']['name'] = $user->fullName();
             $row['user']['id'] = $user->user_id;
-            $row['coach']['name'] = self::getCoachById($user->coach);
+            $coachName = self::getCoachById($user->coach);
+            $row['coach']['name'] = $coachName ?? 'N/A';
             $row['coach']['id'] = $user->coach;
             $row['user_birth'] = date('d-m-Y', strtotime($user->user_birth)) ?? null;
             $row['repres'] = $user->representative;

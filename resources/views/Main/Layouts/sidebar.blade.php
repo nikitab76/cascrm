@@ -129,10 +129,10 @@
                 </div>
             </li>
         </ul>
-        <div id="garland" class="garland_4">
+        {{--<div id="garland" class="garland_4">
             <div id="nums_1">1</div>
-        </div>
-        <script>
+        </div>--}}
+        {{--<script>
             function garland() {
                 nums = document.getElementById('nums_1').innerHTML
                 if (nums == 1) {
@@ -156,7 +156,7 @@
             setInterval(function () {
                 garland()
             }, 400)
-        </script>
+        </script>--}}
     </nav>
     <!-- /.navbar -->
 
