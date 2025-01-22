@@ -165,10 +165,12 @@ class trainingController extends Controller
             $user = Users::where('id', $user)->first();
             if ($doc = UsersDocument::where('user_id', $user->id)->first()) {
                 if (isset($doc->coach)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'У ' . $user->fullName() . ' уже есть тренер!'
-                    ]);
+                    if ($doc->coach != '') {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'У ' . $user->fullName() . ' уже есть тренер!'
+                        ]);
+                    }
                 }
             }
         }
