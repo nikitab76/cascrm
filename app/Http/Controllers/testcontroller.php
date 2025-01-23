@@ -20,7 +20,7 @@ class testcontroller extends Controller
 {
     public function index()
     {
-
+        dd('test');
         // Получаем список всех таблиц
         // Замените 'users' на нужное имя таблицы
         $data = DB::table('users')->get();
