@@ -66,14 +66,18 @@
             <!-- /.widget-user -->
             <!-- Default box -->
             <div class="col-md-12">
-                <div class="row" id="saveButton" style="display: none">
-                    <div class="alert alert-default-warning" role="alert">
-                        <span id="alertText"></span>
-                        <button type="button" class="btn btn-primary ml-5" style="color: white" onclick="eddUser()">
-                            сохранить
-                        </button>
+                @if(\Illuminate\Support\Facades\Auth::user()->role == 'admin')
+                    <div class="row" id="saveButton" style="display: none">
+                        <div class="alert alert-default-warning" role="alert">
+                            <span id="alertText"></span>
+                            <button type="button" class="btn btn-primary ml-5" style="color: white" onclick="eddUser()">
+                                сохранить
+                            </button>
+                        </div>
                     </div>
-                </div>
+                    <div class="alert alert-success" role="alert" id="successEdd"
+                         style="display: none"></div>
+                @endif
                 <div class="card">
                     <ul class="nav nav-tabs" id="user_info" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -107,6 +111,7 @@
                                         <div class="col-6">
                                             <div class="form-group">
                                                 {{--@dump($user)--}}
+                                                <input id="user_id" value="{{$user->id}}" style="display: none">
                                                 <label for="surname">Фамилия</label>
                                                 <input type="text" class="form-control" id="surname" name="surname"
                                                        value="{{$user->surname}}" autocomplete="off">
@@ -135,8 +140,8 @@
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            @if($user->role != 'user')
-                                                <div class="form-group">
+                                            <div class="form-group">
+                                                @if($user->role != 'user')
                                                     <div class="row">
                                                         <label for="phone">Телефон</label>
                                                         <input type="tel" class="form-control" id="user_phone"
@@ -147,16 +152,26 @@
                                                         <input type="text" class="form-control" id="speciality"
                                                                name="speciality">
                                                     </div>
-                                                </div>
-                                            @else
-                                                <div class="form-group">
+                                                @else
                                                     <label for="user_coach">Инструктор</label>
                                                     <input type="text" class="form-control" id="user_coach"
                                                            name="user_coach" autocomplete="off"
                                                            value="{{\App\Models\Users::where('id', $user->coach)->value('surname')}}">
-                                                    <label for="representative">Представитель</label>
-                                                    <input type="text" class="form-control" id="representative"
-                                                           name="representative" value="{{$user->representative}}">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <label for="representative">Представитель</label>
+                                                            <input type="text" class="form-control" id="representative"
+                                                                   name="representative"
+                                                                   value="{{$user->representative}}">
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label for="phone">Телефон</label>
+                                                            <input type="tel" class="form-control" id="user_phone"
+                                                                   pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                                                   name="user_phone" autocomplete="off"
+                                                                   value="{{$user->phone}}">
+                                                        </div>
+                                                    </div>
                                                     <div class="row">
                                                         <div class="col-6">
                                                             <label for="nosology">Нозология</label>
@@ -172,8 +187,8 @@
                                                                    autocomplete="off">
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @endif
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -315,36 +330,35 @@
                     });
                 }
 
-                function eddUser(){
-                   const name = $('#alertText').attr('name');
-                   const val = $('#alertText').attr('data-val');
+                function eddUser() {
+                    const user = $('#user_id').val();
+                    const name = $('#alertText').attr('name');
+                    const val = $('#alertText').attr('data-val');
                     console.log(name, val)
+                    var data = {
+                        [name]: val,
+                        'user': user
+                    }
+
+                    $.ajax({ // инициализациям ajax запрос
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        type: 'POST', // отправляем в POST формате, можно GET
+                        url: '{{route('edd.users')}}', // путь дo обработчика
+                        dataType: 'json', // ответ ждём в json формате
+                        data: data, // данные для отправки
+                        success: function (data) { // событие в случае удачного запроса
+                            if (data.success) {
+                                $('#saveButton').hide();
+                                $('#successEdd').show();
+                                $('#successEdd').text(data.message);
+                                window.location.reload();
+                            }
+                        },
+                    })
                 }
             </script>
-            {{--<div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Любая нужная инфа</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    Start creating your amazing application!
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    Footer
-                </div>
-                <!-- /.card-footer-->
-            </div>--}}
-            <!-- /.card -->
-
         </section>
         <!-- /.content -->
     </div>

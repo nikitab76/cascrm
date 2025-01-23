@@ -122,6 +122,11 @@
                 ],
                 "columns": [
                     {
+                        title: "id",
+                        className: "column-160 text-align-center vertical-align-middle",
+                        data: 'user.id',
+                    },
+                    {
                         title: "Имя",
                         className: "column-120 text-align-center vertical-align-middle",
                         data: 'user',

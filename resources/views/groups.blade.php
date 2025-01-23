@@ -38,7 +38,7 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                     <tr>
-                                                        <th scope="col">#</th>
+                                                        <th scope="col">id</th>
                                                         <th scope="col">ФИО</th>
                                                         <th scope="col">Дата рождения</th>
                                                         <th scope="col">Нозология</th>
@@ -50,7 +50,7 @@
                                                             <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->first()->fullName()}}">
                                                         </div>--}}
                                                         <tr>
-                                                            <th scope="row"><span class="fa fa-user"></span></th>
+                                                            <th scope="row">{{$user}}</th>
                                                             <td>{{\App\Models\Users::where('id', $user)->first()->fullName()}}</td>
                                                             <td>{{\App\Models\UsersDocument::where('user_id', $user)->value('user_birth')}}</td>
                                                             <td>{{\App\Models\UsersDocument::where('user_id', $user)->value('nosology')}}</td>

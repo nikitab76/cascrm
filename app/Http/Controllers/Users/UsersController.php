@@ -69,6 +69,61 @@ class UsersController extends Controller
         return redirect()->route('users.list');
     }
 
+    public function eddUsers(Request $request)
+    {
+        $params = '';
+        $value = '';
+        if(isset($request->surname)){
+            $params = 'surname';
+            $value = $request->surname;
+        }
+
+        if(isset($request->name)){
+            $params = 'name';
+            $value = $request->name;
+        }
+
+        if(isset($request->second_name)){
+            $params = 'second_name';
+            $value = $request->second_name;
+        }
+
+        if(isset($request->user_coach)){
+            $params = 'coach';
+            $value = $request->user_coach;
+        }
+
+        if(isset($request->representative)){
+            $params = 'representative';
+            $value = $request->representative;
+        }
+
+        if(isset($request->user_phone)){
+            $params = 'representative_phone';
+            $value = $request->user_phone;
+        }
+
+        if(isset($request->nosology)){
+            $params = 'nosology';
+            $value = $request->nosology;
+        }
+
+        if(isset($request->medical_certificate)){
+            $params = 'medical_certificate';
+            $value = date('Y-m-d', strtotime($request->medical_certificate));
+        }
+
+        if ($params == 'surname' || $params == 'name' || $params == 'second_name'){
+            Users::where('id', $request->user)->update([$params => $value]);
+        } else {
+            UsersDocument::where('user_id', $request->user)->update([$params => $value]);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Данные успешно сохранены!'
+        ]);
+    }
+
     public function showUsers(string $id)
     {
         $user = Users::where('id' , $id)->first();
@@ -122,7 +177,7 @@ class UsersController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Введите новые данные!'
-                ]);;
+                ]);
             }
         }
     }
