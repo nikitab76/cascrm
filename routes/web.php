@@ -9,6 +9,7 @@ Route::any('logout', [\App\Http\Controllers\MainController::class, 'logout'])->n
 Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function (){
     Route::get('/profile', [\App\Http\Controllers\MainController::class, 'indexProfile'])->name('index.profile');
     Route::post('/profile/update/password', [\App\Http\Controllers\Users\UsersController::class, 'updatePassword'])->name('password.update');
+    //admin rout
     Route::middleware([\App\Http\Middleware\AdminRole::class])->group(function (){
         Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
         Route::post('/users/list', [\App\Http\Controllers\Users\UsersController::class, 'usersList'])->name('get.users.list');
@@ -30,6 +31,9 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::get('coachHour', [\App\Http\Controllers\trainingController::class, 'indexHourCoach'])->name('index.hour.coach');
 
         Route::get('magazine/coach', [\App\Http\Controllers\MagazineController::class, 'showMagazinesCoach'])->name('magazines.coach');
+        //exel журнал
+        Route::get('crateMagazine', [\App\Http\Controllers\MagazineController::class, 'exelMagazine'])->name('magazines.exel');
+        Route::post('crateMagazine', [\App\Http\Controllers\MagazineController::class, 'exelMagazineCreate'])->name('magazines.exel.create');
     });
     Route::get('training/list', [\App\Http\Controllers\trainingController::class, 'trainingProfile'])->name('training.profile');
     Route::get('trainings', [\App\Http\Controllers\trainingController::class, 'trainingList'])->name('training.list');
