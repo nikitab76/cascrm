@@ -138,6 +138,9 @@ class MagazineController extends Controller
 
         $doc = new TemplateProcessor(storage_path('app/public/doc/proba.docx'));
 
+        $day = self::getRandomWeekdaysDates(2024, 9);
+        $count = count($day['days']);
+
         // Создаем таблицу, которую нужно вставить в шаблон
         $phpWord = new PhpWord();
         $section = $phpWord->addSection();
@@ -173,24 +176,109 @@ class MagazineController extends Controller
         ];
 
         $tableVisit = $section->addTable($tableStyle);
-
         // Заголовок
         $tableVisit->addRow();
         $tableVisit->addCell(1000, ['vMerge' => 'restart', 'valign' => 'center'])->addText('№', ['bold' => true]);
         $tableVisit->addCell(4000, ['vMerge' => 'restart', 'valign' => 'center'])->addText('Фамилия, имя', ['bold' => true]);
-        $tableVisit->addCell(8000, ['gridSpan' => 8, 'align' => 'center'])->addText('Сентябрь', ['bold' => true]);
+        $tableVisit->addCell(8000, ['gridSpan' => $count, 'align' => 'center'])->addText('Сентябрь', ['bold' => true]);
 
         // Вторая строка (даты)
         $tableVisit->addRow();
         $tableVisit->addCell(1000, ['vMerge' => 'continue']); // Продолжение объединенной ячейки №
         $tableVisit->addCell(4000, ['vMerge' => 'continue']); // Продолжение объединенной ячейки Фамилия, имя
-        foreach ([2, 4, 6, 8, 10, 12, 14, 16] as $date) {
+        foreach ($day['days'] as $date) {
             $tableVisit->addCell(1000)->addText($date);
         }
 
+        //строки посещений
+        $columnCounts = array_fill(1, $count, 0);
 
+        foreach ($users as $key => $user) {
+            $tableVisit->addRow();
+            $tableVisit->addCell(1000)->addText($key + 1);
+            $tableVisit->addCell(4000)->addText($user['user']);
 
-        // Заменяем метку {{table}} в шаблоне на HTML-код таблицы
+            for ($i = 1; $i <= $count; $i++) {
+                $arrayVisit = ['n', '+'];
+                $key = array_rand($arrayVisit, 1);
+                $value = $arrayVisit[$key]; // Получаем сам текст
+                $tableVisit->addCell(1000)->addText($value); // Добавляем в таблицу
+
+                if ($value == '+') { // Проверяем непосредственно текст
+                    $columnCounts[$i]++;
+                }
+            }
+        }
+
+        $row = 15 - count($users);
+
+        for ($r = 1; $r <= $row; $r++) {
+            $tableVisit->addRow();
+            $tableVisit->addCell(1000)->addText('');
+            $tableVisit->addCell(4000)->addText('');
+
+            for ($i = 1; $i <= $count; $i++) {
+                $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+            }
+        }
+
+        //Присутствовало
+        $tableVisit->addRow();
+        $tableVisit->addCell(1000)->addText('');
+        $tableVisit->addCell(4000)->addText('Присутствовало');
+        foreach ($columnCounts as $value) {
+            $tableVisit->addCell(1000)->addText($value);
+        }
+
+        //Продолжительность(час)
+        $tableVisit->addRow();
+        $tableVisit->addCell(1000)->addText('');
+        $tableVisit->addCell(4000)->addText('Продолжительность(час)');
+        for ($i = 1; $i <= $count; $i++) {
+            $tableVisit->addCell(1000)->addText(2); // Добавляем в таблицу
+        }
+
+        //В том числе
+        $tableVisit->addRow();
+        $tableVisit->addCell(1000)->addText('');
+        $tableVisit->addCell(4000)->addText('В том числе');
+        for ($i = 1; $i <= $count; $i++) {
+            $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+        }
+
+        //ОФП
+        $tableVisit->addRow();
+        $tableVisit->addCell(1000)->addText('');
+        $tableVisit->addCell(4000)->addText('ОФП');
+        for ($i = 1; $i <= $count; $i++) {
+            $tableVisit->addCell(1000)->addText(1); // Добавляем в таблицу
+        }
+
+        //СФП
+        $tableVisit->addRow();
+        $tableVisit->addCell(1000)->addText('');
+        $tableVisit->addCell(4000)->addText('СФП');
+        for ($i = 1; $i <= $count; $i++) {
+            $tableVisit->addCell(1000)->addText(1); // Добавляем в таблицу
+        }
+
+        //Теория
+        $tableVisit->addRow();
+        $tableVisit->addCell(1000)->addText('');
+        $tableVisit->addCell(4000)->addText('Теория');
+        for ($i = 1; $i <= $count; $i++) {
+            $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+        }
+
+        //Подпись инструктора
+        $tableVisit->addRow();
+        $tableVisit->addCell(1000)->addText('');
+        $tableVisit->addCell(4000)->addText('Подпись инструктора');
+        for ($i = 1; $i <= $count; $i++) {
+            $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+        }
+
+        // Заменяем метку ${tegs} в шаблоне на HTML-код таблицы
         $doc->setComplexBlock('user_table', $tableUser);
         $doc->setComplexBlock('user_visit', $tableVisit);
         $doc->setValue('coach', $coach);
@@ -203,5 +291,32 @@ class MagazineController extends Controller
 
         // Отправляем файл на скачивание
         return response()->download($path)->deleteFileAfterSend(true);
+    }
+
+    public function getRandomWeekdaysDates($year, $month) {
+        // Дни недели в числовом формате (1 — понедельник, 7 — воскресенье)
+        $weekdays = range(1, 7);
+        shuffle($weekdays);
+        $randomWeekdays = array_slice($weekdays, 0, 3);
+
+        $dates = [];
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $dateString = sprintf('%04d-%02d-%02d', $year, $month, $day);
+            $weekday = date('N', strtotime($dateString));
+
+            if (in_array($weekday, $randomWeekdays)) {
+                $dates[$weekday][] = date('d', strtotime($dateString));
+            }
+        }
+
+        // Объединяем все даты в один массив и сортируем
+        $allDates = array_merge(...array_values($dates));
+        sort($allDates);
+
+        $data = ['day' => $randomWeekdays, 'days' => $allDates];
+
+        return $data;
     }
 }
