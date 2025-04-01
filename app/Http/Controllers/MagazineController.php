@@ -311,7 +311,7 @@ class MagazineController extends Controller
             $tableVisit->addCell(4000)->addText($user['user']);
 
             for ($i = 1; $i <= $count; $i++) {
-                $arrayVisit = ['n', ' '];
+                $arrayVisit = ['н', ' '];
                 $key = array_rand($arrayVisit, 1);
                 $value = $arrayVisit[$key]; // Получаем сам текст
                 $tableVisit->addCell(1000)->addText($value); // Добавляем в таблицу
