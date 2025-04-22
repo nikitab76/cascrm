@@ -118,7 +118,7 @@ class MagazineController extends Controller
             if ($firstLine) {
                 $coach = $line['инструктор'] ?? '';
                 $sport = $line['спорт'] ?? '';
-                $num = $line['номер'];
+                $num = $line['нрмер'] ?? $line['номер'];
                 $firstLine = false;
             }
 
@@ -175,12 +175,15 @@ class MagazineController extends Controller
 
         // Добавляем данные пользователей с границами
         foreach ($users as $key => $user) {
-            $fullName = $user['user'];
+            $fullName = trim($user['user']);
             if (preg_match('/^\S+/', $fullName, $matches)) {
                 $lastName = $matches[0]; // Фамилия
             }
             $user_id = Users::query()->where('surname', $lastName)->value('id');
-            $userPhone = UsersDocument::query()->where('user_id', $user_id)->value('representative_phone') ?? ' ';
+            $userPhone = '';
+            if ($user_id) {
+                $userPhone = UsersDocument::query()->where('user_id', $user_id)->value('representative_phone') ?? ' ';
+            }
             $tableUser->addRow();
             $tableUser->addCell(200, ['borderSize' => 6, 'borderColor' => '000000'])->addText($key + 1);
             $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText(trim($user['user']));
