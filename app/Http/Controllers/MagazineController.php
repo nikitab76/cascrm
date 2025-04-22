@@ -111,18 +111,21 @@ class MagazineController extends Controller
         $users = [];
         $coach = '';
         $sport = '';
+        $num = '';
         $firstLine = true;
 
-        $file->import($request->file, function ($line) use (&$users, &$coach, &$sport, &$firstLine) {
+        $file->import($request->file, function ($line) use (&$users, &$coach, &$sport, &$firstLine, &$num) {
             if ($firstLine) {
                 $coach = $line['инструктор'] ?? '';
                 $sport = $line['спорт'] ?? '';
+                $num = $line['номер'];
                 $firstLine = false;
             }
 
             $row = [
                 'sport' => $sport,
                 'coach' => $coach,
+                'num' => $num,
                 'user' => $line['группа'] ?? null,
                 'br' => $line['др'] instanceof \DateTimeImmutable
                     ? $line['др']->format('Y-m-d')
@@ -241,9 +244,11 @@ class MagazineController extends Controller
         $doc->setComplexBlock('user_visit_des', $tableVisitDes);
         $doc->setValue('coach', $coach);
         $doc->setValue('sport', $sport);
+        $doc->setValue('num', $num);
 
         // Сохраняем итоговый документ
-        $filename = 'users_table_from_template.docx';
+
+        $filename = "$coach $sport $num" . '.docx';
         $path = storage_path('app/public/success/' . $filename);
         $doc->saveAs($path);
 
