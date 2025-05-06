@@ -88,6 +88,18 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        #calendar-print-wrapper {
+            width: 100%; /* или задайте конкретную ширину */
+            height: 900px; /* задайте желаемую высоту */
+            overflow: hidden; /* отключаем скролл */
+        }
+
+        /* Пример настройки самого календаря */
+        #calendar {
+            width: 100%;
+            height: 100%;
+        }
     </style>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -283,6 +295,8 @@
                                                         <option selected value="4">Цс</option>
                                                         <option value="2">Цас</option>
                                                         <option value="1">Сшор</option>
+                                                        <option value="5">Платные услуги</option>
+                                                        <option value="6">Мероприятия</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -334,8 +348,13 @@
                                             <button id="prev-week" class="btn btn-outline-warning">← Предыдущая неделя</button>
                                             <button id="next-week" class="btn btn-outline-warning">Следующая неделя →</button>
                                             <button id="today" class="btn btn-outline-warning">Сегодня</button>
+                                            <button id="export-pdf" class="btn btn-outline-success">🖨 Печать</button>
+
                                         </div>
-                                        <div id="calendar"></div>
+                                        <div id="calendar-print-wrapper">
+                                            <h3 class="widget-user-username text-center">{{$room['room']->title}}</h3>
+                                            <div id="calendar"></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="popup">
@@ -417,6 +436,10 @@
     <script src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.min.js"></script>
     <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script>
         function show() {
             $('#alertmess').show();
@@ -498,24 +521,30 @@
         }
 
         function renderCalendar(data) {
+
             var calendar = new tui.Calendar('#calendar', {
                 defaultView: 'week',
                 taskView: false,
                 scheduleView: ['time'],
-                useDetailPopup: true,  // Включаем всплывающее окно
-                useCreationPopup: true,  // Включаем создание событий через всплывающие окна
-                useResizeHandle: true,   // Включаем изменение размера событий
-                useDrag: true,           // Включаем перетаскивание событий
+                useDetailPopup: true,
+                useCreationPopup: true,
+                useResizeHandle: true,
+                useDrag: true,
                 week: {
                     startDayOfWeek: 1,
-                    hourStart: 6,
-                    hourEnd: 23,
+                    hourStart: 8,     // важно: с нуля
+                    hourEnd: 23,       // важно: до 24
+                    dayNames: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
                 },
                 template: {
                     time: function (schedule) {
-                        var start = schedule.start;
-                        var timeString = start.getHours().toString().padStart(2, '0') + ':' + start.getMinutes().toString().padStart(2, '0');
-                        return timeString + ' ' + schedule.title;
+                        const start = schedule.start;
+                        const hours = start.getHours().toString().padStart(2, '0');
+                        const minutes = start.getMinutes().toString().padStart(2, '0');
+                        return `${hours}:${minutes} ${schedule.title}`;
+                    },
+                    timegridDisplayPrimaryTime(hour) {
+                        return hour.hour + ':00';
                     }
                 }
             });
@@ -606,6 +635,51 @@
 
             document.getElementById('today').addEventListener('click', function () {
                 calendar.today();  // Возврат на текущую неделю
+            });
+
+            document.getElementById('export-pdf').addEventListener('click', async function () {
+                const calendarElement = document.getElementById('calendar-print-wrapper');
+
+                const canvas = await html2canvas(calendarElement, {
+                    scale: 2,
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+
+                const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+                const width = imgWidth * ratio;
+                const height = imgHeight * ratio;
+
+                const x = (pageWidth - width) / 2;
+                const y = (pageHeight - height) / 2;
+
+                pdf.addImage(imgData, 'PNG', x, y, width, height);
+
+                // Генерируем Blob и открываем для печати
+                const blob = pdf.output('blob');
+
+                const blobURL = URL.createObjectURL(blob);
+                const printWindow = window.open(blobURL);
+
+                // Ждём, пока окно загрузит PDF, затем вызываем print()
+                printWindow.onload = function () {
+                    printWindow.focus();
+                    printWindow.print();
+                };
             });
         }
     </script>

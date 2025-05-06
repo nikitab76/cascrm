@@ -116,7 +116,7 @@ class RoomsController extends Controller
             '<strong>Конец тренировки:</strong> ' . $training->time_end . '<br>' .
                 '<strong>Инструктор:</strong> ' . $training->coach . '<br>'.
                 '<strong>Группа:</strong> ' . $group . '<br>'.
-            '<strong>Комментарий:</strong> ' . $training->comment;
+            '<strong>Комментарий:</strong> ' . self::getOrganisation($training->quarter) . ' ' . $training->comment;
             $list[] = $row;
         }
         return $list;
@@ -129,6 +129,26 @@ class RoomsController extends Controller
                 return '';
             case 1:
                 return '#d5b42c';
+            case 5:
+                return '#1cc6e1';
+            case 6:
+                return '#c71ce1';
+        }
+    }
+
+    public function getOrganisation($data)
+    {
+        switch ($data){
+            case 4:
+                return 'Цс';
+            case 2:
+                return 'Цас';
+            case 1:
+                return 'Сшор';
+            case 5:
+                return 'Платные услуги';
+            case 6:
+                return 'Мероприятия';
         }
     }
 }
