@@ -595,16 +595,14 @@
             });
 
             // Обработчик события для изменения стандартного всплывающего окна
-            /*calendar.on('clickSchedule', function(event) {
-                var schedule = event.schedule;
+            /*calendar.on('beforeUpdateSchedule', function({ event, changes }) {
+                console.log('Событие редактируется:', event);
+                console.log('Изменения:', changes);
 
-                // Заполнение данных в всплывающем окне
-                $('#popupTitle').text(schedule.title);
-                $('#popupComment').html(schedule.body);
+                // Например: отправим на сервер изменения
 
-                // Показать всплывающее окно
-                $('#overlay').show();
-                $('#popup').show();
+                // Обновим вручную (если нужно)
+
             });*/
 
             $('#closePopup').click(function() {

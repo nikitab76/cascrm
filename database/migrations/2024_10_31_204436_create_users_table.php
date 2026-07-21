@@ -3,9 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 return new class extends Migration
 {
+    use SoftDeletes;
     /**
      * Run the migrations.
      */
@@ -24,6 +26,7 @@ return new class extends Migration
                 $table->string('role')->nullable();
                 $table->string('job_title')->nullable();
                 $table->timestamps();
+                $table->softDeletes(); // deleted_at
             });
         }
 
@@ -53,6 +56,9 @@ return new class extends Migration
             }
             if (Schema::hasColumn('users', 'login')) {
                 $table->string('login')->nullable()->change();
+            }
+            if (Schema::hasColumn('users', 'password')) {
+                $table->string('password')->nullable()->change();
             }
             if (Schema::hasColumn('users', 'password')) {
                 $table->string('password')->nullable()->change();

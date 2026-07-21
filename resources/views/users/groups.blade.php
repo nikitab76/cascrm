@@ -79,8 +79,8 @@
                                     <input type="text" name="coach" id="coach" class="form-control"
                                            value="{{\Illuminate\Support\Facades\Auth::user()->id}}"
                                            style="display: none">
-                                    <label for="numGroup">Номер группы</label>
-                                    <input type="number" class="form-control" id="numGroup" name="numGroup"
+                                    <label for="numGroup">Название группы</label>
+                                    <input type="text" class="form-control" id="numGroup" name="numGroup"
                                            placeholder="">
 
                                     <label for="users[]">Занимающиеся</label>

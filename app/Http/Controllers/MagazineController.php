@@ -7,9 +7,12 @@ use App\Models\Training;
 use App\Models\traning_group;
 use App\Models\Users;
 use App\Models\UsersDocument;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Shared\ZipArchive;
 use PhpOffice\PhpWord\SimpleType\Jc;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 use function PHPUnit\Framework\isEmpty;
@@ -259,6 +262,209 @@ class MagazineController extends Controller
         return response()->download($path)->deleteFileAfterSend(true);
     }
 
+    public function execelMagazine(Request $request)
+    {
+        $file = new \Rap2hpoutre\FastExcel\FastExcel();
+        $zip = new ZipArchive();
+        $zipFileName = 'журналы_' . now()->format('Y-m-d_H-i-s') . '.zip';
+        $zipPath = storage_path('app/public/success/' . $zipFileName);
+
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            throw new \Exception('Не удалось создать архив');
+        }
+        $arrayUser = $file->import($request->file('file'));
+        $result = [];
+        foreach ($arrayUser as $row) {
+            $instructor = trim($row['Инструктор'] ?? '');
+            if (!$instructor) continue;
+            $result[$instructor]['вид_спорта'] = $row['вид спорта'] ?? null;
+            $result[$instructor]['расписание'] = [
+                'пн' => $row['пн'] ?? '',
+                'вт' => $row['вт'] ?? '',
+                'ср' => $row['ср'] ?? '',
+                'чт' => $row['чт'] ?? '',
+                'пт' => $row['пт'] ?? '',
+                'сб' => $row['сб'] ?? '',
+                'вс' => $row['вс'] ?? '',
+            ];
+
+            $dateValue = $row['дата рож'] ?? '';
+            if ($dateValue instanceof \DateTimeInterface) {
+                $dateValue = $dateValue->format('d.m.Y');
+            }
+            $result[$instructor]['группа'][] = [
+                'фио' => $row['ФИО'] ?? '',
+                'дата_рождения' => $dateValue,
+                'пол' => $row['Пол'] ?? '',
+                'телефон' => $row['Телефон'] ?? '',
+                'адрес' => $row['Адрес'] ?? '',
+                'представитель' => $row['Представитель'] ?? '',
+                'приказ' => $row['№ Приказ о зачислении'] ?? ''
+            ];
+
+        }
+        //dd($result);
+        foreach ($result as $coach => $magazine) {
+            $doc = new TemplateProcessor(storage_path('app/public/doc/proba.docx'));
+            //____________________________________________
+            // Создаем таблицу, общие сведения
+            $phpWord = new PhpWord();
+            $tableStyle = [
+                'borderSize' => 6,
+                'borderColor' => '000000',
+                'cellMargin' => 50,
+            ];
+            $months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            $section = $phpWord->addSection();
+            $tableUser = $section->addTable($tableStyle);
+
+            // Добавляем заголовки с границами
+            $tableUser->addRow();
+            $tableUser->addCell(200, ['borderSize' => 6, 'borderColor' => '000000'])->addText('');
+            $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText('ФИО');
+            $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText('Дата рождения');
+            $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText('Зачисление');
+            $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText('Отчисление');
+            $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText('адрес');
+            $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText('Контактные данные');
+            $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText('представитель');
+
+            // Добавляем данные пользователей с границами
+            foreach ($magazine['группа'] as $user) {
+                //dd($user);
+                $fullName = trim($user['фио']);
+                if (preg_match('/^\S+/', $fullName, $matches)) {
+                    $lastName = $matches[0]; // Фамилия
+                }
+
+
+                $tableUser->addRow();
+                $tableUser->addCell(200, ['borderSize' => 6, 'borderColor' => '000000'])->addText();
+                $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText(trim($fullName));
+                $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText($user['дата_рождения']);
+                $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText($user['приказ'] ?? '');
+                $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText($user['end'] ?? '');
+                $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText($user['адрес'] ?? '');
+                $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText($user['телефон']);
+                $tableUser->addCell(2000, ['borderSize' => 6, 'borderColor' => '000000'])->addText($user['представитель']);
+            }
+            // таблица расписаний
+            $tableSchedule = $section->addTable($tableStyle);
+            $tableSchedule->addRow();
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('');
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('Пн');
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('Вт');
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('Ср');
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('Чт');
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('Пт');
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('Сб');
+            $tableSchedule->addCell(1500, ['valign' => 'center'])->addText('Вс');
+            foreach ($months as $month) {
+                $tableSchedule->addRow();
+                $tableSchedule->addCell(1500, ['valign' => 'center'])->addText($month);
+                foreach ($magazine['расписание'] as $time) {
+                    $tableSchedule->addCell(1500, ['valign' => 'center'])->addText($time);
+                }
+            }
+
+            //таблица посещений
+            $date = self::datesDay($magazine['расписание'], 2025);
+            // Создаём контейнер TextRun
+            //$table = self::createTableVisitDoc('январь', $date['январь'], $magazine['группа']);
+            $sport = htmlspecialchars(substr($magazine['вид_спорта'], 0, -1));
+
+            $doc->setValue('sport', $sport);
+            $doc->setValue('coach', substr($coach, 0, -1));
+            $doc->setComplexBlock('table_schedule', $tableSchedule);
+            $doc->setComplexBlock('user_table', $tableUser);
+            $doc->setComplexBlock('user_visit_jun', self::createTableVisitDoc('январь', $date['январь'], $magazine['группа']));
+            $doc->setComplexBlock('user_visit_feb', self::createTableVisitDoc('февраль', $date['февраль'], $magazine['группа']));
+            $doc->setComplexBlock('user_visit_much', self::createTableVisitDoc('март', $date['март'], $magazine['группа']));
+            $doc->setComplexBlock('user_visit_apr', self::createTableVisitDoc('апрель', $date['апрель'], $magazine['группа']));
+            $doc->setComplexBlock('user_visit_may', self::createTableVisitDoc('май', $date['май'], $magazine['группа']));
+            $doc->setComplexBlock('user_visit_june', self::createTableVisitDoc('июнь', $date['июнь'], $magazine['группа']));
+
+            $filename = "$coach " . $magazine['вид_спорта'] . '.docx';
+            $path = storage_path('app/public/success/' . $filename);
+            $doc->saveAs($path);
+            $zip->addFile($path, $filename);
+
+            // Отправляем файл на скачивание
+            //return response()->download($path)->deleteFileAfterSend(true);
+            //return true;
+
+        }
+        $zip->close();
+        return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
+    public function datesDay(array $input, int $year = null)
+    {
+        $year = $year ?? date('Y');
+
+        $monthMap = [
+            'январь' => 1,
+            'февраль' => 2,
+            'март' => 3,
+            'апрель' => 4,
+            'май' => 5,
+            'июнь' => 6,
+        ];
+
+        $weekdayMap = [
+            'вс' => 0,
+            'пн' => 1,
+            'вт' => 2,
+            'ср' => 3,
+            'чт' => 4,
+            'пт' => 5,
+            'сб' => 6,
+        ];
+
+        $result = [];
+
+        foreach ($monthMap as $monthName => $monthNumber) {
+            // Определяем количество дней в месяце
+            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $monthNumber, $year);
+
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = DateTime::createFromFormat('Y-m-d', sprintf('%04d-%02d-%02d', $year, $monthNumber, $day));
+                $dayOfWeek = (int)$date->format('w'); // 0 (вс) – 6 (сб)
+
+                foreach ($weekdayMap as $weekdayStr => $weekdayNum) {
+                    if (!empty($input[$weekdayStr]) && $dayOfWeek === $weekdayNum) {
+                        // Разделяем строку на начало и конец
+                        [$startStr, $endStr] = explode('-', $input[$weekdayStr]);
+
+                        // Создаем объекты времени
+                        $start = new DateTime($startStr);
+                        $end = new DateTime($endStr);
+
+                        // Если конец раньше начала (например, 23:00–01:00), считаем, что это на следующий день
+                        if ($end < $start) {
+                            $end->modify('+1 day');
+                        }
+
+                        // Получаем разницу
+                        $interval = $start->diff($end);
+
+                        // Считаем общее количество часов (включая дни)
+                        $totalHours = $interval->days * 24 + $interval->h;
+
+                        // Форматируем результат
+                        $result[$monthName][] = [
+                            'время' => $totalHours . ':' . str_pad($interval->i, 2, '0', STR_PAD_LEFT),
+                            'дата' => $date->format('d'),
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $result;
+
+    }
+
     public function getRandomWeekdaysDates($year, $month, $daysWeek)
     {
 
@@ -286,7 +492,8 @@ class MagazineController extends Controller
 
     public function createTableVisitDoc($month, $day, $users)
     {
-        $count = count($day['days']);
+        //dd($day);
+        $count = count($day);
         $phpWord = new PhpWord();
         $section = $phpWord->addSection();
         $tableStyle = [
@@ -298,104 +505,168 @@ class MagazineController extends Controller
         $tableVisit = $section->addTable($tableStyle);
         // Заголовок
         $tableVisit->addRow();
-        $tableVisit->addCell(1000, ['vMerge' => 'restart', 'valign' => 'center'])->addText('№', ['bold' => true]);
-        $tableVisit->addCell(4000, ['vMerge' => 'restart', 'valign' => 'center'])->addText('Фамилия, имя', ['bold' => true]);
-        $tableVisit->addCell(8000, ['gridSpan' => $count, 'align' => 'center'])->addText($month, ['bold' => true]);
+        $tableVisit->addCell(1000, ['vMerge' => 'restart'])->addText('№', ['bold' => true]);
+        $tableVisit->addCell(4000, ['vMerge' => 'restart'])->addText('Фамилия, имя', ['bold' => true]);
+        $tableVisit->addCell(8000, ['gridSpan' => $count])->addText($month, ['bold' => true]);
 
-        // Вторая строка (даты)
+        // Даты
         $tableVisit->addRow();
-        $tableVisit->addCell(1000, ['vMerge' => 'continue']); // Продолжение объединенной ячейки №
-        $tableVisit->addCell(4000, ['vMerge' => 'continue']); // Продолжение объединенной ячейки Фамилия, имя
-        foreach ($day['days'] as $date) {
-            $tableVisit->addCell(1000)->addText($date);
+        $tableVisit->addCell(1000, ['vMerge' => 'continue']);
+        $tableVisit->addCell(4000, ['vMerge' => 'continue']);
+        foreach ($day as $date) {
+            $tableVisit->addCell(1000)->addText($date['дата']);
         }
 
-        //строки посещений
-        $columnCounts = array_fill(1, $count, 0);
+        $userCount = count($users);
+        $visitTable = [];
 
-        foreach ($users as $key => $user) {
-            $tableVisit->addRow();
-            $tableVisit->addCell(1000)->addText($key + 1);
-            $tableVisit->addCell(4000)->addText($user['user']);
+        // 1. Инициализируем массив ячеек с 'н'
+        foreach ($users as $userIndex => $user) {
+            for ($i = 0; $i < $count; $i++) {
+                $visitTable[$userIndex][$i] = 'н';
+            }
+        }
 
-            for ($i = 1; $i <= $count; $i++) {
-                $arrayVisit = ['н', ' '];
-                $key = array_rand($arrayVisit, 1);
-                $value = $arrayVisit[$key]; // Получаем сам текст
-                $tableVisit->addCell(1000)->addText($value); // Добавляем в таблицу
+        // 2. Для каждой даты выбираем минимум 3 случайных посетителя и очищаем им ячейки
+        for ($i = 0; $i < $count; $i++) {
+            $selectedUsers = array_rand($users, min(3, $userCount));
+            if (!is_array($selectedUsers)) {
+                $selectedUsers = [$selectedUsers];
+            }
 
-                if ($value == ' ') { // Проверяем непосредственно текст
-                    $columnCounts[$i]++;
+            foreach ($selectedUsers as $userIdx) {
+                $visitTable[$userIdx][$i] = ''; // посещение: оставить пусто
+            }
+
+            // Опционально: можно добавить больше случайных посещений
+            foreach ($users as $userIdx => $user) {
+                if (!in_array($userIdx, $selectedUsers)) {
+                    if (rand(0, 1) === 1) {
+                        $visitTable[$userIdx][$i] = ''; // тоже посещал
+                    }
                 }
             }
         }
 
-        $row = 15 - count($users);
-
-        for ($r = 1; $r <= $row; $r++) {
+        // 3. Заполняем таблицу
+        $columnCounts = array_fill(1, $count, 0);
+        foreach ($users as $userIndex => $user) {
             $tableVisit->addRow();
-            $tableVisit->addCell(1000)->addText('');
-            $tableVisit->addCell(4000)->addText('');
+            $tableVisit->addCell(1000)->addText($userIndex + 1);
+            $tableVisit->addCell(4000)->addText($user['фио']);
 
-            for ($i = 1; $i <= $count; $i++) {
-                $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+            for ($i = 0; $i < $count; $i++) {
+                $value = $visitTable[$userIndex][$i];
+                $tableVisit->addCell(1000)->addText($value);
+                if ($value === '') {
+                    $columnCounts[$i + 1]++;
+                }
             }
         }
 
-        //Присутствовало
+        // 4. Добавляем пустые строки до 15 человек
+        $row = 15 - count($users);
+        for ($r = 0; $r < $row; $r++) {
+            $tableVisit->addRow();
+            $tableVisit->addCell(1000)->addText('');
+            $tableVisit->addCell(4000)->addText('');
+            for ($i = 0; $i < $count; $i++) {
+                $tableVisit->addCell(1000)->addText('');
+            }
+        }
+
+        // 5. Итоговые строки
+        // Присутствовало
         $tableVisit->addRow();
         $tableVisit->addCell(1000)->addText('');
         $tableVisit->addCell(4000)->addText('Присутствовало');
-        foreach ($columnCounts as $value) {
-            $tableVisit->addCell(1000)->addText($value);
+        foreach ($columnCounts as $val) {
+            $tableVisit->addCell(1000)->addText($val);
         }
 
-        //Продолжительность(час)
+        // Продолжительность
         $tableVisit->addRow();
         $tableVisit->addCell(1000)->addText('');
         $tableVisit->addCell(4000)->addText('Продолжительность(час)');
-        for ($i = 1; $i <= $count; $i++) {
-            $tableVisit->addCell(1000)->addText(2); // Добавляем в таблицу
+        foreach ($day as $date) {
+            $tableVisit->addCell(1000)->addText($date['время']);
         }
 
-        //В том числе
+        // В том числе
         $tableVisit->addRow();
         $tableVisit->addCell(1000)->addText('');
         $tableVisit->addCell(4000)->addText('В том числе');
-        for ($i = 1; $i <= $count; $i++) {
-            $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+        for ($i = 0; $i < $count; $i++) {
+            $tableVisit->addCell(1000)->addText('');
         }
 
-        //ОФП
+        /*// ОФП
+        // Разделяем строку на часы и минуты
+        [$hours, $minutes] = explode(':', $date['время']);
+
+        // Переводим всё во время в минутах
+        $totalMinutes = $hours * 60 + $minutes;
+
+        // Делим
+        $dividedMinutes = (int) floor($totalMinutes / 2);
+
+        // Получаем обратно часы и минуты
+        $newHours = intdiv($dividedMinutes, 60);
+        $newMinutes = $dividedMinutes % 60;*/
+
+        // Форматируем строку
+        //$timeOfp = $newHours . ':' . str_pad($newMinutes, 2, '0', STR_PAD_LEFT);
         $tableVisit->addRow();
         $tableVisit->addCell(1000)->addText('');
         $tableVisit->addCell(4000)->addText('ОФП');
-        for ($i = 1; $i <= $count; $i++) {
-            $tableVisit->addCell(1000)->addText(1); // Добавляем в таблицу
+        foreach ($day as $date) {
+            if (!empty($date['время']) && strpos($date['время'], ':') !== false) {
+                [$hours, $minutes] = explode(':', $date['время']);
+                $totalMinutes = ((int)$hours) * 60 + (int)$minutes;
+                $dividedMinutes = (int) floor($totalMinutes / 2);
+                $newHours = intdiv($dividedMinutes, 60);
+                $newMinutes = $dividedMinutes % 60;
+                $timeOfp = $newHours . ':' . str_pad($newMinutes, 2, '0', STR_PAD_LEFT);
+            } else {
+                $timeOfp = ''; // если формат неправильный или пустой
+            }
+
+            $tableVisit->addCell(1000)->addText($timeOfp);
         }
 
-        //СФП
+        // СФП
         $tableVisit->addRow();
         $tableVisit->addCell(1000)->addText('');
         $tableVisit->addCell(4000)->addText('СФП');
-        for ($i = 1; $i <= $count; $i++) {
-            $tableVisit->addCell(1000)->addText(1); // Добавляем в таблицу
+        foreach ($day as $date) {
+            if (!empty($date['время']) && strpos($date['время'], ':') !== false) {
+                [$hours, $minutes] = explode(':', $date['время']);
+                $totalMinutes = ((int)$hours) * 60 + (int)$minutes;
+                $dividedMinutes = (int) floor($totalMinutes / 2);
+                $newHours = intdiv($dividedMinutes, 60);
+                $newMinutes = $dividedMinutes % 60;
+                $timeOfp = $newHours . ':' . str_pad($newMinutes, 2, '0', STR_PAD_LEFT);
+            } else {
+                $timeOfp = ''; // если формат неправильный или пустой
+            }
+
+            $tableVisit->addCell(1000)->addText($timeOfp);
         }
 
-        //Теория
+        // Теория
         $tableVisit->addRow();
         $tableVisit->addCell(1000)->addText('');
         $tableVisit->addCell(4000)->addText('Теория');
-        for ($i = 1; $i <= $count; $i++) {
-            $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+        for ($i = 0; $i < $count; $i++) {
+            $tableVisit->addCell(1000)->addText('');
         }
 
-        //Подпись инструктора
+        // Подпись инструктора
         $tableVisit->addRow();
         $tableVisit->addCell(1000)->addText('');
         $tableVisit->addCell(4000)->addText('Подпись инструктора');
-        for ($i = 1; $i <= $count; $i++) {
-            $tableVisit->addCell(1000)->addText(''); // Добавляем в таблицу
+        for ($i = 0; $i < $count; $i++) {
+            $tableVisit->addCell(1000)->addText('');
         }
 
         return $tableVisit;

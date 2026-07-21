@@ -33,7 +33,7 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::get('magazine/coach', [\App\Http\Controllers\MagazineController::class, 'showMagazinesCoach'])->name('magazines.coach');
         //exel журнал
         Route::get('createMagazine', [\App\Http\Controllers\MagazineController::class, 'exelMagazine'])->name('magazines.exel');
-        Route::post('crateMagazine', [\App\Http\Controllers\MagazineController::class, 'exelMagazineCreate'])->name('magazines.exel.create');
+        Route::post('crateMagazine', [\App\Http\Controllers\MagazineController::class, 'execelMagazine'])->name('magazines.exel.create');
     });
     Route::get('training/list', [\App\Http\Controllers\trainingController::class, 'trainingProfile'])->name('training.profile');
     Route::get('trainings', [\App\Http\Controllers\trainingController::class, 'trainingList'])->name('training.list');
