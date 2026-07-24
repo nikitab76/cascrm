@@ -63,6 +63,9 @@ return new class extends Migration
             if (Schema::hasColumn('users', 'password')) {
                 $table->string('password')->nullable()->change();
             }
+            if (Schema::hasColumn('users', 'deleted_at')) {
+                $table->softDeletes()->after('updated_at');
+            }
         });
     }
 
