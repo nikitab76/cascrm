@@ -39,8 +39,20 @@
                         <div class="modal-body">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label for="roomName">Название</label>
-                                    <input type="text" class="form-control" id="roomName" name="roomName" placeholder="">
+                                    <label for="swName">ФИО</label>
+                                    <input type="text" class="form-control" id="swName" name="swName" placeholder="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="swPhone">Телефон</label>
+                                    <input type="text" class="form-control" id="swPhone" name="swPhone" placeholder="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="swNoz">Нозология</label>
+                                    <input type="text" class="form-control" id="swNoz" name="swNoz" placeholder="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="swDat">Справка</label>
+                                    <input type="date" class="form-control" id="swDat" name="swDat" placeholder="">
                                 </div>
                             </div>
                         </div>
