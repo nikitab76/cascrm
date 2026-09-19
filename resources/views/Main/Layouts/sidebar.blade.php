@@ -279,6 +279,12 @@
                             </a>
                         </li>
                     @endif
+                    <li class="nav-item">
+                        <a href="{{route('freeFloating')}}" class="nav-link">
+                            <i class="nav-icon fas fa-swimmer"></i>
+                            <p>Свободное плавание</p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

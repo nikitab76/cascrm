@@ -49,5 +49,6 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         return view('test');
     });
     Route::get('/test', [\App\Http\Controllers\testcontroller::class, 'index']);
+    Route::get('freeFloating', [\App\Http\Controllers\FreeFloating::class , 'index'])->name('freeFloating');
 });
 

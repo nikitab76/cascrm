@@ -52,7 +52,7 @@
                                     <h5 class="description-header">35</h5>
                                     <span class="description-text">PRODUCTS</span>
                                 @else
-                                    <h5 class="description-header">Справка</h5>
+                                    <h5 class="description-header">Вид спорта</h5>
                                     <span class="description-text">PRODUCTS</span>
                                 @endif
                             </div>
@@ -112,10 +112,29 @@
                                             <div class="form-group">
                                                 {{--@dump($user)--}}
                                                 <input id="user_id" value="{{$user->id}}" style="display: none">
-                                                <label for="surname">Фамилия</label>
-                                                <input type="text" class="form-control" id="surname" name="surname"
-                                                       value="{{$user->surname}}" autocomplete="off">
                                                 <div class="row">
+                                                    <div class="col-6">
+                                                        <label for="surname">ФИО</label>
+                                                        <input type="text" class="form-control" id="surname"
+                                                               name="surname"
+                                                               value="{{$user->surname}} {{$user->name}} {{$user->second_name}}"
+                                                               autocomplete="off">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="name">Дата рождения</label>
+                                                        <input type="text" class="form-control" id="name" name="name"
+                                                               value="" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <label for="name">Возраст</label>
+                                                        <input type="text" class="form-control" id="name" name="name"
+                                                               value="" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                {{--<label for="surname">ФИО</label>
+                                                <input type="text" class="form-control" id="surname" name="surname"
+                                                       value="{{$user->surname}} {{$user->name}} {{$user->second_name}}" autocomplete="off">--}}
+                                                {{--<div class="row">
                                                     <div class="col-6">
                                                         <label for="name">Имя</label>
                                                         <input type="text" class="form-control" id="name" name="name"
@@ -127,16 +146,16 @@
                                                                name="second_name" value="{{$user->second_name}}"
                                                                autocomplete="off">
                                                     </div>
-                                                </div>
-                                                <label for="job_title">Должность</label>
-                                                {{--<input type="text" class="form-control" id="job_title" name="job_title" placeholder="">--}}
+                                                </div>--}}
+                                                {{--<label for="job_title">Должность</label>
+                                                --}}{{--<input type="text" class="form-control" id="job_title" name="job_title" placeholder="">--}}{{--
                                                 <select class="form-control" name="job_title" id="job_title">
                                                     <option selected
                                                             value="{{$user->job_title}}">{{$user->job_title}}</option>
                                                     @foreach(\App\Models\Job_title::all() as $job)
                                                         <option value="{{$job->name}}">{{$job->name}}</option>
                                                     @endforeach
-                                                </select>
+                                                </select>--}}
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -153,7 +172,7 @@
                                                                name="speciality">
                                                     </div>
                                                 @else
-                                                    <label for="user_coach">Инструктор</label>
+                                                    {{--<label for="user_coach">Инструктор</label>
                                                     <input type="text" class="form-control" id="user_coach"
                                                            name="user_coach" autocomplete="off"
                                                            value="{{\App\Models\Users::where('id', $user->coach)->value('surname')}}">
@@ -186,11 +205,301 @@
                                                                    value="{{$user->medical_certificate}}"
                                                                    autocomplete="off">
                                                         </div>
+                                                    </div>--}}
+                                                    <div class="row">
+
+                                                        <div class="col-1">
+                                                            <label for="second_name">Пол</label>
+                                                            <input type="text" class="form-control" id="second_name"
+                                                                   name="second_name" value=""
+                                                                   autocomplete="off">
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <label for="second_name">Функц. группа</label>
+                                                            <input type="text" class="form-control" id="second_name"
+                                                                   name="second_name" value=""
+                                                                   autocomplete="off">
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <label for="second_name">Вид спорта</label>
+                                                            <input type="text" class="form-control" id="second_name"
+                                                                   name="second_name" value=""
+                                                                   autocomplete="off">
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <label for="second_name">Дисциплина</label>
+                                                            <input type="text" class="form-control" id="second_name"
+                                                                   name="second_name" value=""
+                                                                   autocomplete="off">
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <label for="surname">Тренер</label>
+                                                        <input type="text" class="form-control" id="surname"
+                                                               name="surname"
+                                                               value=""
+                                                               autocomplete="off">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="podg">Этап подготовки</label>
+                                                        <input type="text" class="form-control" id="podg"
+                                                               name="second_name" value=""
+                                                               autocomplete="off">
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <label for="podg">№ группы</label>
+                                                        <input type="text" class="form-control" id="podg"
+                                                               name="second_name" value=""
+                                                               autocomplete="off">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="surname">Дата зачисления в УСП</label>
+                                                            <input type="text" class="form-control" id="surname"
+                                                                   name="surname"
+                                                                   value=""
+                                                                   autocomplete="off">
+                                                        </div>
+                                                        <div class="col">
+                                                            <label for="surname">Дата отчисления в УСП</label>
+                                                            <input type="text" class="form-control" id="surname"
+                                                                   name="surname"
+                                                                   value=""
+                                                                   autocomplete="off">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <label class="form-label">Первичный приказ</label>
+
+                                                            <div class="row">
+                                                                <div class="col-6">
+                                                                    <input type="text"
+                                                                           class="form-control"
+                                                                           name="order_number"
+                                                                           placeholder="№ приказа">
+                                                                </div>
+
+                                                                <div class="col-6">
+                                                                    <input type="date"
+                                                                           class="form-control"
+                                                                           name="order_date">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label">Приказ о зач. на 2026</label>
+                                                            <div class="row">
+                                                                <div class="col-6">
+                                                                    <input type="text"
+                                                                           class="form-control"
+                                                                           name="order_number"
+                                                                           placeholder="№ приказа">
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <input type="date"
+                                                                           class="form-control"
+                                                                           name="order_date">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="row col">
+                                                        <label class="form-label">Уровень квал.</label>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <input type="text"
+                                                                       class="form-control"
+                                                                       name="order_number"
+                                                                       placeholder="разряд">
+                                                            </div>
+                                                            <div class="col">
+                                                                <input type="text"
+                                                                       class="form-control"
+                                                                       name="order_number"
+                                                                       placeholder="№ приказа">
+                                                            </div>
+                                                            <div class="col">
+                                                                <input type=""
+                                                                       class="form-control"
+                                                                       placeholder="дата"
+                                                                       name="order_date">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <label class="form-label">Сборная 2026</label>
+
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <input type="text"
+                                                                       class="form-control"
+                                                                       name="order_number"
+                                                                       placeholder="СПБ">
+                                                            </div>
+
+                                                            <div class="col-6">
+                                                                <input type="text"
+                                                                       class="form-control"
+                                                                       placeholder="РФ"
+                                                                       name="order_date">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label class="form-label">Отчисление, приказ</label>
+
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <input type="text"
+                                                                       class="form-control"
+                                                                       name="order_number"
+                                                                       placeholder="№ приказа">
+                                                            </div>
+
+                                                            <div class="col-6">
+                                                                <input type="date"
+                                                                       class="form-control"
+                                                                       name="order_date">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h3>Медицина</h3>
+                                <div class="content">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label class="form-label">Справка</label>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <input type="text"
+                                                                   class="form-control"
+                                                                   name="order_number"
+                                                                   placeholder="вид">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type=""
+                                                                   class="form-control"
+                                                                   placeholder="дата с"
+                                                                   name="order_date">
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type=""
+                                                                   class="form-control"
+                                                                   placeholder="дата до"
+                                                                   name="order_date">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label">РУСАДА</label>
+                                                    <input type=""
+                                                           class="form-control"
+                                                           placeholder="№"
+                                                           name="order_date">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h3>Персональные данные</h3>
+                                <div class="content">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label>Документ</label>
+                                                    <input type="text"
+                                                    class="form-control">
+                                                </div>
+                                                <div class="col">
+                                                    <label>серия</label>
+                                                    <input type="text"
+                                                           class="form-control">
+                                                </div>
+                                                <div class="col">
+                                                    <label>номер</label>
+                                                    <input type="text"
+                                                           class="form-control">
+                                                </div>
+                                                <div class="col">
+                                                    <label>дата выдачи</label>
+                                                    <input type="text"
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label>Кем выдан</label>
+                                                    <input type="text"
+                                                           class="form-control">
+                                                </div>
+                                                {{--<div class="col">
+                                                    <label>Снилс</label>
+                                                    <input type="text"
+                                                           class="form-control">
+                                                </div>
+                                                <div class="col">
+                                                    <label>Снилс</label>
+                                                    <input type="text"
+                                                           class="form-control">
+                                                </div>--}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>Адрес регистрации</label>
+                                                <input type="text"
+                                                       class="form-control">
+                                            </div>
+                                            {{--<div class="col">
+                                                <label>Снилс</label>
+                                                <input type="text"
+                                                       class="form-control">
+                                            </div>
+                                            <div class="col">
+                                                <label>Снилс</label>
+                                                <input type="text"
+                                                       class="form-control">
+                                            </div>--}}
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </div>

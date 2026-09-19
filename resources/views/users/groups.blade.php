@@ -84,20 +84,37 @@
                                            placeholder="">
 
                                     <label for="users[]">Занимающиеся</label>
+                                    <hr>
                                     <div class="user-row d-flex">
                                         <div class="col-10">
-                                            <select name="users[]" class="form-control" id="users">
+                                            <label for="surname">Фамилия</label>
+                                            <input type="text" class="form-control" id="surname" name="surname"
+                                                   placeholder="Иванов" value="{{old('surname')}}" autocomplete="off">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label for="name">Имя</label>
+                                                    <input type="text" class="form-control" id="name" name="name"
+                                                           placeholder="Иван" value="{{old('name')}}" autocomplete="off">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="second_name">Отчество</label>
+                                                    <input type="text" class="form-control" id="second_name" name="second_name"
+                                                           placeholder="Иванович" value="{{old('second_name')}}"
+                                                           autocomplete="off">
+                                                </div>
+                                            </div>
+                                            {{--<select name="users[]" class="form-control" id="users">
                                                 <option value="null"></option>
                                                 @foreach(\App\Models\Users::where('role', 'user')->orderBy('surname', 'asc')->get() as $user)
                                                     <option value="{{$user->id}}">{{$user->fullName()}}</option>
                                                 @endforeach
-                                            </select>
+                                            </select>--}}
                                         </div>
-                                        <div class="col">
+                                        {{--<div class="col">
                                             <button type="button" class="add-btn btn btn-light" onclick="addBtn()"
                                                     id="add-btn">+
                                             </button>
-                                        </div>
+                                        </div>--}}
                                     </div>
                                 </div>
                             </div>
