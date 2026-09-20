@@ -163,9 +163,9 @@
                                                 @if($user->role != 'user')
                                                     <div class="row">
                                                         <label for="phone">Телефон</label>
-                                                        <input type="tel" class="form-control" id="user_phone"
+                                                        <input type="tel" class="form-control" id="phone"
                                                                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                                               name="user_phone" autocomplete="off"
+                                                               name="phone" autocomplete="off"
                                                                value="{{$user->phone}}">
                                                         <label for="speciality">Направление</label>
                                                         <input type="text" class="form-control" id="speciality"

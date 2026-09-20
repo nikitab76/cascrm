@@ -50,5 +50,7 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     });
     Route::get('/test', [\App\Http\Controllers\testcontroller::class, 'index']);
     Route::get('freeFloating', [\App\Http\Controllers\FreeFloating::class , 'index'])->name('freeFloating');
+    Route::post('freeFloating', [\App\Http\Controllers\FreeFloating::class , 'createUser'])->name('createUser.freeFloating');
+    Route::post('freeFloatingUser', [\App\Http\Controllers\FreeFloating::class , 'getUser'])->name('getUser.freeFloating');
 });
 
