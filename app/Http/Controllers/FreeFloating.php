@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\freeFloatingModel;
+use App\Models\Training;
 use Illuminate\Http\Request;
 
 class FreeFloating extends Controller
@@ -62,5 +63,17 @@ class FreeFloating extends Controller
         ]);
 
         return view('freeFloating');
+    }
+
+    public function showUserPage()
+    {
+        $trening = Training::query()
+            ->where('profile', '=', 'Свободное плавание')
+            ->whereDate('date', '>=', today())
+            ->get()
+            ->groupBy(function ($item) {
+                return date('Y-m-d', strtotime($item->date));
+            });
+        return view('swimmingRecording', compact('trening'));
     }
 }
