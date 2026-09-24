@@ -30,7 +30,7 @@
 <div class="row">
     <div class="container">
         <h1>Запись на свободное плавание</h1>
-        @dump($trening)
+        {{--@dump($trening)--}}
         @if(isset($trening))
             <div class="accordion accordion-flush" id="accordionFlushExample"> @foreach($trening as $date => $items)
                     <div class="accordion-item">
