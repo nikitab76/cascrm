@@ -31,55 +31,66 @@
     <div class="container">
         <h1>Запись на свободное плавание</h1>
         @dump($trening)
-        <div class="accordion accordion-flush" id="accordionFlushExample"> @foreach($trening as $date => $items)
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapse{{ str_replace('-', '', $date) }}" aria-expanded="false"
-                                aria-controls="collapse{{ str_replace('-', '', $date) }}">
-                            Занятия {{ date('d-m-Y', strtotime($date)) }} </button>
-                    </h2>
-                    <div id="collapse{{ str_replace('-', '', $date) }}" class="accordion-collapse collapse"
-                         data-bs-parent="#accordionFlushExample">
-                        <div class="accordion-body"> @foreach($items as $tr)
-                                <button type="button" class="btn btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
-                                        data-bs-target="#trainingModal{{ $tr->id }}"> Записаться на
-                                    тренировку {{ $tr->time_start }} - {{ $tr->time_end }} </button> <!-- Modal -->
-                                <div class="modal fade" id="trainingModal{{ $tr->id }}" tabindex="-1"
-                                     aria-labelledby="trainingModalLabel{{ $tr->id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header"><h5 class="modal-title"
-                                                                          id="trainingModalLabel{{ $tr->id }}"> Запись
-                                                    на тренировку </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Закрыть"></button>
-                                            </div>
-                                            <div class="modal-body"><p>
-                                                    <strong>Дата:</strong> {{ date('d-m-Y', strtotime($date)) }} </p>
-                                                <p><strong>Время:</strong> {{ $tr->time_start }} - {{ $tr->time_end }}
-                                                </p>
-                                                <form action="{{--{{ route('training.register') }}--}}" method="POST"> @csrf
-                                                    <input type="hidden" name="training_id" value="{{ $tr->id }}">
-                                                    <div class="mb-3"><label for="name{{ $tr->id }}" class="form-label">
-                                                            Имя </label> <input type="text" class="form-control"
-                                                                                id="name{{ $tr->id }}" name="name"
-                                                                                required></div>
-                                                    <div class="mb-3"><label for="phone{{ $tr->id }}"
-                                                                             class="form-label"> Телефон </label> <input
-                                                            type="text" class="form-control" id="phone{{ $tr->id }}"
-                                                            name="phone" required></div>
-                                                    <button type="submit" class="btn btn-primary w-100"> Записаться
-                                                    </button>
-                                                </form>
+        @if(isset($trening))
+            <div class="accordion accordion-flush" id="accordionFlushExample"> @foreach($trening as $date => $items)
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{ str_replace('-', '', $date) }}" aria-expanded="false"
+                                    aria-controls="collapse{{ str_replace('-', '', $date) }}">
+                                Занятия {{ date('d-m-Y', strtotime($date)) }} </button>
+                        </h2>
+                        <div id="collapse{{ str_replace('-', '', $date) }}" class="accordion-collapse collapse"
+                             data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body"> @foreach($items as $tr)
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#trainingModal{{ $tr->id }}"> Записаться на
+                                        тренировку {{ $tr->time_start }} - {{ $tr->time_end }} </button> <!-- Modal -->
+                                    <div class="modal fade" id="trainingModal{{ $tr->id }}" tabindex="-1"
+                                         aria-labelledby="trainingModalLabel{{ $tr->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header"><h5 class="modal-title"
+                                                                              id="trainingModalLabel{{ $tr->id }}">
+                                                        Запись
+                                                        на тренировку </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Закрыть"></button>
+                                                </div>
+                                                <div class="modal-body"><p>
+                                                        <strong>Дата:</strong> {{ date('d-m-Y', strtotime($date)) }}
+                                                    </p>
+                                                    <p><strong>Время:</strong> {{ $tr->time_start }}
+                                                        - {{ $tr->time_end }}
+                                                    </p>
+                                                    <form action="{{--{{ route('training.register') }}--}}"
+                                                          method="POST"> @csrf
+                                                        <input type="hidden" name="training_id" value="{{ $tr->id }}">
+                                                        <div class="mb-3"><label for="name{{ $tr->id }}"
+                                                                                 class="form-label">
+                                                                Имя </label> <input type="text" class="form-control"
+                                                                                    id="name{{ $tr->id }}" name="name"
+                                                                                    required></div>
+                                                        <div class="mb-3"><label for="phone{{ $tr->id }}"
+                                                                                 class="form-label"> Телефон </label>
+                                                            <input
+                                                                type="text" class="form-control" id="phone{{ $tr->id }}"
+                                                                name="phone" required></div>
+                                                        <button type="submit" class="btn btn-primary w-100"> Записаться
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach </div>
+                                @endforeach </div>
+                        </div>
                     </div>
-                </div>
-            @endforeach </div>
+                @endforeach </div>
+        @else
+            Запись пуста
+        @endif
     </div>
 </div>
 
