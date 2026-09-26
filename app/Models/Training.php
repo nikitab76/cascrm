@@ -9,4 +9,9 @@ class Training extends Model
 {
     use HasFactory;
     protected $fillable = ['slug_room' , 'coach', 'profile', 'date', 'time_start', 'time_end', 'quarter', 'comment', 'group'];
+
+    public function freeFloatings()
+    {
+        return $this->hasMany(freeFloatingModel::class, 'training_id', 'id');
+    }
 }

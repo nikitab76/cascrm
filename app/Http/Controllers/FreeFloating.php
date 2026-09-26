@@ -26,16 +26,16 @@ class FreeFloating extends Controller
 
     public function createUser(Request $request)
     {
-        if (isset($request->swPhone)){
+        if (isset($request->swPhone)) {
             $phone = trim($request->swPhone);
             $phone = str_replace(' ', '', $phone);
             $onesim = substr($phone, 0, 1);
-            if ($onesim == '+'){
+            if ($onesim == '+') {
                 $phone = substr($phone, 1);
-            } elseif ($onesim == 8){
+            } elseif ($onesim == 8) {
                 $phone = '7' . substr($phone, 1);
             }
-            if(mb_strlen($phone) != 11){
+            if (mb_strlen($phone) != 11) {
                 return null;
             }
         }
@@ -50,14 +50,14 @@ class FreeFloating extends Controller
 
         $swName = $request->swName;
         $swNoz = $request->swNoz;
-        $swDat = date('d-m-Y',strtotime($request->swDat));
+        $swDat = date('d-m-Y', strtotime($request->swDat));
         // Получаем человеческое название
         $swNozName = $nozologe[$swNoz] ?? 'Не указано';
         //dd($phone, $swDat, $swNoz, $swName);
 
         freeFloatingModel::create([
-            'fio' =>$swName,
-            'phone' =>$phone,
+            'fio' => $swName,
+            'phone' => $phone,
             'nozologe' => $swNozName,
             'date_spravka' => $swDat
         ]);
@@ -75,5 +75,60 @@ class FreeFloating extends Controller
                 return date('Y-m-d', strtotime($item->date));
             });
         return view('swimmingRecording', compact('trening'));
+    }
+
+    public function saveUserFreeSwimming(Request $request)
+    {
+        $param = $request->all();
+
+        if (isset($param['phone'])) {
+            $phone = trim($param['phone']);
+            $phone = str_replace(' ', '', $phone);
+            $onesim = substr($phone, 0, 1);
+            if ($onesim == '+') {
+                $phone = substr($phone, 1);
+            } elseif ($onesim == 8) {
+                $phone = '7' . substr($phone, 1);
+            }
+            if (mb_strlen($phone) != 11) {
+                return null;
+            }
+        }
+
+        $nozologe = [
+            'ovz' => 'ОВЗ',
+            'lin' => 'ЛИН',
+            'poda' => 'ПОДА',
+            'slykh' => 'Слух',
+            'zrenie' => 'Зрение',
+        ];
+        $swNozName = $nozologe[$param['noz']] ?? 'Не указано';
+
+        freeFloatingModel::create([
+            'fio' => $param['name'],
+            'birthday' => $param['dr'],
+            'phone' => $phone,
+            'nozologe' => $swNozName,
+            'mail' => $param['mail'],
+            'training_id' => $param['training_id'],
+            'date_spravka' => '01-01-1900',
+            'personal_data_consent' => $param['personal_data_consent']
+        ]);
+
+        return back()->with('success', 'Вы успешно записались!');
+    }
+
+    public function showAdminUsersPage()
+    {
+        $trening = Training::query()
+            ->where('profile', 'Свободное плавание')
+            ->whereDate('date', '>=', today())
+            ->with('freeFloatings')
+            ->get()
+            ->groupBy(function ($item) {
+                return date('Y-m-d', strtotime($item->date));
+            });
+
+        return view('swimmingRecordingAdmin', compact('trening'));
     }
 }

@@ -6,6 +6,7 @@ Route::get('/', [\App\Http\Controllers\MainController::class, 'index'])->name('i
 Route::post('/', [\App\Http\Controllers\MainController::class, 'login'])->name('index.login');
 Route::any('logout', [\App\Http\Controllers\MainController::class, 'logout'])->name('logout');
 Route::get('swimmingRecording', [\App\Http\Controllers\FreeFloating::class, 'showUserPage'])->name('showUserPage');
+Route::post('swimmingRecording', [\App\Http\Controllers\FreeFloating::class, 'saveUserFreeSwimming'])->name('saveUserFreeSwimming');
 
 Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function (){
     Route::get('/profile', [\App\Http\Controllers\MainController::class, 'indexProfile'])->name('index.profile');
@@ -53,5 +54,6 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     Route::get('freeFloating', [\App\Http\Controllers\FreeFloating::class , 'index'])->name('freeFloating');
     Route::post('freeFloating', [\App\Http\Controllers\FreeFloating::class , 'createUser'])->name('createUser.freeFloating');
     Route::post('freeFloatingUser', [\App\Http\Controllers\FreeFloating::class , 'getUser'])->name('getUser.freeFloating');
+    Route::get('swimmingRecordingAdmin', [\App\Http\Controllers\FreeFloating::class, 'showAdminUsersPage'])->name('showAdminUsersPage');
 });
 

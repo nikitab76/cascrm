@@ -64,7 +64,7 @@
                                                     <p><strong>Время:</strong> {{ $tr->time_start }}
                                                         - {{ $tr->time_end }}
                                                     </p>
-                                                    <form action="{{--{{ route('training.register') }}--}}"
+                                                    <form action="{{ route('saveUserFreeSwimming') }}"
                                                           method="POST"> @csrf
                                                         <input type="hidden" name="training_id" value="{{ $tr->id }}">
                                                         <div class="mb-3">
@@ -85,14 +85,15 @@
                                                             </label>
                                                             <select class="form-control" name="noz"
                                                                     id="noz{{ $tr->id }}">
-                                                                <option selected value="ovz">Ограниченные возможности
+                                                                <option value="ovz">Ограниченные возможности
                                                                     здоровья (ОВЗ, Общие заболевания)
                                                                 </option>
-                                                                <option selected value="slykh">Слух</option>
-                                                                <option selected value="zrenie">Зрение</option>
-                                                                <option selected value="poda">ПОДА</option>
-                                                                <option selected value="lin">ЛИН</option>
-                                                                <option selected value="">Выберите пункт</option>
+                                                                <option value="slykh">Слух</option>
+                                                                <option value="zrenie">Зрение</option>
+                                                                <option value="poda">ПОДА</option>
+                                                                <option value="lin">ЛИН</option>
+                                                                <option selected disabled value="">Выберите пункт
+                                                                </option>
                                                             </select>
                                                         </div>
                                                         <div class="mb-3">
@@ -107,7 +108,7 @@
                                                                 Электронная почта</label>
                                                             <input
                                                                 type="email" class="form-control" id="mail{{ $tr->id }}"
-                                                                name="mail" required>
+                                                                name="mail">
                                                             <span>Если Вы укажете электронную почту, то на нее придет ответное письмо с подтверждением регистрации</span>
                                                         </div>
                                                         <div class="mb-3">
@@ -128,10 +129,26 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 @endforeach </div>
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show"
+                     role="alert"> {{ session('success') }}
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Закрыть"></button>
+                </div>
+            @endif @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show"
+                     role="alert"> {{ session('error') }}
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Закрыть"></button>
+                </div>
+            @endif
         @else
             Запись пуста
         @endif

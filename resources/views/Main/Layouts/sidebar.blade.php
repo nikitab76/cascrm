@@ -279,11 +279,34 @@
                             </a>
                         </li>
                     @endif
-                    <li class="nav-item">
+                    {{--<li class="nav-item">
                         <a href="{{route('freeFloating')}}" class="nav-link">
                             <i class="nav-icon fas fa-swimmer"></i>
                             <p>Свободное плавание</p>
                         </a>
+                    </li>--}}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-swimmer"></i>
+                            <p>
+                                Свободное плавание
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('freeFloating')}}" class="nav-link">
+                                    <i class="fas nav-icon"></i>
+                                    <p>Список пользователей</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('showAdminUsersPage')}}" class="nav-link">
+                                    <i class="far nav-icon"></i>
+                                    <p>Свод записавшихся</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </nav>
