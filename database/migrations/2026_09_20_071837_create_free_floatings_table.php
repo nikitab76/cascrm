@@ -15,9 +15,13 @@ return new class extends Migration
             Schema::create('free_floatings', function (Blueprint $table) {
                 $table->id();
                 $table->text('fio');
+                $table->string('birthday');
                 $table->text('phone');
                 $table->text('nozologe');
-                $table->text('date_spravka')->nullable();
+                $table->string('mail');
+                $table->text('date_spravka');
+                $table->string('training_id');
+                $table->boolean('personal_data_consent');
                 $table->timestamps();
             });
         }
