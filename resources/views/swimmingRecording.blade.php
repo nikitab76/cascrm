@@ -67,16 +67,60 @@
                                                     <form action="{{--{{ route('training.register') }}--}}"
                                                           method="POST"> @csrf
                                                         <input type="hidden" name="training_id" value="{{ $tr->id }}">
-                                                        <div class="mb-3"><label for="name{{ $tr->id }}"
-                                                                                 class="form-label">
-                                                                Имя </label> <input type="text" class="form-control"
-                                                                                    id="name{{ $tr->id }}" name="name"
-                                                                                    required></div>
-                                                        <div class="mb-3"><label for="phone{{ $tr->id }}"
-                                                                                 class="form-label"> Телефон </label>
+                                                        <div class="mb-3">
+                                                            <label for="name{{ $tr->id }}" class="form-label">
+                                                                <span style="color: red">*</span>ФИО Участника</label>
+                                                            <input type="text" class="form-control"
+                                                                   id="name{{ $tr->id }}" name="name" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="dr{{ $tr->id }}" class="form-label">
+                                                                <span style="color: red">*</span>Дата рождения </label>
+                                                            <input type="date" class="form-control" id="dr{{ $tr->id }}"
+                                                                   name="dr" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="noz{{ $tr->id }}" class="form-label">
+                                                                <span style="color: red">*</span>Нозологическая группа
+                                                            </label>
+                                                            <select class="form-control" name="noz"
+                                                                    id="noz{{ $tr->id }}">
+                                                                <option selected value="ovz">Ограниченные возможности
+                                                                    здоровья (ОВЗ, Общие заболевания)
+                                                                </option>
+                                                                <option selected value="slykh">Слух</option>
+                                                                <option selected value="zrenie">Зрение</option>
+                                                                <option selected value="poda">ПОДА</option>
+                                                                <option selected value="lin">ЛИН</option>
+                                                                <option selected value="">Выберите пункт</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="phone{{ $tr->id }}" class="form-label">
+                                                                <span style="color: red">*</span>Телефон </label>
                                                             <input
                                                                 type="text" class="form-control" id="phone{{ $tr->id }}"
-                                                                name="phone" required></div>
+                                                                name="phone" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="mail{{ $tr->id }}" class="form-label">
+                                                                Электронная почта</label>
+                                                            <input
+                                                                type="email" class="form-control" id="mail{{ $tr->id }}"
+                                                                name="mail" required>
+                                                            <span>Если Вы укажете электронную почту, то на нее придет ответное письмо с подтверждением регистрации</span>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <div class="form-check"><input class="form-check-input"
+                                                                                           type="checkbox"
+                                                                                           id="personalData{{ $tr->id }}"
+                                                                                           name="personal_data_consent"
+                                                                                           value="1" required> <label
+                                                                    class="form-check-label"
+                                                                    for="personalData{{ $tr->id }}"> <span
+                                                                        style="color: red">*</span> Согласие на
+                                                                    обработку персональных данных </label></div>
+                                                        </div>
                                                         <button type="submit" class="btn btn-primary w-100"> Записаться
                                                         </button>
                                                     </form>
