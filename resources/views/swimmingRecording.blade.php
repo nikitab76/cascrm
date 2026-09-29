@@ -64,65 +64,150 @@
                                                     <p><strong>Время:</strong> {{ $tr->time_start }}
                                                         - {{ $tr->time_end }}
                                                     </p>
-                                                    <form action="{{ route('saveUserFreeSwimming') }}"
-                                                          method="POST"> @csrf
+                                                    <form action="{{ route('saveUserFreeSwimming') }}" method="POST">
+                                                        @csrf
                                                         <input type="hidden" name="training_id" value="{{ $tr->id }}">
+                                                        {{-- ФИО --}}
                                                         <div class="mb-3">
                                                             <label for="name{{ $tr->id }}" class="form-label">
-                                                                <span style="color: red">*</span>ФИО Участника</label>
-                                                            <input type="text" class="form-control"
-                                                                   id="name{{ $tr->id }}" name="name" required>
+                                                                <span style="color: red">*</span>ФИО Участника
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                class="form-control @error('name') is-invalid @enderror"
+                                                                id="name{{ $tr->id }}"
+                                                                name="name"
+                                                                value="{{ old('name') }}"
+                                                                required>
+                                                            @error('name')
+                                                            <div class="invalid-feedback">
+                                                                {{ $message }}
+                                                            </div>
+                                                            @enderror
                                                         </div>
+                                                        {{-- Дата рождения --}}
                                                         <div class="mb-3">
                                                             <label for="dr{{ $tr->id }}" class="form-label">
-                                                                <span style="color: red">*</span>Дата рождения </label>
-                                                            <input type="date" class="form-control" id="dr{{ $tr->id }}"
-                                                                   name="dr" required>
+                                                                <span style="color: red">*</span>Дата рождения
+                                                            </label>
+                                                            <input
+                                                                type="date"
+                                                                class="form-control @error('dr') is-invalid @enderror"
+                                                                id="dr{{ $tr->id }}"
+                                                                name="dr"
+                                                                value="{{ old('dr') }}"
+                                                                required>
+                                                            @error('dr')
+                                                            <div class="invalid-feedback">
+                                                                {{ $message }}
+                                                            </div>
+                                                            @enderror
                                                         </div>
+                                                        {{-- Нозологическая группа --}}
                                                         <div class="mb-3">
                                                             <label for="noz{{ $tr->id }}" class="form-label">
-                                                                <span style="color: red">*</span>Нозологическая группа
+                                                                <span style="color: red">*</span>
+                                                                Нозологическая группа
                                                             </label>
-                                                            <select class="form-control" name="noz"
-                                                                    id="noz{{ $tr->id }}">
-                                                                <option value="ovz">Ограниченные возможности
-                                                                    здоровья (ОВЗ, Общие заболевания)
+                                                            <select
+                                                                class="form-control @error('noz') is-invalid @enderror"
+                                                                name="noz"
+                                                                id="noz{{ $tr->id }}"
+                                                                required>
+                                                                <option value=""
+                                                                        disabled {{ old('noz') ? '' : 'selected' }}>
+                                                                    Выберите пункт
                                                                 </option>
-                                                                <option value="slykh">Слух</option>
-                                                                <option value="zrenie">Зрение</option>
-                                                                <option value="poda">ПОДА</option>
-                                                                <option value="lin">ЛИН</option>
-                                                                <option selected disabled value="">Выберите пункт
+                                                                <option
+                                                                    value="ovz" {{ old('noz') == 'ovz' ? 'selected' : '' }}>
+                                                                    Ограниченные возможности здоровья (ОВЗ, Общие
+                                                                    заболевания)
+                                                                </option>
+                                                                <option
+                                                                    value="slykh" {{ old('noz') == 'slykh' ? 'selected' : '' }}>
+                                                                    Слух
+                                                                </option>
+                                                                <option
+                                                                    value="zrenie" {{ old('noz') == 'zrenie' ? 'selected' : '' }}>
+                                                                    Зрение
+                                                                </option>
+                                                                <option
+                                                                    value="poda" {{ old('noz') == 'poda' ? 'selected' : '' }}>
+                                                                    ПОДА
+                                                                </option>
+                                                                <option
+                                                                    value="lin" {{ old('noz') == 'lin' ? 'selected' : '' }}>
+                                                                    ЛИН
                                                                 </option>
                                                             </select>
+                                                            @error('noz')
+                                                            <div class="invalid-feedback">
+                                                                {{ $message }}
+                                                            </div>
+                                                            @enderror
                                                         </div>
+                                                        {{-- Телефон --}}
                                                         <div class="mb-3">
                                                             <label for="phone{{ $tr->id }}" class="form-label">
-                                                                <span style="color: red">*</span>Телефон </label>
+                                                                <span style="color: red">*</span>Телефон
+                                                            </label>
                                                             <input
-                                                                type="text" class="form-control" id="phone{{ $tr->id }}"
-                                                                name="phone" required>
+                                                                type="text"
+                                                                class="form-control @error('phone') is-invalid @enderror"
+                                                                id="phone{{ $tr->id }}"
+                                                                name="phone"
+                                                                value="{{ old('phone') }}"
+                                                                required>
+                                                            @error('phone')
+                                                            <div class="invalid-feedback">
+                                                                {{ $message }}
+                                                            </div>
+                                                            @enderror
                                                         </div>
+                                                        {{-- Email --}}
                                                         <div class="mb-3">
                                                             <label for="mail{{ $tr->id }}" class="form-label">
-                                                                Электронная почта</label>
+                                                                Электронная почта
+                                                            </label>
                                                             <input
-                                                                type="email" class="form-control" id="mail{{ $tr->id }}"
-                                                                name="mail">
+                                                                type="email"
+                                                                class="form-control @error('mail') is-invalid @enderror"
+                                                                id="mail{{ $tr->id }}"
+                                                                name="mail"
+                                                                value="{{ old('mail') }}">
                                                             <span>Если Вы укажете электронную почту, то на нее придет ответное письмо с подтверждением регистрации</span>
+                                                            @error('mail')
+                                                            <div class="invalid-feedback">
+                                                                {{ $message }}
+                                                            </div>
+                                                            @enderror
                                                         </div>
+                                                        {{-- Согласие --}}
                                                         <div class="mb-3">
-                                                            <div class="form-check"><input class="form-check-input"
-                                                                                           type="checkbox"
-                                                                                           id="personalData{{ $tr->id }}"
-                                                                                           name="personal_data_consent"
-                                                                                           value="1" required> <label
+                                                            <div class="form-check">
+                                                                <input
+                                                                    class="form-check-input @error('personal_data_consent') is-invalid @enderror"
+                                                                    type="checkbox"
+                                                                    id="personalData{{ $tr->id }}"
+                                                                    name="personal_data_consent"
+                                                                    value="1"
+                                                                    {{ old('personal_data_consent') ? 'checked' : '' }}
+                                                                    required>
+                                                                <label
                                                                     class="form-check-label"
-                                                                    for="personalData{{ $tr->id }}"> <span
-                                                                        style="color: red">*</span> Согласие на
-                                                                    обработку персональных данных </label></div>
+                                                                    for="personalData{{ $tr->id }}">
+                                                                    <span style="color: red">*</span>
+                                                                    Согласие на обработку персональных данных
+                                                                </label>
+                                                                @error('personal_data_consent')
+                                                                <div class="text-danger">
+                                                                    {{ $message }}
+                                                                </div>
+                                                                @enderror
+                                                            </div>
                                                         </div>
-                                                        <button type="submit" class="btn btn-primary w-100"> Записаться
+                                                        <button type="submit" class="btn btn-primary w-100">
+                                                            Записаться
                                                         </button>
                                                     </form>
                                                 </div>
@@ -141,10 +226,19 @@
                             data-bs-dismiss="alert"
                             aria-label="Закрыть"></button>
                 </div>
-            @endif @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show"
-                     role="alert"> {{ session('error') }}
-                    <button type="button" class="btn-close"
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Пожалуйста, проверьте заполнение формы:</strong>
+
+                    <ul class="mb-0 mt-2">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+
+                    <button type="button"
+                            class="btn-close"
                             data-bs-dismiss="alert"
                             aria-label="Закрыть"></button>
                 </div>

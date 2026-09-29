@@ -70,6 +70,7 @@ class FreeFloating extends Controller
         $trening = Training::query()
             ->where('profile', '=', 'Свободное плавание')
             ->whereDate('date', '>=', today())
+            ->orderBy('date')
             ->get()
             ->groupBy(function ($item) {
                 return date('Y-m-d', strtotime($item->date));
@@ -79,6 +80,37 @@ class FreeFloating extends Controller
 
     public function saveUserFreeSwimming(Request $request)
     {
+        // Валидация входных данных
+        $request->validate([
+            'training_id' => ['required', 'integer'],
+            'name' => ['required', 'string', 'max:255'],
+            'dr' => ['required', 'date'],
+            'noz' => ['required', 'in:ovz,lin,poda,slykh,zrenie'],
+            'phone' => ['required', 'string'],
+            'mail' => ['nullable', 'email'],
+            'personal_data_consent' => ['required', 'accepted'],
+        ], [
+            'training_id.required' => 'Не указана тренировка.',
+            'training_id.integer' => 'Некорректный идентификатор тренировки.',
+
+            'name.required' => 'Укажите ФИО участника.',
+            'name.string' => 'ФИО указано некорректно.',
+            'name.max' => 'ФИО не должно превышать 255 символов.',
+
+            'dr.required' => 'Укажите дату рождения.',
+            'dr.date' => 'Укажите корректную дату рождения.',
+
+            'noz.required' => 'Выберите нозологическую группу.',
+            'noz.in' => 'Выберите корректную нозологическую группу.',
+
+            'phone.required' => 'Укажите номер телефона.',
+
+            'mail.email' => 'Укажите корректный адрес электронной почты.',
+
+            'personal_data_consent.required' => 'Необходимо согласие на обработку персональных данных.',
+            'personal_data_consent.accepted' => 'Необходимо согласие на обработку персональных данных.',
+        ]);
+
         $param = $request->all();
 
         if (isset($param['phone'])) {
@@ -91,7 +123,9 @@ class FreeFloating extends Controller
                 $phone = '7' . substr($phone, 1);
             }
             if (mb_strlen($phone) != 11) {
-                return null;
+                return back()
+                    ->withErrors(['phone' => 'Номер телефона должен содержать 11 цифр.'])
+                    ->withInput();
             }
         }
 
