@@ -71,53 +71,87 @@ class UsersController extends Controller
 
     public function eddUsers(Request $request)
     {
-        $params = '';
-        $value = '';
-        if(isset($request->surname)){
-            $params = 'surname';
-            $value = $request->surname;
+       /* dd($request->all());*/
+        $userId = $request->edit_user_id;
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Не передан ID пользователя'
+            ], 422);
         }
 
-        if(isset($request->name)){
-            $params = 'name';
-            $value = $request->name;
+        // =========================
+        // USERS
+        // =========================
+
+        $userData = [];
+
+        if ($request->filled('edit_user_name')) {
+
+            $parts = preg_split(
+                '/\s+/',
+                trim($request->edit_user_name)
+            );
+
+            $userData['surname'] = $parts[0] ?? null;
+            $userData['name'] = $parts[1] ?? null;
+            $userData['second_name'] = $parts[2] ?? null;
         }
 
-        if(isset($request->second_name)){
-            $params = 'second_name';
-            $value = $request->second_name;
+        if ($request->filled('edit_user_phone')) {
+            $userData['phone'] = $request->edit_user_phone;
         }
 
-        if(isset($request->user_coach)){
-            $params = 'coach';
-            $value = $request->user_coach;
+        if ($request->filled('edit_user_job')) {
+
+            $userData['role'] = Job_title::where(
+                'name',
+                $request->edit_user_job
+            )->value('role_name');
+            $userData['job_title'] = $request->edit_user_job;
         }
 
-        if(isset($request->representative)){
-            $params = 'representative';
-            $value = $request->representative;
+        if (!empty($userData)) {
+            Users::where('id', $userId)->update($userData);
         }
 
-        if(isset($request->user_phone)){
-            $params = 'representative_phone';
-            $value = $request->user_phone;
+
+        // =========================
+        // USERS DOCUMENTS
+        // =========================
+
+        $documentData = [];
+
+        if ($request->filled('user_coach')) {
+            $documentData['coach'] = $request->user_coach;
         }
 
-        if(isset($request->nosology)){
-            $params = 'nosology';
-            $value = $request->nosology;
+        if ($request->filled('representative')) {
+            $documentData['representative'] = $request->representative;
         }
 
-        if(isset($request->medical_certificate)){
-            $params = 'medical_certificate';
-            $value = date('Y-m-d', strtotime($request->medical_certificate));
+        if ($request->filled('user_phone')) {
+            $documentData['representative_phone'] = $request->user_phone;
         }
 
-        if ($params == 'surname' || $params == 'name' || $params == 'second_name'){
-            Users::where('id', $request->user)->update([$params => $value]);
-        } else {
-            UsersDocument::where('user_id', $request->user)->update([$params => $value]);
+        if ($request->filled('nosology')) {
+            $documentData['nosology'] = $request->nosology;
         }
+
+        if ($request->filled('medical_certificate')) {
+            $documentData['medical_certificate'] = date(
+                'Y-m-d',
+                strtotime($request->medical_certificate)
+            );
+        }
+
+        if (!empty($documentData)) {
+            UsersDocument::where('user_id', $userId)
+                ->update($documentData);
+        }
+
+
         return response()->json([
             'success' => true,
             'message' => 'Данные успешно сохранены!'

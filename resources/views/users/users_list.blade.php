@@ -26,6 +26,59 @@
                                                 <meta name="csrf-token" content="{{ csrf_token()}}">
                                                 <table width="100%" id="user_table"
                                                        class="table table-striped table-bordered table-hover dataTable dtr-inline word-break"></table>
+                                                <!--Modal redaktor-->
+                                                <form role="form" method="post" action="{{route('edd.users')}}"
+                                                      enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="modal fade" id="editModal" tabindex="-1">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Редактирование
+                                                                        пользователя</h5>
+                                                                    <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"></button>
+                                                                </div>
+
+                                                                <div class="modal-body">
+
+                                                                    <input type="hidden" id="edit_user_id" name="edit_user_id">
+
+                                                                    <div class="mb-3">
+                                                                        <label>Имя</label>
+                                                                        <input type="text" id="edit_user_name"
+                                                                               class="form-control" name="edit_user_name">
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label>Телефон</label>
+                                                                        <input type="text" id="edit_user_phone"
+                                                                               class="form-control" name="edit_user_phone">
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label for="edit_user_job">Должность</label>
+
+                                                                        <select class="form-control"
+                                                                                name="edit_user_job"
+                                                                                id="edit_user_job">
+                                                                            @foreach(\App\Models\Job_title::all() as $job)
+                                                                                <option value="{{ $job->name }}">
+                                                                                    {{ $job->name }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                    <button type="submit" id="save_user"
+                                                                            class="btn btn-primary">
+                                                                        Сохранить
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -57,9 +110,9 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     @if(\Illuminate\Support\Facades\Auth::user()->surname == 'Белянинов')
-                                    <input type="file" name="file" class="form-control">
-                                    <label for="fileEdit" class="mt-2">редактировать</label>
-                                    <input type="file" name="fileEdit" class="form-control">
+                                        <input type="file" name="file" class="form-control">
+                                        <label for="fileEdit" class="mt-2">редактировать</label>
+                                        <input type="file" name="fileEdit" class="form-control">
                                     @endif
                                     <label for="surname">Фамилия</label>
                                     <input type="text" class="form-control" id="surname" name="surname"
@@ -181,8 +234,8 @@
                         title: "Имя",
                         className: "column-120 text-align-center vertical-align-middle",
                         data: 'user',
-                        render: function (data){
-                            return '<a href="/users/profile/' + data.id +'">'+ data.name +'</a>'
+                        render: function (data) {
+                            return '<a href="/users/profile/' + data.id + '">' + data.name + '</a>'
                         }
                     },
                     {
@@ -194,6 +247,14 @@
                         title: "Должность",
                         className: "column-160 text-align-center vertical-align-middle",
                         data: 'job',
+                    },
+                    {
+                        title: "Действия",
+                        className: "column-160 text-center vertical-align-middle",
+                        data: null,
+                        render: function (data, type, row) {
+                            return `<a href="#" class="edit-user" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-pen"></i></a>`;
+                        }
                     },
                 ],
                 "headerCallback": function (row, data, start, end, display) {
@@ -215,5 +276,16 @@
             });
 
         }
+
+        $('#user_table').on('click', '.edit-user', function (e) {
+            e.preventDefault();
+
+            const row = table.row($(this).closest('tr')).data();
+
+            $('#edit_user_id').val(row.user.id);
+            $('#edit_user_name').val(row.user.name);
+            $('#edit_user_phone').val(row.phone);
+            $('#edit_user_job').val(row.job);
+        });
     </script>
 @endsection
