@@ -46,7 +46,7 @@
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2"
                                             data-bs-toggle="modal"
                                             data-bs-target="#trainingModal{{ $tr->id }}"> Записаться на
-                                        тренировку {{ $tr->time_start }} - {{ $tr->time_end }} </button> <!-- Modal -->
+                                        Занятие {{ $tr->time_start }} - {{ $tr->time_end }} </button> <!-- Modal -->
                                     <div class="modal fade" id="trainingModal{{ $tr->id }}" tabindex="-1"
                                          aria-labelledby="trainingModalLabel{{ $tr->id }}" aria-hidden="true">
                                         <div class="modal-dialog">
