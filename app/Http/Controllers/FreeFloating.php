@@ -16,7 +16,9 @@ class FreeFloating extends Controller
 
     public function getUser()
     {
-        $user = freeFloatingModel::all();
+        $user = freeFloatingModel::all()
+            ->unique('fio')
+            ->values();
 
         return response()->json([
             'success' => true,
@@ -70,7 +72,8 @@ class FreeFloating extends Controller
         $trening = Training::query()
             ->where('profile', '=', 'Свободное плавание')
             ->whereDate('date', '>=', today())
-            ->orderBy('date')
+            ->orderBy('date', 'asc')
+            ->orderBy('time_start', 'asc')
             ->get()
             ->groupBy(function ($item) {
                 return date('Y-m-d', strtotime($item->date));
@@ -138,16 +141,23 @@ class FreeFloating extends Controller
         ];
         $swNozName = $nozologe[$param['noz']] ?? 'Не указано';
 
-        freeFloatingModel::create([
-            'fio' => $param['name'],
-            'birthday' => $param['dr'],
-            'phone' => $phone,
-            'nozologe' => $swNozName,
-            'mail' => $param['mail'],
-            'training_id' => $param['training_id'],
-            'date_spravka' => '01-01-1900',
-            'personal_data_consent' => $param['personal_data_consent']
-        ]);
+        $maxUser = Training::query()->where('id', '=', $param['training_id'])->value('max_user');
+        $countUser = freeFloatingModel::query() ->where('training_id', $param['training_id'])->count();
+        if ($countUser <= $maxUser){
+            freeFloatingModel::create([
+                'fio' => $param['name'],
+                'birthday' => $param['dr'],
+                'phone' => $phone,
+                'nozologe' => $swNozName,
+                'mail' => $param['mail'],
+                'training_id' => $param['training_id'],
+                'date_spravka' => '01-01-1900',
+                'personal_data_consent' => $param['personal_data_consent']
+            ]);
+        } else {
+            return back()->with('error', 'В данной группе нет мест, запишитесь на другое занятие');
+        }
+
 
         return back()->with('success', 'Вы успешно записались!');
     }
@@ -158,11 +168,12 @@ class FreeFloating extends Controller
             ->where('profile', 'Свободное плавание')
             ->whereDate('date', '>=', today())
             ->with('freeFloatings')
+            ->orderBy('date', 'asc')
+            ->orderBy('time_start', 'asc')
             ->get()
             ->groupBy(function ($item) {
-                return date('Y-m-d', strtotime($item->date));
-            });
-
+            return date('Y-m-d', strtotime($item->date));
+        });
         return view('swimmingRecordingAdmin', compact('trening'));
     }
 }

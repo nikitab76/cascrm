@@ -22,6 +22,7 @@ return new class extends Migration {
                 $table->string('time_end')->default(null);
                 $table->string('quarter')->default(null);
                 $table->string('comment')->default(null);
+                $table->string('max_user')->default(null);
                 $table->timestamps();
             });
         }
@@ -39,6 +40,11 @@ return new class extends Migration {
         if (!Schema::hasColumn('trainings', 'group')) {
             Schema::table('trainings', function (Blueprint $table) {
                 $table->string('group')->after('coach')->default(null);
+            });
+        }
+        if (!Schema::hasColumn('trainings', 'max_user')) {
+            Schema::table('trainings', function (Blueprint $table) {
+                $table->string('max_user')->after('comment')->default(null);
             });
         }
 

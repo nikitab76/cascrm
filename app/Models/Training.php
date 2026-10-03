@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Training extends Model
 {
     use HasFactory;
-    protected $fillable = ['slug_room' , 'coach', 'profile', 'date', 'time_start', 'time_end', 'quarter', 'comment', 'group'];
+    protected $fillable = ['slug_room' , 'coach', 'profile', 'date', 'time_start', 'time_end', 'quarter', 'comment', 'group', 'max_user'];
 
     public function freeFloatings()
     {

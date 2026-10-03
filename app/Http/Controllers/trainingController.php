@@ -27,6 +27,7 @@ class trainingController extends Controller
             'time_end' => $request->classTimeEnd,
             'quarter' => $request->classQuarter,
             'comment' => $request->classComment ? $request->classComment : '-',
+            'max_user' => $request->max_user ? $request->max_user : '15',
         ]);
         return redirect()->route('rooms.show', ['room' => $request->roomsSlug]);
     }

@@ -27,7 +27,16 @@
                                                 <div class="card mb-3">
                                                     <div class="card-header"><strong> {{ $tr->time_start }}
                                                             - {{ $tr->time_end }} </strong> <span
-                                                            class="badge bg-primary float-end"> {{ $tr->freeFloatings->count() }} </span>
+                                                            class="float-end d-flex align-items-center gap-2"> <label
+                                                                for="max_{{ $tr->id }}"
+                                                                class="mb-0"> Макс.: </label> <input type="number"
+                                                                                                     id="max_{{ $tr->id }}"
+                                                                                                     name="max_group[{{ $tr->id }}]"
+                                                                                                     class="form-control form-control-sm"
+                                                                                                     style="width: 70px;"
+                                                                                                     min="1"
+                                                                                                     value="{{ $tr->max_user ?? '' }}"> <span
+                                                                class="badge bg-primary"> {{ $tr->freeFloatings->count() }} </span> </span>
                                                     </div>
                                                     <div
                                                         class="card-body"> {{-- ЗАПИСАВШИЕСЯ --}} @if($tr->freeFloatings->isNotEmpty())
