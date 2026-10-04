@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\freeFloatingModel;
 use App\Models\Training;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class FreeFloating extends Controller
 {
