@@ -21,23 +21,6 @@ class testcontroller extends Controller
 {
     public function index()
     {
-        $users = freeFloatingModel::all()
-            ->unique('fio');
-        foreach ($users as $user) {
-            $parts = explode(' ', $user->fio);
-            $surname = $parts[0];
-            $user = User::query()->where('surname', $surname)
-                ->where('name', $parts[1])->first();
-            if (!isset($user)){
-                Users::create([
-                    'name' => $parts[1],
-                    'surname' => $parts[0],
-                    'second_name' => $parts[2] ?? null,
-                    'job_title' => 'Занимающийся',
-                    'role' => 'user'
-                ]);
-            }
-        }
         dd('ok');
         // Получаем список всех таблиц
         // Замените 'users' на нужное имя таблицы
