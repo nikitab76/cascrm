@@ -25,6 +25,21 @@
                         </div>
                     </a>
                 @endif
+                @if($train->slug_room == "bolsaia-casa-basseina" && $train->profile == "Свободное плавание")
+                    <a href="{{route('magazine.show.freeFloating', ['coach' => $train->coach,
+                                                                    'date' => $train->date,
+                                                                    'time_start' => $train->time_start,
+                                                                    'time_end' => $train->time_end,
+                                                                    'train_id' => $train->id])}}"
+                       style="color: #ffffff">
+                        <div class="alert alert-info" role="alert">
+                            <h5 class="accordion-header">
+                                <span style="color: black">{{$train->profile . ' ' . $train->time_start}}</span>
+                                {{$train->date}}
+                            </h5>
+                        </div>
+                    </a>
+                @endif
             @endforeach
             {{--</div>--}}
         </div>

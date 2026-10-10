@@ -86,6 +86,7 @@ class trainingController extends Controller
                 'time_end' => $request->classTimeEnd,
                 'quarter' => 1,
                 'comment' => $request->classComment ? $request->classComment : '-',
+                'max_user' => $request->max_user ? $request->max_user : '15',
             ]);
             return response()->json([
                 'success' => true,

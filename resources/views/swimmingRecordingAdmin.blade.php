@@ -18,7 +18,7 @@
                                                 data-bs-target="#date{{ str_replace('-', '', $date) }}"
                                                 aria-expanded="false"
                                                 aria-controls="date{{ str_replace('-', '', $date) }}">
-                                            Занятия {{ date('d.m.Y', strtotime($date)) }} </button>
+                                            Занятия {{ \Carbon\Carbon::parse($date)->locale('ru')->translatedFormat('l d.m.Y') }} </button>
                                     </h2>
                                     <div id="date{{ str_replace('-', '', $date) }}" class="accordion-collapse collapse"
                                          data-bs-parent="#accordionFreeSwimming">
@@ -42,17 +42,32 @@
                                                         class="card-body"> {{-- ЗАПИСАВШИЕСЯ --}} @if($tr->freeFloatings->isNotEmpty())
                                                             <div
                                                                 class="list-group"> @foreach($tr->freeFloatings as $user)
-                                                                    <div class="list-group-item">
-                                                                        <div class="fw-bold"> {{ $user->fio }} </div>
-                                                                        <div class="small text-muted"> Дата
-                                                                            рождения: {{ \Carbon\Carbon::parse($user->birthday)->format('d.m.Y') }} </div>
-                                                                        <div class="small text-muted">
-                                                                            Телефон: {{ $user->phone }} </div>
-                                                                        <div class="small text-muted">
-                                                                            Нозология: {{ $user->nozologe }} </div> @if($user->mail)
+                                                                    <div
+                                                                        class="list-group-item d-flex justify-content-between align-items-start">
+                                                                        <div>
+                                                                            <div
+                                                                                class="fw-bold"> {{ $user->fio }} </div>
+                                                                            <div class="small text-muted"> Дата
+                                                                                рождения: {{ \Carbon\Carbon::parse($user->birthday)->format('d.m.Y') }} </div>
                                                                             <div class="small text-muted">
-                                                                                Email: {{ $user->mail }} </div>
-                                                                        @endif </div>
+                                                                                Телефон: {{ $user->phone }} </div>
+                                                                            <div class="small text-muted">
+                                                                                Нозология: {{ $user->nozologe }} </div> @if($user->mail)
+                                                                                <div class="small text-muted">
+                                                                                    Email: {{ $user->mail }} </div>
+                                                                            @endif </div>
+                                                                        <div class="ms-3">
+                                                                            <form
+                                                                                action="{{ route('deleteUser.freeFloating', ['user'=>$user->id, 'idTren'=>$tr->id]) }}"
+                                                                                method="POST"
+                                                                                onsubmit="return confirm('Удалить {{ $user->fio }} из тренировки?');"> @csrf
+                                                                                <button type="submit"
+                                                                                        class="btn btn-sm btn-outline-danger">
+                                                                                    Удалить
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
                                                                 @endforeach </div>
                                                         @else
                                                             <div class="text-muted"> На тренировку никто не записался

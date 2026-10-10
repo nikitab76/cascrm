@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\freeFloatingModel;
+use App\Models\Job_title;
 use App\Models\Training;
+use App\Models\User;
+use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -25,6 +28,16 @@ class FreeFloating extends Controller
             'success' => true,
             'data' => $user
         ]);
+    }
+
+    public function deleteUser($user, $idTren)
+    {
+        //dd($user, $idTren);
+        $userTren = freeFloatingModel::query()
+            ->where('id', $user)
+            ->where('training_id', $idTren)
+            ->delete();
+        return back();
     }
 
     public function createUser(Request $request)
@@ -141,7 +154,19 @@ class FreeFloating extends Controller
             'zrenie' => 'Зрение',
         ];
         $swNozName = $nozologe[$param['noz']] ?? 'Не указано';
-
+        $parts = explode(' ', $param['name']);
+        $surname = $parts[0];
+        $user = User::query()->where('surname', $surname)
+            ->where('name', $parts[1])->first();
+        if (!isset($user)){
+            Users::create([
+                'name' => $parts[1],
+                'surname' => $parts[0],
+                'second_name' => $parts[2],
+                'job_title' => 'Занимающийся',
+                'role' => 'user'
+            ]);
+        }
         $maxUser = Training::query()->where('id', '=', $param['training_id'])->value('max_user');
         $countUser = freeFloatingModel::query() ->where('training_id', $param['training_id'])->count();
         if ($countUser <= $maxUser){
@@ -158,7 +183,6 @@ class FreeFloating extends Controller
         } else {
             return back()->with('error', 'В данной группе нет мест, запишитесь на другое занятие');
         }
-
 
         return back()->with('success', 'Вы успешно записались!');
     }

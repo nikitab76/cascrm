@@ -31,6 +31,30 @@
     <div class="container">
         <h1>Запись на свободное плавание</h1>
         {{--@dump($trening)--}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show"
+                 role="alert"> {{ session('success') }}
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Закрыть"></button>
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Пожалуйста, проверьте заполнение формы:</strong>
+
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Закрыть"></button>
+            </div>
+        @endif
         @if(isset($trening))
             <div class="accordion accordion-flush" id="accordionFlushExample"> @foreach($trening as $date => $items)
                     <div class="accordion-item">
@@ -38,7 +62,7 @@
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#collapse{{ str_replace('-', '', $date) }}" aria-expanded="false"
                                     aria-controls="collapse{{ str_replace('-', '', $date) }}">
-                                Занятия {{ date('d-m-Y', strtotime($date)) }} </button>
+                                Занятия {{ date('d-m-Y', strtotime($date)) }} {{\Carbon\Carbon::parse($date)->locale('ru')->translatedFormat('l')}} </button>
                         </h2>
                         <div id="collapse{{ str_replace('-', '', $date) }}" class="accordion-collapse collapse"
                              data-bs-parent="#accordionFlushExample">
@@ -46,7 +70,7 @@
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2"
                                             data-bs-toggle="modal"
                                             data-bs-target="#trainingModal{{ $tr->id }}"> Записаться на
-                                        Занятие {{ $tr->time_start }} - {{ $tr->time_end }} </button> <!-- Modal -->
+                                        Занятие {{ $tr->time_start }} - {{ $tr->time_end }} (Инструктор {{$tr->coach}}) </button> <!-- Modal -->
                                     <div class="modal fade" id="trainingModal{{ $tr->id }}" tabindex="-1"
                                          aria-labelledby="trainingModalLabel{{ $tr->id }}" aria-hidden="true">
                                         <div class="modal-dialog">
@@ -219,30 +243,7 @@
                         </div>
                     </div>
                 @endforeach </div>
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show"
-                     role="alert"> {{ session('success') }}
-                    <button type="button" class="btn-close"
-                            data-bs-dismiss="alert"
-                            aria-label="Закрыть"></button>
-                </div>
-            @endif
-            @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Пожалуйста, проверьте заполнение формы:</strong>
 
-                    <ul class="mb-0 mt-2">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert"
-                            aria-label="Закрыть"></button>
-                </div>
-            @endif
         @else
             Запись пуста
         @endif

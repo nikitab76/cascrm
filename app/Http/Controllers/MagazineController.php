@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\freeFloatingModel;
 use App\Models\MagazineVisits;
 use App\Models\Training;
 use App\Models\traning_group;
@@ -51,6 +52,44 @@ class MagazineController extends Controller
                 $data[$user] = 0;
             }
         }
+        return view('coach.listMagazine', compact(['data', 'day', 'profile']));
+    }
+
+    public function freeFloatingMagazine(Request $request)
+    {
+        $day = $request->date;
+        $profile = "Свободное плавание";
+        $usersFreeFloating = freeFloatingModel::query()
+            ->where('training_id', $request->train_id)
+            ->pluck('fio')
+            ->toArray();
+
+        $users = [];
+        foreach ($usersFreeFloating as $item){
+            $parts = explode(' ', $item);
+            $users[] = Users::query()
+                ->where('name', $parts[1])
+                ->where('surname', $parts[0])
+                ->value('id');
+        }
+        $dayChekit = MagazineVisits::query()->where('date', $day)->get();
+        foreach ($dayChekit as $chek) {
+            foreach ($users as $user) {
+                if ($chek->user == $user) {
+                    if ($chek->on_visit) {
+                        $data[$user] = 1;
+                    } else {
+                        $data[$user] = 0;
+                    }
+                }
+            }
+        }
+        if (empty($data)) {
+            foreach ($users as $user) {
+                $data[$user] = 0;
+            }
+        }
+
         return view('coach.listMagazine', compact(['data', 'day', 'profile']));
     }
 
