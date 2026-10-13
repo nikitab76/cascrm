@@ -65,6 +65,7 @@ class MagazineController extends Controller
             ->toArray();
 
         $users = [];
+        $data = [];
         foreach ($usersFreeFloating as $item){
             $parts = explode(' ', $item);
             $users[] = Users::query()

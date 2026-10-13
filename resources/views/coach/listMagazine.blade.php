@@ -18,24 +18,31 @@
                 <input id="day" value="{{$day}}" style="display: none">
                 <input id="profile" value="{{$profile}}" style="display: none">
                 <div class="row container">
-                    @foreach($data as $user => $key)
-                        @if($user = \App\Models\Users::where('id', $user)->first())
-                            <div class="form-check form-control">
-                                <div class="container">
-                                    <input class="form-check-input user-checkbox" type="checkbox"
-                                           value="{{'user_' . $user->id}}"
-                                           id="{{$user->role . '_' . $user->id}}"
-                                            @if($key) checked @endif>
-                                    <label class="form-check-label" for="{{$user->role . '_' . $user->id}}">
-                                        <div class="col">{{$user->fullName()}}</div>
-                                    </label>
+                    @if(isset($data) && count($data) > 0)
+                        @foreach($data as $user => $key)
+                            @if($user = \App\Models\Users::where('id', $user)->first())
+                                <div class="form-check form-control">
+                                    <div class="container">
+                                        <input class="form-check-input user-checkbox" type="checkbox"
+                                               value="{{'user_' . $user->id}}"
+                                               id="{{$user->role . '_' . $user->id}}"
+                                               @if($key) checked @endif>
+                                        <label class="form-check-label" for="{{$user->role . '_' . $user->id}}">
+                                            <div class="col">{{$user->fullName()}}</div>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
-                    @endforeach
-                    <button type="button" class="btn btn-success form-check form-control" style="color: white" onclick="noteUsers()">
-                        Отметить
-                    </button>
+                            @endif
+                        @endforeach
+                        <button type="button" class="btn btn-success form-check form-control" style="color: white"
+                                onclick="noteUsers()">
+                            Отметить
+                        </button>
+                    @else
+                        <div class="row">
+                            <h1>Нет записавшихся</h1>
+                        </div>
+                    @endif
                 </div>
             </form>
         </div>
