@@ -21,6 +21,7 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::post('/users/list/engaged', [\App\Http\Controllers\Users\UsersController::class, 'engagedListGet'])->name('engaged.list.get');
         Route::post('/eddUsers', [\App\Http\Controllers\Users\UsersController::class, 'eddUsers'])->name('edd.users');
 
+        Route::get('room/vault', [\App\Http\Controllers\RoomsController::class, 'showVault'])->name('roomsVault');
         Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
         Route::post('/rooms/nextWeek', [\App\Http\Controllers\RoomsController::class, 'nextWeek'])->name('nextWeek');
 

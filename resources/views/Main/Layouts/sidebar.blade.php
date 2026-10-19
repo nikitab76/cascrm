@@ -243,6 +243,12 @@
                                         <p>Часы тренеров</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{route('roomsVault')}}" class="nav-link">
+                                        <i class="far nav-icon"></i>
+                                        <p>Свод на день</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item">

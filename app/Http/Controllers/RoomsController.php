@@ -157,4 +157,60 @@ class RoomsController extends Controller
                 return 'Мероприятия';
         }
     }
+
+    public function showVault()
+    {
+        $rooms = Room::query()->get();
+
+        $trainings = Training::query()
+            ->where('date', Carbon::today()->toDateString())
+            ->get()
+            ->groupBy('slug_room');
+
+        $schedule = [];
+
+        $start = 7 * 60;  // 07:00
+        $end = 22 * 60;   // 22:00
+        $step = 15;
+
+        foreach ($rooms as $room) {
+            // Ищем тренировки по slug, а не по title
+            $roomTrainings = $trainings->get($room->slug, collect());
+
+            $slots = [];
+
+            for ($minute = $start; $minute < $end; $minute += $step) {
+                $time = sprintf(
+                    '%02d:%02d',
+                    intdiv($minute, 60),
+                    $minute % 60
+                );
+
+                $slots[$time] = $roomTrainings->contains(
+                    function ($training) use ($minute, $step) {
+                        if (!$training->time_start || !$training->time_end) {
+                            return false;
+                        }
+
+                        $startTime = Carbon::parse($training->time_start);
+                        $endTime = Carbon::parse($training->time_end);
+
+                        $startMinute = $startTime->hour * 60 + $startTime->minute;
+                        $endMinute = $endTime->hour * 60 + $endTime->minute;
+
+                        return $startMinute < $minute + $step
+                            && $endMinute > $minute;
+                    }
+                );
+            }
+
+            // Название и слоты храним отдельно
+            $schedule[] = [
+                'title' => $room->title,
+                'slots' => $slots,
+            ];
+        }
+
+        return view('Main.roomsVault', compact('schedule'));
+    }
 }
