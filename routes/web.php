@@ -22,6 +22,7 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::post('/eddUsers', [\App\Http\Controllers\Users\UsersController::class, 'eddUsers'])->name('edd.users');
 
         Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
+        Route::post('/rooms/nextWeek', [\App\Http\Controllers\RoomsController::class, 'nextWeek'])->name('nextWeek');
 
         Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
         Route::post('training/delete', [\App\Http\Controllers\trainingController::class, 'delete'])->name('training.delete');

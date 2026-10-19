@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\Training;
 use App\Models\traning_group;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -77,6 +78,11 @@ class RoomsController extends Controller
     {
         Room::find($id)->delete();
         return redirect()->route('rooms.index');
+    }
+
+    public function nextWeek(Request $request)
+    {
+        dd($request->all());
     }
 
     public function infoTraining($id){

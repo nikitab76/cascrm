@@ -289,6 +289,12 @@
                                                        placeholder="" value="{{old('classDate')}}">
                                             </div>
                                             <div class="pt-2">
+                                                <label for="classDateFor">Растянуть до:</label>
+                                                <input type="date" class="form-control" id="classDateFor" name="classDateFor"
+                                                       placeholder="" value="{{old('classDate')}}">
+                                            </div>
+
+                                            <div class="pt-2">
                                                 <div class="form-group">
                                                     <label for="classQuarter">Организация</label>
                                                     <select class="form-control" name="classQuarter" id="classQuarter">
@@ -321,6 +327,8 @@
 
 
             @if(isset($room['info']))
+                {{--@dump("кнопка 'Перенести на неделю' пока что не работает")
+                @dump($room['room']->slug)--}}
 
                 <div class="col-md-12">
                     <div class="card">
@@ -348,6 +356,7 @@
                                             <button id="prev-week" class="btn btn-outline-warning">← Предыдущая неделя</button>
                                             <button id="next-week" class="btn btn-outline-warning">Следующая неделя →</button>
                                             <button id="today" class="btn btn-outline-warning">Сегодня</button>
+                                            {{--<button id="nextweek" class="btn btn-outline-secondary">Перенести на неделю</button>--}}
                                             <button id="export-pdf" class="btn btn-outline-success">🖨 Печать</button>
 
                                         </div>
@@ -634,6 +643,20 @@
             document.getElementById('today').addEventListener('click', function () {
                 calendar.today();  // Возврат на текущую неделю
             });
+            document.getElementById('nextweek').addEventListener('click', function () {
+                const date = calendar.getDate();
+
+                console.log('Дата календаря:', date);
+
+                const jsDate = typeof date.toDate === 'function'
+                    ? date.toDate()
+                    : new Date(date);
+
+                nextWeek(
+                    @json($room['room']->slug),
+                    jsDate.toISOString()
+                );
+            });
 
             document.getElementById('export-pdf').addEventListener('click', async function () {
                 const calendarElement = document.getElementById('calendar-print-wrapper');
@@ -678,6 +701,25 @@
                     printWindow.focus();
                     printWindow.print();
                 };
+            });
+        }
+
+        function nextWeek(slug, currentDate) {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("nextWeek") }}',
+                dataType: 'json',
+                data: {
+                    slug: slug,
+                    currentDate: currentDate,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    renderCalendar(data);
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
             });
         }
     </script>

@@ -7,6 +7,7 @@ use App\Models\Training;
 use App\Models\traning_group;
 use App\Models\Users;
 use App\Models\UsersDocument;
+use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -17,18 +18,28 @@ class trainingController extends Controller
 {
     public function create(Request $request)
     {
-        Training::create([
-            'slug_room' => $request->roomsSlug,
-            'coach' => $request->classCoach,
-            'profile' => $request->classProfile,
-            'date' => $request->classDate,
-            'group' => $request->group ?? '',
-            'time_start' => $request->classTime,
-            'time_end' => $request->classTimeEnd,
-            'quarter' => $request->classQuarter,
-            'comment' => $request->classComment ? $request->classComment : '-',
-            'max_user' => $request->max_user ? $request->max_user : '15',
-        ]);
+        $startDate = Carbon::parse($request->classDate);
+        $endDate = $request->filled('classDateFor')
+            ? Carbon::parse($request->classDateFor)
+            : $startDate->copy();
+
+        while ($startDate->lte($endDate)) {
+            Training::create([
+                'slug_room' => $request->roomsSlug,
+                'coach' => $request->classCoach,
+                'profile' => $request->classProfile,
+                'date' => $startDate->toDateString(),
+                'group' => $request->group ?? '',
+                'time_start' => $request->classTime,
+                'time_end' => $request->classTimeEnd,
+                'quarter' => $request->classQuarter,
+                'comment' => $request->classComment ?: '-',
+                'max_user' => $request->max_user ?: 15,
+            ]);
+
+            $startDate->addWeek();
+        }
+
         return redirect()->route('rooms.show', ['room' => $request->roomsSlug]);
     }
 
