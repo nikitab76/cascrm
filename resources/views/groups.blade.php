@@ -46,14 +46,19 @@
                                                     </thead>
                                                     <tbody>
                                                     @foreach(json_decode($train['users_list']) as $user)
-                                                        {{--<div class="col mt-2">
-                                                            <input type="text" class="col-6 form-control" value="{{\App\Models\Users::where('id', $user)->first()->fullName()}}">
-                                                        </div>--}}
+                                                        @php
+                                                            $userModel = \App\Models\Users::find($user);
+                                                            $document = \App\Models\UsersDocument::where('user_id', $user)->first();
+                                                        @endphp
+
                                                         <tr>
-                                                            <th scope="row">{{$user}}</th>
-                                                            <td>{{\App\Models\Users::where('id', $user)->first()->fullName()}}</td>
-                                                            <td>{{\App\Models\UsersDocument::where('user_id', $user)->value('user_birth')}}</td>
-                                                            <td>{{\App\Models\UsersDocument::where('user_id', $user)->value('nosology')}}</td>
+                                                            <th scope="row">{{ $user }}</th>
+
+                                                            <td>{{ $userModel ? $userModel->fullName() : 'Пользователь не найден' }}</td>
+
+                                                            <td>{{ $document->user_birth ?? '—' }}</td>
+
+                                                            <td>{{ $document->nosology ?? '—' }}</td>
                                                         </tr>
                                                     @endforeach
                                                     </tbody>

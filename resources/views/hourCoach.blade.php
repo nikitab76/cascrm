@@ -20,6 +20,13 @@
         .nav-buttons {
             margin-bottom: 20px;
         }
+
+        #user_table tfoot th {
+            font-weight: bold !important;
+            background: #e8e8e8 !important;
+            text-align: center;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -79,9 +86,24 @@
             <div class="portlet light portlet-fit portlet-datatable bordered">
                 <div class="portlet-body" id="tableDiv">
                     <div class="table-container">
-                        <meta name="csrf-token" content="{{ csrf_token()}}">
+                        <meta name="csrf-token" content="{{ csrf_token() }}">
+
                         <table width="100%" id="user_table"
-                               class="table table-striped table-bordered table-hover dataTable dtr-inline word-break"></table>
+                               class="table table-striped table-bordered table-hover dataTable dtr-inline word-break">
+
+                            <thead>
+                            <tr></tr>
+                            </thead>
+
+                            <tbody></tbody>
+
+                            <tfoot>
+                            <tr>
+                                <th>Итого:</th>
+                            </tr>
+                            </tfoot>
+
+                        </table>
                     </div>
                 </div>
             </div>
@@ -89,6 +111,24 @@
     </div>
 </div>
 <script>
+    function timeToMinutes(time) {
+        if (!time || time === false || time === '-') {
+            return 0;
+        }
+
+        const parts = time.split(':');
+
+        return (parseInt(parts[0]) * 60) + parseInt(parts[1]);
+    }
+
+    function minutesToTime(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+
+        return String(hours).padStart(2, '0') + ':' +
+            String(remainingMinutes).padStart(2, '0');
+    }
+
     // Вызываем функцию при загрузке страницы
     $(document).ready(function () {
         setCurrentWeekRange();
@@ -139,53 +179,81 @@
             },
         });
     }
+
     let table;
 
     function render(data) {
-        // Формируем столбцы
+
         let columns = [];
-        let days = data['days'];
+        let days = data.days;
 
-        let title = data.result['profile'];
-
-        // Добавляем колонку для "Занятие"
+        // Первая колонка
         columns.push({
             title: 'Занятие',
-            data: 'profile', // Свойство profile для отображения в первой колонке
+            data: 'profile',
             className: "cursor penalty column-100 text-align-center vertical-align-middle",
         });
 
-        // Добавляем колонки для дней
+        // Колонки с датами
         days.forEach(function (day) {
             columns.push({
                 title: day,
-                data: day, // Имя поля совпадает с названием дня
+                data: day,
                 className: "cursor column-100 text-align-center vertical-align-middle",
                 width: '100',
-                render: function (data) {
-                    return data && data !== false ? data : '-'; // Если значение есть, отображаем его, иначе "-"
-                },
+                render: function (value) {
+                    return value && value !== false ? value : '-';
+                }
             });
         });
 
-        // Уничтожаем старую таблицу, если она существует
-        if (table) {
-            table.clear().destroy();
-            $('#user_table').empty();
+        // Уничтожаем старую таблицу
+        if ($.fn.DataTable.isDataTable('#user_table')) {
+            $('#user_table').DataTable().clear().destroy();
         }
 
-        // Создаем новую таблицу
+        // Восстанавливаем структуру таблицы
+        $('#user_table').html(`
+        <thead>
+            <tr></tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr></tr>
+        </tfoot>
+    `);
+
+        // Формируем footer под все столбцы
+        let footerHtml = '<th><strong>Итого:</strong></th>';
+
+        for (let i = 1; i < columns.length; i++) {
+            footerHtml += '<th>00:00</th>';
+        }
+
+        $('#user_table tfoot tr').html(footerHtml);
+
+        // Если нет данных, не обращаемся к data.result[0]
+        let coachName = data.result.length
+            ? data.result[0].coach
+            : 'Тренер';
+
+        // Создаем DataTable
         table = $('#user_table').DataTable({
-            "scrollX": true,
-            "deferRender": true,
-            "iDisplayLength": 25,
-            "order": [[0, "asc"]],
-            "language": {
-                "url": "{{asset('assets/profile/plugins/datatables/ru.json')}}", // Локализация
+
+            scrollX: true,
+            deferRender: true,
+            iDisplayLength: 25,
+            order: [[0, "asc"]],
+
+            language: {
+                url: "{{asset('assets/profile/plugins/datatables/ru.json')}}",
             },
-            "data": data.result, // Используем свойство "result", где массив данных
-            "dom": "<'row padding-top-5 mt-1 padding-left-15 padding-right-15' <'col-md-12'B>><'row padding-left-15 padding-right-15'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row padding-left-15 padding-right-15'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
-            "buttons": [
+
+            data: data.result,
+
+            dom: "<'row padding-top-5 mt-1 padding-left-15 padding-right-15' <'col-md-12'B>><'row padding-left-15 padding-right-15'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row padding-left-15 padding-right-15'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+
+            buttons: [
                 {
                     extend: 'collection',
                     text: ' Сохранить',
@@ -195,7 +263,7 @@
                             extend: 'excelHtml5',
                             className: 'btn',
                             text: 'EXCEL',
-                            title: data.result[0].coach,
+                            title: coachName,
                         },
                         {
                             extend: 'csvHtml5',
@@ -213,9 +281,6 @@
                     extend: 'print',
                     className: 'btn blue btn-outline fa fa-print',
                     text: ' Печать',
-                    exportOptions: {
-                        stripHtml: false,
-                    }
                 },
                 {
                     extend: 'colvis',
@@ -223,8 +288,45 @@
                     text: ' Выбрать колонки',
                 },
             ],
-            "columns": columns
+
+            columns: columns,
+
+            // Подсчет итогов
+            footerCallback: function (row, data, start, end, display) {
+
+                let api = this.api();
+
+                let totalAll = 0;
+
+                for (let column = 1; column < api.columns().count(); column++) {
+
+                    let totalMinutes = 0;
+
+                    // Берем все отфильтрованные строки
+                    api.column(column, {
+                        search: 'applied'
+                    }).data().each(function (value) {
+
+                        totalMinutes += timeToMinutes(value);
+
+                    });
+
+                    totalAll += totalMinutes;
+
+                    // Записываем сумму за день
+                    $(api.column(column).footer()).html(
+                        '<strong>' + minutesToTime(totalMinutes) + '</strong>'
+                    );
+                }
+
+                // Общая сумма за период
+                $(api.column(0).footer()).html(
+                    '<strong>Итого: ' + minutesToTime(totalAll) + '</strong>'
+                );
+            }
+
         });
+
     }
 
 </script>

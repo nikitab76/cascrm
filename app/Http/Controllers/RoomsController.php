@@ -174,37 +174,63 @@ class RoomsController extends Controller
         $step = 15;
 
         foreach ($rooms as $room) {
-            // Ищем тренировки по slug, а не по title
             $roomTrainings = $trainings->get($room->slug, collect());
+
+            // Подготавливаем интервалы тренировок
+            $intervals = $roomTrainings
+                ->filter(fn ($training) => $training->time_start && $training->time_end)
+                ->map(function ($training) {
+                    $startTime = Carbon::parse($training->time_start);
+                    $endTime = Carbon::parse($training->time_end);
+
+                    return [
+                        'start' => $startTime->hour * 60 + $startTime->minute,
+                        'end' => $endTime->hour * 60 + $endTime->minute,
+
+                        // Информация для ховера
+                        'group' => $training->group ?? '',
+                        'profile' => $training->profile ?? '',
+                        'coach' => $training->coach ?? 'Не указан',
+                        'comment' => $training->comment ?? '',
+                        'time_start' => $training->time_start,
+                        'time_end' => $training->time_end,
+                    ];
+                })
+                ->values();
 
             $slots = [];
 
             for ($minute = $start; $minute < $end; $minute += $step) {
+                $slotEnd = $minute + $step;
+
+                // Ищем тренировки, пересекающиеся с текущей ячейкой
+                $matchingTrainings = $intervals->filter(function ($interval) use ($minute, $slotEnd) {
+                    return $interval['start'] < $slotEnd
+                        && $interval['end'] > $minute;
+                });
+
                 $time = sprintf(
                     '%02d:%02d',
                     intdiv($minute, 60),
                     $minute % 60
                 );
 
-                $slots[$time] = $roomTrainings->contains(
-                    function ($training) use ($minute, $step) {
-                        if (!$training->time_start || !$training->time_end) {
-                            return false;
-                        }
+                $slots[$time] = [
+                    'busy' => $matchingTrainings->isNotEmpty(),
 
-                        $startTime = Carbon::parse($training->time_start);
-                        $endTime = Carbon::parse($training->time_end);
-
-                        $startMinute = $startTime->hour * 60 + $startTime->minute;
-                        $endMinute = $endTime->hour * 60 + $endTime->minute;
-
-                        return $startMinute < $minute + $step
-                            && $endMinute > $minute;
-                    }
-                );
+                    'trainings' => $matchingTrainings->map(function ($training) {
+                        return [
+                            'group' => $training['group'],
+                            'profile' => $training['profile'],
+                            'coach' => $training['coach'],
+                            'comment' => $training['comment'],
+                            'time_start' => $training['time_start'],
+                            'time_end' => $training['time_end'],
+                        ];
+                    })->values()->all(),
+                ];
             }
 
-            // Название и слоты храним отдельно
             $schedule[] = [
                 'title' => $room->title,
                 'slots' => $slots,
