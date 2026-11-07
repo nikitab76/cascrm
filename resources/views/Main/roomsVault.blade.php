@@ -9,9 +9,9 @@
             --schedule-border: #e5eaf1;
             --schedule-text: #344054;
             --schedule-muted: #98a2b3;
-            --schedule-green: #d9f5e5;
+            --schedule-green: #a1debb;
             --schedule-green-dark: #159957;
-            --schedule-red: #fee2e2;
+            --schedule-red: #ab3e3e;
             --schedule-red-dark: #dc3545;
         }
 
