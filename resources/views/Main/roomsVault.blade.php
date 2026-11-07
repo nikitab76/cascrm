@@ -528,22 +528,4 @@
         </section>
     </div>
 
-    <script>
-        $(document).ready(function () {
-            $('#roomVault').DataTable({
-                paging: false,
-                searching: false,
-                info: false,
-                ordering: false,
-                scrollX: false,
-                scrollY: false,
-                autoWidth: false,
-                responsive: false,
-                language: {
-                    emptyTable: 'Нет данных для отображения'
-                }
-            });
-        });
-    </script>
-
 @endsection
