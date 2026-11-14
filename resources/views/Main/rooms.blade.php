@@ -40,7 +40,8 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="roomName">Название</label>
-                                    <input type="text" class="form-control" id="roomName" name="roomName" placeholder="">
+                                    <input type="text" class="form-control" id="roomName" name="roomName"
+                                           placeholder="">
                                 </div>
                             </div>
                         </div>
@@ -68,34 +69,59 @@
                             <tr>
                                 <th style="width: 10px">#</th>
                                 <th>Название</th>
-                                <th>Загруженность</th>
-                                <th style="width: 40px">Label</th>
-                                <th style="width: 40px">Delight</th>
+                                <th>Загруженность за месяц <small class="text-muted">
+                                        ({{ $monthStart->format('d.m.Y') }} —
+                                        {{ $monthEnd->format('d.m.Y') }})
+                                    </small></th>
+                                <th style="width: 80px">Процент</th>
+                                <th style="width: 40px">Удалить</th>
                             </tr>
                             </thead>
                             <tbody>
 
                             @foreach($rooms as $room)
                                 <tr>
-                                    <td>#</td>
-                                    <td style="width: 25%"><a href="{{route('rooms.show', ['room'=>$room->slug])}}">{{$room->title}}</a>
+                                    <td>{{ $loop->iteration }}</td>
+
+                                    <td style="width: 25%">
+                                        <a href="{{ route('rooms.show', ['room' => $room->slug]) }}">
+                                            {{ $room->title }}
+                                        </a>
                                     </td>
+
                                     <td>
                                         <div class="progress progress-xs">
-                                            <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                                            <div
+                                                class="progress-bar
+                        {{ $room->load_percent >= 80 ? 'bg-danger' : ($room->load_percent >= 50 ? 'bg-warning' : 'bg-success') }}"
+                                                style="width: {{ min($room->load_percent, 100) }}%">
+                                            </div>
                                         </div>
+
+                                        <small class="text-muted">
+                                            {{ $room->occupied_hours }} из {{ $room->available_hours }} часов
+                                        </small>
                                     </td>
-                                    <td><span class="badge bg-danger">55%</span></td>
+
                                     <td>
-                                    <form action="{{ route('rooms.destroy', ['room'=>$room->id]) }}" method="post" class="float-left">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Подтвердите удаление')">
-                                            <i
-                                                class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
+            <span class="badge
+                {{ $room->load_percent >= 80 ? 'bg-danger' : ($room->load_percent >= 50 ? 'bg-warning' : 'bg-success') }}">
+                {{ $room->load_percent }}%
+            </span>
+                                    </td>
+
+                                    <td>
+                                        <form action="{{ route('rooms.destroy', ['room' => $room->id]) }}"
+                                              method="post">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Подтвердите удаление')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

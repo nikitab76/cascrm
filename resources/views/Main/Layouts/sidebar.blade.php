@@ -251,12 +251,12 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
+                        {{--<li class="nav-item">
                             <a href="{{route('index.group')}}" class="nav-link">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>Группы тренеров</p>
                             </a>
-                        </li>
+                        </li>--}}
                         <li class="nav-item">
                             <a href="{{route('magazines.coach')}}" class="nav-link">
                                 <i class="nav-icon fas fa-book"></i>

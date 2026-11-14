@@ -294,4 +294,33 @@ class trainingController extends Controller
     {
         return view('hourCoach');
     }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'training_id' => 'required|integer',
+            'classCoach' => 'required',
+            'classProfile' => 'required',
+            'classDate' => 'required|date',
+            'classDateFor' => 'nullable|date',
+            'classTime' => 'required',
+            'classTimeEnd' => 'required',
+            'classQuarter' => 'required',
+            'classComment' => 'nullable|string',
+        ]);
+
+        $training = Training::findOrFail($request->training_id);
+
+        $training->coach = $request->classCoach;
+        $training->profile = $request->classProfile;
+        $training->date = $request->classDate;
+        $training->time_start = $request->classTime;
+        $training->time_end = $request->classTimeEnd;
+        $training->quarter = $request->classQuarter;
+        $training->comment = $request->classComment ?? '';
+
+        $training->save();
+
+        return redirect()->back()->with('success', 'Занятие обновлено');
+    }
 }

@@ -16,8 +16,117 @@ class RoomsController extends Controller
      */
     public function index()
     {
-        $rooms = Room::all();
-        return view('Main.rooms', compact('rooms'));
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
+        $daysInMonth = $monthStart->daysInMonth;
+
+        // Максимальное количество доступных часов за месяц
+        $availableHours = 16 * $daysInMonth;
+
+        // Все занятия за текущий месяц
+        $trainings = Training::query()
+            ->whereBetween('date', [
+                $monthStart->toDateString(),
+                $monthEnd->toDateString(),
+            ])
+            ->get()
+            ->groupBy('slug_room');
+
+        $rooms = Room::query()->get();
+
+        foreach ($rooms as $room) {
+            $roomTrainings = $trainings->get($room->slug, collect());
+
+            // Группируем занятия по датам.
+            // Важно: пересечения учитываются только в пределах одного дня.
+            $trainingsByDate = $roomTrainings->groupBy(function ($training) {
+                return Carbon::parse($training->date)->toDateString();
+            });
+
+            $occupiedMinutes = 0;
+
+            foreach ($trainingsByDate as $dayTrainings) {
+                $intervals = [];
+
+                foreach ($dayTrainings as $training) {
+                    if (!$training->time_start || !$training->time_end) {
+                        continue;
+                    }
+
+                    $start = Carbon::parse($training->time_start);
+                    $end = Carbon::parse($training->time_end);
+
+                    $startMinute = max(
+                        $start->hour * 60 + $start->minute,
+                        7 * 60
+                    );
+
+                    $endMinute = min(
+                        $end->hour * 60 + $end->minute,
+                        23 * 60
+                    );
+
+                    if ($endMinute > $startMinute) {
+                        $intervals[] = [
+                            'start' => $startMinute,
+                            'end' => $endMinute,
+                        ];
+                    }
+                }
+
+                // Сортируем занятия по времени начала
+                usort($intervals, function ($a, $b) {
+                    return $a['start'] <=> $b['start'];
+                });
+
+                // Объединяем пересекающиеся интервалы
+                $currentStart = null;
+                $currentEnd = null;
+
+                foreach ($intervals as $interval) {
+                    if ($currentStart === null) {
+                        $currentStart = $interval['start'];
+                        $currentEnd = $interval['end'];
+                        continue;
+                    }
+
+                    if ($interval['start'] <= $currentEnd) {
+                        $currentEnd = max(
+                            $currentEnd,
+                            $interval['end']
+                        );
+                    } else {
+                        $occupiedMinutes += $currentEnd - $currentStart;
+
+                        $currentStart = $interval['start'];
+                        $currentEnd = $interval['end'];
+                    }
+                }
+
+                // Добавляем последний интервал дня
+                if ($currentStart !== null) {
+                    $occupiedMinutes += $currentEnd - $currentStart;
+                }
+            }
+
+            // Переводим минуты в часы
+            $occupiedHours = $occupiedMinutes / 60;
+
+            $room->occupied_hours = round($occupiedHours, 2);
+            $room->available_hours = $availableHours;
+
+            // Процент фактической загрузки
+            $room->load_percent = $availableHours > 0
+                ? round(($occupiedHours / $availableHours) * 100, 1)
+                : 0;
+        }
+
+        return view('Main.rooms', compact(
+            'rooms',
+            'monthStart',
+            'monthEnd'
+        ));
     }
 
     /**
@@ -113,11 +222,13 @@ class RoomsController extends Controller
             $group = traning_group::query()->where('id', $training->group)->value('group_num');
             $row['id'] = $training->id;
             $row['name'] = $training->coach;
+            $row['coach'] = $training->coach;
             $row['profile'] = $training->profile;
             $row['comment'] = $training->comment;
             $row['start'] = $training->date . 'T' . $training->time_start . ':00';
             $row['end'] = $training->date . 'T' . $training->time_end . ':00';
             $row['quarter'] = self::colorEvent($training->quarter);
+            $row['quarter_id'] = $training->quarter;
             $row['body'] = '<strong>Начало тренировки:</strong> ' . $training->time_start . '<br>' .
             '<strong>Конец тренировки:</strong> ' . $training->time_end . '<br>' .
                 '<strong>Инструктор:</strong> ' . $training->coach . '<br>'.
@@ -157,20 +268,30 @@ class RoomsController extends Controller
                 return 'Мероприятия';
         }
     }
-
-    public function showVault()
+    public function showVault(Request $request)
     {
+        // Проверяем дату из GET-запроса
+        $request->validate([
+            'date' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+
+        // Если дата не передана — используем сегодня
+        $selectedDate = $request->filled('date')
+            ? Carbon::createFromFormat('Y-m-d', $request->date)->startOfDay()
+            : Carbon::today();
+
         $rooms = Room::query()->get();
 
+        // Получаем тренировки именно на выбранную дату
         $trainings = Training::query()
-            ->where('date', Carbon::today()->toDateString())
+            ->where('date', $selectedDate->toDateString())
             ->get()
             ->groupBy('slug_room');
 
         $schedule = [];
 
         $start = 7 * 60;  // 07:00
-        $end = 22 * 60;   // 22:00
+        $end = 23 * 60;   // 23:00
         $step = 15;
 
         foreach ($rooms as $room) {
@@ -187,7 +308,6 @@ class RoomsController extends Controller
                         'start' => $startTime->hour * 60 + $startTime->minute,
                         'end' => $endTime->hour * 60 + $endTime->minute,
 
-                        // Информация для ховера
                         'group' => $training->group ?? '',
                         'profile' => $training->profile ?? '',
                         'coach' => $training->coach ?? 'Не указан',
@@ -237,6 +357,9 @@ class RoomsController extends Controller
             ];
         }
 
-        return view('Main.roomsVault', compact('schedule'));
+        return view('Main.roomsVault', compact(
+            'schedule',
+            'selectedDate'
+        ));
     }
 }

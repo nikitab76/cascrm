@@ -8,11 +8,11 @@ Route::any('logout', [\App\Http\Controllers\MainController::class, 'logout'])->n
 Route::get('swimmingRecording', [\App\Http\Controllers\FreeFloating::class, 'showUserPage'])->name('showUserPage');
 Route::post('swimmingRecording', [\App\Http\Controllers\FreeFloating::class, 'saveUserFreeSwimming'])->name('saveUserFreeSwimming');
 
-Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function (){
+Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function () {
     Route::get('/profile', [\App\Http\Controllers\MainController::class, 'indexProfile'])->name('index.profile');
     Route::post('/profile/update/password', [\App\Http\Controllers\Users\UsersController::class, 'updatePassword'])->name('password.update');
     //admin rout
-    Route::middleware([\App\Http\Middleware\AdminRole::class])->group(function (){
+    Route::middleware([\App\Http\Middleware\AdminRole::class])->group(function () {
         Route::get('/users', [\App\Http\Controllers\Users\UsersController::class, 'indexList'])->name('users.list');
         Route::post('/users/list', [\App\Http\Controllers\Users\UsersController::class, 'usersList'])->name('get.users.list');
         Route::post('/users/create', [\App\Http\Controllers\Users\UsersController::class, 'createUsers'])->name('users.create');
@@ -22,12 +22,14 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
         Route::post('/eddUsers', [\App\Http\Controllers\Users\UsersController::class, 'eddUsers'])->name('edd.users');
 
         Route::get('room/vault', [\App\Http\Controllers\RoomsController::class, 'showVault'])->name('roomsVault');
+        //Route::post('room/vault', [\App\Http\Controllers\RoomsController::class, 'showVaultTable'])->name('roomsVaultTable');
         Route::resource('/rooms', \App\Http\Controllers\RoomsController::class);
         Route::post('/rooms/nextWeek', [\App\Http\Controllers\RoomsController::class, 'nextWeek'])->name('nextWeek');
 
         Route::post('training/create', [\App\Http\Controllers\trainingController::class, 'create'])->name('training.create');
         Route::post('training/delete', [\App\Http\Controllers\trainingController::class, 'delete'])->name('training.delete');
         Route::post('training/edit', [\App\Http\Controllers\trainingController::class, 'edit'])->name('training.edit');
+        Route::post('training/update', [\App\Http\Controllers\trainingController::class, 'update'])->name('training.update');
         Route::post('room/calendar', [\App\Http\Controllers\RoomsController::class, 'showTable'])->name('rooms.calendar');
 
         Route::get('groups', [\App\Http\Controllers\GroupsController::class, 'index'])->name('index.group');
@@ -50,14 +52,14 @@ Route::middleware([\App\Http\Middleware\LoginMiddleware::class])->group(function
     Route::get('magazine/list/{id}/{profile}/{day}', [\App\Http\Controllers\MagazineController::class, 'show'])->name('magazine.show');
     Route::get('magazine/list/freeFloating', [\App\Http\Controllers\MagazineController::class, 'freeFloatingMagazine'])->name('magazine.show.freeFloating');
     Route::post('magazine/list', [\App\Http\Controllers\MagazineController::class, 'noteUsers'])->name('magazine.noteUsers');
-    Route::get('/t', function (){
+    Route::get('/t', function () {
         return view('test');
     });
     Route::get('/test', [\App\Http\Controllers\testcontroller::class, 'index']);
-    Route::get('freeFloating', [\App\Http\Controllers\FreeFloating::class , 'index'])->name('freeFloating');
-    Route::post('freeFloating', [\App\Http\Controllers\FreeFloating::class , 'createUser'])->name('createUser.freeFloating');
-    Route::post('freeFloatingUser', [\App\Http\Controllers\FreeFloating::class , 'getUser'])->name('getUser.freeFloating');
-    Route::post('freeFloatingUserDelete/{user}/{idTren}', [\App\Http\Controllers\FreeFloating::class , 'deleteUser'])->name('deleteUser.freeFloating');
+    Route::get('freeFloating', [\App\Http\Controllers\FreeFloating::class, 'index'])->name('freeFloating');
+    Route::post('freeFloating', [\App\Http\Controllers\FreeFloating::class, 'createUser'])->name('createUser.freeFloating');
+    Route::post('freeFloatingUser', [\App\Http\Controllers\FreeFloating::class, 'getUser'])->name('getUser.freeFloating');
+    Route::post('freeFloatingUserDelete/{user}/{idTren}', [\App\Http\Controllers\FreeFloating::class, 'deleteUser'])->name('deleteUser.freeFloating');
     Route::get('swimmingRecordingAdmin', [\App\Http\Controllers\FreeFloating::class, 'showAdminUsersPage'])->name('showAdminUsersPage');
 });
 

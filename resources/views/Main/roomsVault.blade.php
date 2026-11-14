@@ -1,4 +1,3 @@
-
 @extends('Main.Layouts.sidebar')
 
 @section('content')
@@ -394,8 +393,46 @@
                             <i class="fas fa-calendar-alt text-primary mr-2"></i>
                             График загруженности
                         </h1>
-                        <div class="vault-subtitle">
-                            Расписание залов на {{ \Carbon\Carbon::today()->format('d.m.Y') }}
+
+                        <div class="vault-subtitle d-flex align-items-center flex-wrap">
+                            <span class="mr-2">Посмотреть расписание на</span>
+
+                            <form method="GET"
+                                  action="{{ route('roomsVault') }}"
+                                  class="d-flex align-items-center">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary mr-2"
+                                    onclick="changeDate(-1)"
+                                    title="Предыдущий день">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+
+                                <input
+                                    type="date"
+                                    id="scheduleDate"
+                                    name="date"
+                                    class="form-control"
+                                    style="width: 170px;"
+                                    value="{{ $selectedDate->format('Y-m-d') }}"
+                                >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary ml-2"
+                                    onclick="changeDate(1)"
+                                    title="Следующий день">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary ml-2">
+                                    Показать
+                                </button>
+
+                            </form>
                         </div>
                     </div>
 
@@ -407,12 +444,30 @@
                     </button>
                 </div>
 
+                <script>
+                    function changeDate(days) {
+                        const input = document.getElementById('scheduleDate');
+
+                        const date = input.value
+                            ? new Date(input.value + 'T12:00:00')
+                            : new Date();
+
+                        date.setDate(date.getDate() + days);
+
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+
+                        input.value = `${year}-${month}-${day}`;
+                    }
+                </script>
+
                 <div class="vault-card">
 
                     <div class="vault-card-header">
                         <h3>
                             <i class="fas fa-clock text-primary mr-2"></i>
-                            Расписание по времени
+                            Расписание на {{ $selectedDate->format('d.m.Y') }}
                         </h3>
 
                         <div class="schedule-legend">
@@ -442,7 +497,7 @@
                                     Зал
                                 </th>
 
-                                @for ($hour = 7; $hour < 22; $hour++)
+                                @for ($hour = 7; $hour < 23; $hour++)
                                     <th colspan="4" class="hour-header">
                                         {{ sprintf('%02d:00', $hour) }}
                                     </th>
@@ -450,7 +505,7 @@
                             </tr>
 
                             <tr>
-                                @for ($hour = 7; $hour < 22; $hour++)
+                                @for ($hour = 7; $hour < 23; $hour++)
                                     @foreach ([0, 15, 30, 45] as $minute)
                                         <th class="quarter-header">
                                             {{ sprintf('%02d', $minute) }}
@@ -465,9 +520,9 @@
                                 <tr>
                                     <td class="room-column">
                                         <div class="room-name">
-                                            <span class="room-icon">
+                                            {{--<span class="room-icon">
                                                 <i class="fas fa-door-open"></i>
-                                            </span>
+                                            </span>--}}
                                             <span>{{ $row['title'] }}</span>
                                         </div>
                                     </td>

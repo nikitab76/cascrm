@@ -223,7 +223,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <button type="button" class="btn btn-success float-sm-right" data-toggle="modal"
+                        <button type="button"
+                                id="addTrainingButton"
+                                class="btn btn-success float-sm-right"
+                                data-toggle="modal"
                                 data-target="#createClass">
                             Добавить занятие
                         </button>
@@ -237,8 +240,10 @@
                  aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <form role="form" method="post" action="{{route('training.create')}}">
+                        <form id="trainingForm" role="form" method="post"
+                              action="{{ route('training.create') }}">
                             @csrf
+                            <input type="hidden" name="training_id" id="editingTrainingId">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Добавить занятие</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -450,6 +455,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
+        $('#createClass').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+
+            // Открытие для создания нового занятия
+            if (button.length && button.data('mode') === 'create') {
+                const form = document.getElementById('trainingForm');
+
+                form.reset();
+
+                $('#editingTrainingId').val('');
+
+                form.action = "{{ route('training.create') }}";
+
+                $('#exampleModalLabel').text('Добавить занятие');
+            }
+        });
+        // Глобальные данные календаря
+        var calendarInstance = null;
+        var trainingData = {};
+        var selectedTraining = null;
+
+        // Функции фильтра
         function show() {
             $('#alertmess').show();
         }
@@ -457,108 +484,292 @@
         function hide() {
             $('#alertmess').hide();
         }
-        $(document).ready(function (){
-            showCalendar();
-        })
 
-        function showCalendar(){
+        $(document).ready(function () {
+            showCalendar();
+
+            // Возвращаем исходный заголовок модалки при закрытии
+            $('#createClass').on('hidden.bs.modal', function () {
+                $('#createClass .modal-title').text('Добавить занятие');
+                $('#editingTrainingId').val('');
+            });
+        });
+
+
+        // Загрузка календаря
+        function showCalendar() {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
             $.ajax({
-                type: 'POST', // отправляем в POST формате, можно GET
-                url: '{{ route('rooms.calendar', ['id'=>$room['room']->slug])}}', // путь дo обработчика
-                dataType: 'json', // ответ ждём в json формате
-                data: '', // данные для отправки
-                beforeSend: function(data) { // событие дo отправки запроса
-                },
-                success: function(data){ // событие в случае удачного запроса
-                    if(data){
-                        renderCalendar(data)
+                type: 'POST',
+                url: '{{ route('rooms.calendar', ['id'=>$room['room']->slug]) }}',
+                dataType: 'json',
+                data: '',
+                success: function (data) {
+                    if (data) {
+                        renderCalendar(data);
                     }
                 },
-            })
-        }
-
-        function deleteTrening(data){
-            let pajeData = {
-                'id': data,
-            }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                error: function (xhr) {
+                    console.error('Ошибка загрузки календаря:', xhr.responseText);
                 }
             });
-            $.ajax({
-                type: 'POST', // отправляем в POST формате, можно GET
-                url: '{{ route('training.delete')}}', // путь дo обработчика
-                dataType: 'json', // ответ ждём в json формате
-                data: pajeData, // данные для отправки
-                beforeSend: function(data) { // событие дo отправки запроса
-                },
-                success: function(data){ // событие в случае удачного запроса
-                    renderCalendar(data)
-                },
-            })
         }
 
-        function editTrening(id, data, timeStart, timeEnd){
-            let pajeData = {
-                'id': id,
-                'date': data,
-                'start': timeStart,
-                'end': timeEnd,
-            }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+
+        // Удаление занятия
+        function deleteTrening(id) {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('training.delete') }}',
+                dataType: 'json',
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    renderCalendar(data);
+                },
+                error: function (xhr) {
+                    console.error('Ошибка удаления:', xhr.responseText);
                 }
             });
-            $.ajax({
-                type: 'POST', // отправляем в POST формате, можно GET
-                url: '{{ route('training.edit')}}', // путь дo обработчика
-                dataType: 'json', // ответ ждём в json формате
-                data: pajeData, // данные для отправки
-                beforeSend: function(data) { // событие дo отправки запроса
-                },
-                success: function(data){ // событие в случае удачного запроса
-                    renderCalendar(data)
-                },
-            })
         }
 
+
+        // Изменение времени занятия при перетаскивании
+        function editTrening(id, date, timeStart, timeEnd) {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('training.edit') }}',
+                dataType: 'json',
+                data: {
+                    id: id,
+                    date: date,
+                    start: timeStart,
+                    end: timeEnd
+                },
+                success: function (data) {
+                    renderCalendar(data);
+                },
+                error: function (xhr) {
+                    console.error('Ошибка изменения занятия:', xhr.responseText);
+                }
+            });
+        }
+
+
+        // Форматирование даты YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+
+            return `${hours}:${minutes}`;
+        }
+
+        // Проверка наличия значения в select
+        function setSelectValue(selector, value) {
+            if (value === undefined || value === null || value === '') {
+                return;
+            }
+
+            var select = $(selector);
+            var exists = select.find('option').filter(function () {
+                return String(this.value) === String(value);
+            }).length > 0;
+
+            if (exists) {
+                select.val(String(value));
+            }
+        }
+
+        function setCoachSelect(coach) {
+            const select = document.getElementById('classCoach');
+
+            if (!select || !coach) {
+                return;
+            }
+
+            const value = String(coach).trim().toLowerCase();
+
+            // Ищем по фамилии (value)
+            let option = Array.from(select.options).find(item =>
+                item.value.trim().toLowerCase() === value
+            );
+
+            // Если не нашли, ищем по полному имени
+            if (!option) {
+                option = Array.from(select.options).find(item =>
+                    item.textContent.trim().toLowerCase() === value
+                );
+            }
+
+            if (option) {
+                select.value = option.value;
+                $('#classCoach').trigger('change');
+            } else {
+                console.warn('Тренер не найден:', coach);
+            }
+        }
+
+        // Открытие существующей модалки с заполненными данными
+        function openTrainingEditModal(training) {
+            if (!training) {
+                alert('Не удалось получить данные занятия');
+                return;
+            }
+
+            const start = new Date(training.start);
+            const end = new Date(training.end);
+
+            const form = document.getElementById('trainingForm');
+
+            form.action = "{{ route('training.update') }}";
+
+            $('#editingTrainingId').val(training.id);
+
+            setCoachSelect(training.coach);
+
+            $('#classProfile').val(training.profile || '');
+
+            $('#classTime').val(formatTime(start));
+            $('#classTimeEnd').val(formatTime(end));
+
+            $('#classDate').val(formatDate(start));
+            $('#classDateFor').val(formatDate(end));
+
+            // Выбираем организацию по числовому коду
+            $('#classQuarter').val(String(training.quarter_id)).trigger('change');
+
+            $('#classComment').val(training.comment || '');
+
+            $('#exampleModalLabel').text('Редактировать занятие');
+
+            $('#createClass').modal('show');
+
+        }
+
+
+        // При открытии окна через кнопку «Добавить занятие»
+        $('#addTrainingButton').on('click', function () {
+
+            const form = document.getElementById('trainingForm');
+
+            // Полностью сбрасываем поля формы
+            form.reset();
+
+            // Очищаем скрытый ID занятия
+            $('#editingTrainingId').val('');
+
+            // Убираем возможные ошибки валидации
+            $('#trainingForm').find('.is-invalid').removeClass('is-invalid');
+            $('#trainingForm').find('.invalid-feedback').remove();
+
+            // Возвращаем action создания
+            form.action = "{{ route('training.create') }}";
+
+            // Убираем метод PUT/PATCH, если он был добавлен
+            $(form).find('input[name="_method"]').remove();
+
+            // Сбрасываем заголовок
+            $('#exampleModalLabel').text('Добавить занятие');
+
+        });
+
+
+        // Перехват кнопки Edit стандартного popup TUI Calendar
+        function editPopupCapture(e) {
+
+            var editButton = e.target.closest(
+                '.tui-full-calendar-popup-edit'
+            );
+
+            if (!editButton) {
+                return;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            if (!selectedTraining) {
+                console.error('Данные выбранного занятия не найдены');
+                alert('Не удалось получить данные занятия');
+                return;
+            }
+
+            openTrainingEditModal(selectedTraining);
+        }
+
+
+        // Основная функция построения календаря
         function renderCalendar(data) {
+
+            // Удаляем предыдущий экземпляр календаря
+            if (calendarInstance) {
+                calendarInstance.destroy();
+            }
+
+            trainingData = {};
+            selectedTraining = null;
 
             var calendar = new tui.Calendar('#calendar', {
                 defaultView: 'week',
                 taskView: false,
                 scheduleView: ['time'],
+
                 useDetailPopup: true,
                 useCreationPopup: true,
                 useResizeHandle: true,
                 useDrag: true,
+                isReadOnly: false,
+
                 week: {
                     startDayOfWeek: 1,
-                    hourStart: 8,     // важно: с нуля
-                    hourEnd: 23,       // важно: до 24
+                    hourStart: 8,
+                    hourEnd: 23,
                     dayNames: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
                 },
+
                 template: {
                     time: function (schedule) {
                         const start = schedule.start;
-                        const hours = start.getHours().toString().padStart(2, '0');
-                        const minutes = start.getMinutes().toString().padStart(2, '0');
+
+                        const hours = start.getHours()
+                            .toString().padStart(2, '0');
+
+                        const minutes = start.getMinutes()
+                            .toString().padStart(2, '0');
+
                         return `${hours}:${minutes} ${schedule.title}`;
                     },
+
                     timegridDisplayPrimaryTime(hour) {
                         return hour.hour + ':00';
                     }
                 }
             });
 
+            calendarInstance = calendar;
+
+
+            // Загружаем занятия
             data.forEach(function (item) {
+
+                // Сохраняем полные данные занятия
+                trainingData[String(item.id)] = item;
+
                 calendar.createSchedules([{
                     id: item.id,
                     calendarId: '1',
@@ -566,161 +777,242 @@
                     category: 'time',
                     start: item.start,
                     end: item.end,
-                    body:item.body,
-                    bgColor:item.quarter,
+                    body: item.body,
+                    bgColor: item.quarter,
+                    isReadOnly: false
                 }]);
             });
-            calendar.on('beforeUpdateSchedule', function(event) {
-                var schedule = event.schedule;
-                var changes = event.changes;
-                var data = changes.start ? new Date(changes.start).toLocaleDateString() : new Date(schedule.start).toLocaleDateString();
-                var timeStart = changes.start ? new Date(changes.start).toLocaleTimeString() : new Date(schedule.start).toLocaleTimeString();
-                var timeEnd = changes.end ? new Date(changes.end).toLocaleTimeString() : new Date(schedule.end).toLocaleTimeString();
-                editTrening(schedule.id, data, timeStart, timeEnd);
 
-                // Создаем текст для отображения изменений
-                var content = `
-            <p><strong>Название события:</strong> ${schedule.title}</p>
-            <p><strong>Новый период:</strong>${changes.start ? new Date(changes.start).toLocaleString() : new Date(schedule.start).toLocaleString()} - ${changes.end ? new Date(changes.end).toLocaleString() : new Date(schedule.end).toLocaleString()}</p>`;
-                $('#popupTitle').text(schedule.title);
-                $('#popupComment').html(content);
 
-                $('#overlay').show();
-                $('#popup').show();
+            // Запоминаем выбранное занятие при открытии
+            calendar.on('clickSchedule', function (event) {
+                const schedule = event.schedule;
 
-                // Обновить событие в календаре
-                calendar.updateSchedule(schedule.id, schedule.calendarId, changes);
+                selectedTraining = trainingData[String(schedule.id)];
+
+                console.log('Выбрано занятие:', selectedTraining);
             });
 
-            // Обработчик для удаления события
-            calendar.on('beforeDeleteSchedule', function(event) {
+
+            // Устанавливаем обработчик Edit в capture-фазе
+            document.removeEventListener(
+                'click',
+                editPopupCapture,
+                true
+            );
+
+            document.addEventListener(
+                'click',
+                editPopupCapture,
+                true
+            );
+
+
+            // Изменение занятия при перемещении или изменении размера
+            calendar.on('beforeUpdateSchedule', function (event) {
+
                 var schedule = event.schedule;
-                // Удаление события
-                if(confirm('Удалить тренировку ' + schedule.title))
-                {
+                var changes = event.changes;
+
+                var data = changes.start
+                    ? new Date(changes.start).toLocaleDateString()
+                    : new Date(schedule.start).toLocaleDateString();
+
+                var timeStart = changes.start
+                    ? new Date(changes.start).toLocaleTimeString()
+                    : new Date(schedule.start).toLocaleTimeString();
+
+                var timeEnd = changes.end
+                    ? new Date(changes.end).toLocaleTimeString()
+                    : new Date(schedule.end).toLocaleTimeString();
+
+                editTrening(
+                    schedule.id,
+                    data,
+                    timeStart,
+                    timeEnd
+                );
+
+                // Обновляем локальные данные
+                calendar.updateSchedule(
+                    schedule.id,
+                    schedule.calendarId,
+                    changes
+                );
+            });
+
+
+            // Удаление занятия
+            calendar.on('beforeDeleteSchedule', function (event) {
+
+                var schedule = event.schedule;
+
+                if (confirm('Удалить тренировку ' + schedule.title + '?')) {
+
                     deleteTrening(schedule.id);
-                    calendar.deleteSchedule(schedule.id, schedule.calendarId);
+
+                    calendar.deleteSchedule(
+                        schedule.id,
+                        schedule.calendarId
+                    );
                 }
             });
 
-            // Обработчик события для изменения стандартного всплывающего окна
-            /*calendar.on('beforeUpdateSchedule', function({ event, changes }) {
-                console.log('Событие редактируется:', event);
-                console.log('Изменения:', changes);
 
-                // Например: отправим на сервер изменения
-
-                // Обновим вручную (если нужно)
-
-            });*/
-
-            $('#closePopup').click(function() {
+            // Закрытие дополнительного popup
+            $('#closePopup').off('click').on('click', function () {
                 $('#popup').hide();
                 $('#overlay').hide();
             });
 
 
             // Закрытие модального окна
-            $('.close').click(function() {
+            $('.close').off('click').on('click', function () {
                 $('#eventModal').fadeOut();
             });
 
-            // Закрытие модального окна при клике вне него
-            $(window).click(function(event) {
+
+            $(window).off('click.eventModal').on('click.eventModal', function (event) {
                 if ($(event.target).is('#eventModal')) {
                     $('#eventModal').fadeOut();
                 }
             });
-            // Функции для переключения между неделями
-            document.getElementById('prev-week').addEventListener('click', function () {
-                calendar.prev();  // Переход на предыдущую неделю
-            });
 
-            document.getElementById('next-week').addEventListener('click', function () {
-                calendar.next();  // Переход на следующую неделю
-            });
 
-            document.getElementById('today').addEventListener('click', function () {
-                calendar.today();  // Возврат на текущую неделю
-            });
-            document.getElementById('nextweek').addEventListener('click', function () {
-                const date = calendar.getDate();
-
-                console.log('Дата календаря:', date);
-
-                const jsDate = typeof date.toDate === 'function'
-                    ? date.toDate()
-                    : new Date(date);
-
-                nextWeek(
-                    @json($room['room']->slug),
-                    jsDate.toISOString()
-                );
-            });
-
-            document.getElementById('export-pdf').addEventListener('click', async function () {
-                const calendarElement = document.getElementById('calendar-print-wrapper');
-
-                const canvas = await html2canvas(calendarElement, {
-                    scale: 2,
-                    useCORS: true
+            // Переключение недель
+            document.getElementById('prev-week')
+                .addEventListener('click', function () {
+                    calendar.prev();
                 });
 
-                const imgData = canvas.toDataURL('image/png');
-
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({
-                    orientation: 'landscape',
-                    unit: 'mm',
-                    format: 'a4'
+            document.getElementById('next-week')
+                .addEventListener('click', function () {
+                    calendar.next();
                 });
 
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
+            document.getElementById('today')
+                .addEventListener('click', function () {
+                    calendar.today();
+                });
 
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
 
-                const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
-                const width = imgWidth * ratio;
-                const height = imgHeight * ratio;
+            // Перенос на следующую неделю
+            var nextWeekButton = document.getElementById('nextweek');
 
-                const x = (pageWidth - width) / 2;
-                const y = (pageHeight - height) / 2;
+            if (nextWeekButton) {
+                nextWeekButton.addEventListener('click', function () {
 
-                pdf.addImage(imgData, 'PNG', x, y, width, height);
+                    const date = calendar.getDate();
 
-                // Генерируем Blob и открываем для печати
-                const blob = pdf.output('blob');
+                    const jsDate = typeof date.toDate === 'function'
+                        ? date.toDate()
+                        : new Date(date);
 
-                const blobURL = URL.createObjectURL(blob);
-                const printWindow = window.open(blobURL);
+                    nextWeek(
+                        @json($room['room']->slug),
+                        jsDate.toISOString()
+                    );
+                });
+            }
 
-                // Ждём, пока окно загрузит PDF, затем вызываем print()
-                printWindow.onload = function () {
-                    printWindow.focus();
-                    printWindow.print();
-                };
-            });
+
+            // Экспорт календаря в PDF
+            document.getElementById('export-pdf')
+                .addEventListener('click', async function () {
+
+                    const calendarElement = document.getElementById(
+                        'calendar-print-wrapper'
+                    );
+
+                    const canvas = await html2canvas(calendarElement, {
+                        scale: 2,
+                        useCORS: true
+                    });
+
+                    const imgData = canvas.toDataURL('image/png');
+
+                    const { jsPDF } = window.jspdf;
+
+                    const pdf = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+
+                    const ratio = Math.min(
+                        pageWidth / imgWidth,
+                        pageHeight / imgHeight
+                    );
+
+                    const width = imgWidth * ratio;
+                    const height = imgHeight * ratio;
+
+                    const x = (pageWidth - width) / 2;
+                    const y = (pageHeight - height) / 2;
+
+                    pdf.addImage(
+                        imgData,
+                        'PNG',
+                        x,
+                        y,
+                        width,
+                        height
+                    );
+
+                    const blob = pdf.output('blob');
+                    const blobURL = URL.createObjectURL(blob);
+
+                    const printWindow = window.open(blobURL);
+
+                    if (printWindow) {
+                        printWindow.onload = function () {
+                            printWindow.focus();
+                            printWindow.print();
+                        };
+                    }
+                });
         }
 
+
+        // Перенос занятий на следующую неделю
         function nextWeek(slug, currentDate) {
+
             $.ajax({
                 type: 'POST',
                 url: '{{ route("nextWeek") }}',
                 dataType: 'json',
+
                 data: {
                     slug: slug,
                     currentDate: currentDate,
                     _token: '{{ csrf_token() }}'
                 },
-                success: function(data) {
+
+                success: function (data) {
                     renderCalendar(data);
                 },
-                error: function(xhr) {
+
+                error: function (xhr) {
                     console.error(xhr.responseText);
                 }
             });
+        }
+        function getOrganisationId(name) {
+            const organisations = {
+                'Сшор': 1,
+                'Цас': 2,
+                'Цс': 4,
+                'Платные услуги': 5,
+                'Мероприятия': 6
+            };
+
+            return organisations[name] ?? '';
         }
     </script>
 @endsection
